@@ -1,0 +1,883 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage[a4paper,margin=19mm,headheight=22pt,footskip=12mm]{geometry}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{parskip}
+\usepackage{lastpage}
+\usepackage{xurl}
+
+\definecolor{DARESNavy}{HTML}{102A43}
+\definecolor{DARESTeal}{HTML}{0B7285}
+\definecolor{DARESMuted}{HTML}{66788A}
+\definecolor{DARESLine}{HTML}{D9E2EC}
+\definecolor{DARESBlueLight}{HTML}{EAF2FF}
+\definecolor{DARESTealLight}{HTML}{E7F5F7}
+\definecolor{DARESOrangeLight}{HTML}{FFF4E6}
+\definecolor{DARESGreenLight}{HTML}{EAF7F0}
+\definecolor{DARESPaper}{HTML}{F7F9FC}
+\definecolor{DARESCoral}{HTML}{E76F51}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=DARESTeal,
+  urlcolor=DARESTeal,
+  citecolor=DARESTeal,
+  pdftitle={BLDC Motor Control - Learning and Project Documentation Guide},
+  pdfauthor={DARES Electronics},
+  pdfsubject={BLDC and ODrive onboarding, implementation, and documentation},
+  pdfkeywords={BLDC, ODrive, ESC, six-step commutation, PWM, FOC}
+}
+\urlstyle{same}
+\setcounter{tocdepth}{1}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist[itemize]{leftmargin=5.5mm,itemsep=2.5pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=7mm,itemsep=3pt,topsep=3pt}
+\emergencystretch=3em
+
+\titleformat{\section}
+  {\Large\bfseries\color{DARESNavy}}
+  {\thesection.}{0.55em}{}
+  [\vspace{2pt}\color{DARESTeal}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\color{DARESTeal}}
+  {\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{DARESNavy}}
+  {\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{14pt}{8pt}
+\titlespacing*{\subsection}{0pt}{10pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{7pt}{2pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small\bfseries\color{DARESTeal}DARES ELECTRONICS}
+\rhead{\small\color{DARESMuted}BLDC Motor Control Documentation}
+\lfoot{\scriptsize\color{DARESMuted}Learning and project documentation guide}
+\rfoot{\scriptsize\color{DARESMuted}Page \thepage\ of \pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{DARESLine}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{DARESLine}\leaders\hrule height \footrulewidth\hfill}}
+
+\newtcolorbox{callout}[1]{
+  enhanced,
+  breakable,
+  colback=DARESTealLight,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  borderline west={3pt}{0pt}{DARESTeal},
+  arc=0pt,
+  left=3mm,
+  right=3mm,
+  top=2.5mm,
+  bottom=2.5mm,
+  title={#1},
+  coltitle=DARESNavy,
+  fonttitle=\bfseries,
+  attach title to upper={\par\vspace{1mm}}
+}
+
+\newtcolorbox{warningbox}[1]{
+  enhanced,
+  breakable,
+  colback=DARESOrangeLight,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  borderline west={3pt}{0pt}{DARESCoral},
+  arc=0pt,
+  left=3mm,
+  right=3mm,
+  top=2.5mm,
+  bottom=2.5mm,
+  title={#1},
+  coltitle=DARESNavy,
+  fonttitle=\bfseries,
+  attach title to upper={\par\vspace{1mm}}
+}
+
+\newtcolorbox{resourcebox}{
+  enhanced,
+  breakable,
+  colback=DARESBlueLight,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  arc=0pt,
+  left=3mm,
+  right=3mm,
+  top=2.5mm,
+  bottom=2.5mm
+}
+
+\newcommand{\Resource}[3]{%
+  \begin{resourcebox}
+    \href{#2}{\textbf{\color{DARESTeal}#1}}\par
+    {\small #3}
+  \end{resourcebox}
+}
+
+\newcommand{\RepoEntry}[2]{%
+  \texttt{\detokenize{#1}}\hfill{\small\color{DARESMuted}#2}\par
+}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+  \thispagestyle{empty}
+  \pagecolor{DARESPaper}
+  \color{DARESNavy}
+
+  \vspace*{20mm}
+  {\large\bfseries\color{DARESTeal}DARES ELECTRONICS\par}
+  \vspace{12mm}
+
+  {\fontsize{30}{34}\selectfont\bfseries BLDC Motor Control\par}
+  \vspace{3mm}
+  {\Large\color{DARESMuted}Learning and Project Documentation Guide\par}
+
+  \vspace{15mm}
+  \begin{tcolorbox}[
+    colback=DARESNavy,
+    colframe=DARESNavy,
+    arc=0pt,
+    boxrule=0pt,
+    left=4mm,right=4mm,top=4mm,bottom=4mm]
+    \centering\bfseries\color{white}
+    PRINCIPLE \(\rightarrow\) SIMULATION \(\rightarrow\) ODRIVE
+    \(\rightarrow\) HARDWARE \(\rightarrow\) TESTING \(\rightarrow\) CONTROL
+  \end{tcolorbox}
+
+  \vspace{15mm}
+  {\large\color{DARESMuted}
+    A beginner-friendly reference for learning six-step ESC control,
+    validating concepts on ODrive, documenting engineering work, and
+    progressing toward closed-loop control and field-oriented control.
+    \par}
+
+  \vfill
+  \begin{callout}{CURRENT PRIORITY}
+    BLDC principle \(\rightarrow\) three-phase inverter \(\rightarrow\)
+    six-step commutation \(\rightarrow\) PWM \(\rightarrow\) simulation
+    \(\rightarrow\) ODrive bring-up. Use ODrive to connect the theory to
+    real closed-loop control before moving to a custom ESC and advanced
+    FOC development.
+  \end{callout}
+
+  \vfill
+  {\color{DARESCoral}\rule{32mm}{2pt}\par}
+  \vspace{3mm}
+  {\small\color{DARESMuted}Version 1.1 \textbar\ September 2026\par}
+\end{titlepage}
+\nopagecolor
+\hypersetup{pageanchor=true}
+
+\tableofcontents
+\clearpage
+
+\section{Purpose and scope}
+
+This guide gives new Motor Control members a shared starting point. It
+explains what to learn, what to simulate, what to document, and what evidence
+is required before the team moves from basic six-step commutation to
+closed-loop control and FOC.
+
+\subsection{Learning objectives}
+
+By using this guide, a member should be able to:
+
+\begin{itemize}
+  \item Explain how a BLDC motor produces torque and why electronic commutation is required.
+  \item Explain the purpose of the three-phase inverter, gate driver, PWM, dead time, and sensing circuits.
+  \item Build or review a basic six-step simulation and interpret voltage, current, speed, and torque results.
+  \item Bring up an ODrive safely and connect motor parameters, sensing, FOC, and closed-loop control to a real motor.
+  \item Document schematic, firmware, simulation, and test work so another member can reproduce it.
+  \item Recognise when the system is ready for speed feedback, current control, and FOC.
+\end{itemize}
+
+\begin{callout}{IMPORTANT BOUNDARY}
+  This guide is an onboarding and documentation standard. It does not replace
+  component datasheets, a design review, electrical safety procedures, or
+  validation on the actual target motor and power system.
+\end{callout}
+
+\subsection{Recommended working method}
+
+Learn enough theory to understand the physical system, build a simple model,
+validate key ideas on an ODrive, compare the model with measured behaviour,
+and then deepen the control theory or develop custom hardware. Theory,
+simulation, hardware, and testing should not be treated as separate projects.
+Each step should create evidence for the next one.
+
+\section{Recommended learning path}
+
+The sequence below is designed for members with no previous motor-control
+experience. Complete each stage well enough to explain it in your own words
+before moving to the next stage.
+
+\subsection{BLDC motor operating principle}
+
+A BLDC motor has a permanent-magnet rotor and three stator windings. Current
+in a winding creates a stator magnetic field. The controller changes which
+windings carry current so that the stator field advances around the motor.
+The rotor follows this field and produces mechanical rotation. Unlike a
+brushed DC motor, commutation is performed electronically by the ESC.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Identify the rotor, stator, and three motor phases.
+  \item Explain why current direction changes the stator magnetic field.
+  \item Explain why a controller must know, or estimate, rotor position.
+\end{itemize}
+
+\Resource
+  {YouTube: How does a Brushless DC Motor work?}
+  {https://www.youtube.com/watch?v=Hw1q-jbhPzc}
+  {Animated introduction to the rotor, stator, three-phase windings, and electronic commutation.}
+
+\subsection{Three-phase inverter and gate driver}
+
+The battery supplies DC power. A three-phase inverter uses three
+half-bridges, normally six MOSFETs, to connect each motor phase to the
+positive DC bus, the negative bus, or a floating state. The MCU generates
+logic-level commands; a gate driver supplies the voltage and current needed
+to switch the MOSFET gates. Dead time prevents the high-side and low-side
+devices in one half-bridge from conducting simultaneously.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Explain high-side, low-side, half-bridge, and shoot-through.
+  \item Explain why an MCU pin should not directly drive a power MOSFET gate.
+  \item Identify the roles of bootstrap circuitry, gate resistors, and dead time.
+\end{itemize}
+
+\subsection{Six-step commutation}
+
+In six-step commutation, two phases are driven and the third phase is normally
+floating. One driven phase carries current into the motor and the other
+carries current out. The controller advances through six electrical states
+so that the stator field moves around the motor. Reversing the order reverses
+the direction. The exact switching table depends on phase naming, the Hall
+sequence, and the desired direction.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Describe the current path in all six states.
+  \item Identify the high-side device, low-side device, and floating phase in each state.
+  \item Explain why the sequence must be synchronised with rotor position.
+\end{itemize}
+
+\Resource
+  {YouTube: Understanding Six-Step Commutation for BLDC Motors}
+  {https://www.youtube.com/watch?v=WYJWdMV3YMs}
+  {MathWorks introduction to the switching sequence and simulated behaviour of a six-step BLDC drive.}
+
+\subsection{PWM and power control}
+
+Pulse-width modulation switches a MOSFET rapidly. Duty cycle is the fraction
+of each PWM period for which the command is active. Increasing duty cycle
+generally increases the average voltage available to the motor, but current
+and torque still depend on winding resistance, inductance, back-EMF, load,
+commutation timing, and the selected PWM strategy. PWM frequency is a
+compromise among current ripple, audible noise, switching loss, timer
+resolution, and control bandwidth.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Define PWM frequency, period, and duty cycle.
+  \item Explain why duty cycle is not the same as guaranteed motor speed.
+  \item Explain how dead time and switching losses affect real hardware.
+\end{itemize}
+
+\subsection{Rotor position and back-EMF}
+
+Hall sensors provide coarse rotor-position sectors, while encoders provide
+finer mechanical position. A sensorless six-step controller can monitor the
+voltage of the floating phase and detect back-EMF zero crossings. Because
+back-EMF is small near zero speed, a sensorless ESC normally needs an
+open-loop starting sequence before it can transition to reliable
+closed-loop commutation.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Compare Hall, encoder, and sensorless position information.
+  \item Explain why back-EMF increases with speed.
+  \item Explain why low-speed sensorless starting is difficult.
+\end{itemize}
+
+\section{Simulation before final hardware}
+
+Simulation is used to test understanding and reduce risk before the final
+power stage is energised. It is not a substitute for measurement. The first
+model should be simple enough that every block and parameter can be
+explained. Suitable tools include MATLAB/Simulink, PLECS, PSIM, and LTspice.
+
+\subsection{Minimum first simulation}
+
+\begin{itemize}
+  \item DC bus source with a documented voltage and current limit.
+  \item Three-phase inverter or an equivalent switching model.
+  \item BLDC motor model with documented electrical and mechanical parameters.
+  \item Six-step commutation sequence and adjustable PWM duty cycle.
+  \item Mechanical load or an explicitly stated no-load assumption.
+\end{itemize}
+
+\subsection{Required outputs}
+
+\begin{itemize}
+  \item Phase voltages and phase currents.
+  \item DC bus voltage and current.
+  \item Motor speed and electromagnetic torque.
+  \item Commutation state and PWM duty cycle.
+  \item Start-up transient and steady-state behaviour.
+\end{itemize}
+
+\subsection{What the report must explain}
+
+Do not upload plots without interpretation. State the objective, assumptions,
+input parameters, solver and sample time, expected behaviour, observed
+behaviour, and conclusion. If the model behaves incorrectly, record the
+failure and the evidence used to diagnose it. A failed simulation with a
+clear explanation is more useful than an unexplained successful screenshot.
+
+\begin{callout}{SIMULATION EXIT CRITERION}
+  A member can explain the current path for each commutation state and can
+  account for the main voltage, current, speed, and torque waveforms. Changing
+  duty cycle or load produces a physically reasonable response.
+\end{callout}
+
+\Resource
+  {Official reference: MathWorks Six Step Commutation}
+  {https://www.mathworks.com/help/mcb/ref/sixstepcommutation.html}
+  {Reference for six-step switching logic, Hall-state inputs, rotor-position inputs, and switching sequences.}
+
+\section{Practical implementation with ODrive}
+
+ODrive provides a ready-made motor-control platform containing the power
+stage, gate drivers, current measurement, MCU, control firmware,
+communication interface, and rotor-feedback inputs. It allows the team to
+move from a simulated motor to a controlled physical motor without first
+designing a complete ESC. It is useful for learning motor calibration,
+current control, velocity control, position feedback, FOC, regenerative
+braking, and fault diagnosis.
+
+\begin{callout}{IMPORTANT DISTINCTION}
+  ODrive is not a six-step commutation teaching board. Its normal control
+  approach is closed-loop current control and FOC. Six-step commutation
+  should still be learned and simulated because it makes the inverter,
+  phase-current paths, PWM, and rotor-position problem easier to understand.
+  ODrive is the next practical step, not a replacement for those fundamentals.
+\end{callout}
+
+\subsection{How ODrive maps to the motor-control system}
+
+\begin{itemize}
+  \item DC input and bus capacitors provide energy to the inverter.
+  \item Gate drivers and MOSFET bridges switch the three motor phases.
+  \item Current shunts and amplifiers provide phase-current feedback for the inner current loop.
+  \item The MCU executes calibration, FOC, protection, and torque, velocity, or position control.
+  \item An encoder, Hall sensors, or a sensorless estimator provides rotor information.
+  \item USB, UART, CAN, or other interfaces allow configuration, commands, logging, and fault reporting.
+  \item The brake resistor or another regeneration strategy manages energy returned to the DC bus.
+\end{itemize}
+
+\subsection{Record the exact hardware and firmware first}
+
+Before following any tutorial, record the ODrive model, voltage version, board
+revision, firmware version, host-tool version, and motor-feedback method.
+ODrive v3.x firmware 0.5.x and current ODrive products running 0.6.x do not
+use identical configuration names or procedures. Treat a video as a
+conceptual demonstration and use documentation that matches the exact board
+and firmware for actual commands.
+
+\subsection{Recommended bring-up workflow}
+
+\begin{enumerate}
+  \item Inspect the board and wiring. Secure the motor, remove the propeller, and confirm DC supply polarity and voltage range.
+  \item Connect the three motor phases and the selected encoder or Hall feedback. Confirm pole pairs and feedback resolution.
+  \item Set conservative bus-voltage, motor-current, calibration-current, velocity, and acceleration limits before enabling the axis.
+  \item Plan for regenerated energy. Configure the correct brake resistor or regeneration limit for the board and power source.
+  \item Run motor calibration so the controller can estimate phase resistance and inductance. Investigate errors rather than repeatedly increasing limits.
+  \item Calibrate and verify the encoder or configure the intended sensorless method. Confirm that position and velocity change in the expected direction.
+  \item Begin closed-loop operation at low torque and speed. Test start, stop, direction, and loss-of-feedback behaviour before increasing the command.
+  \item Log DC bus voltage, current, measured speed, target speed, controller mode, temperature, and error history.
+\end{enumerate}
+
+\subsection{What members should learn from ODrive}
+
+\begin{itemize}
+  \item Why motor resistance and inductance are needed by a current controller.
+  \item How pole pairs relate mechanical rotation to electrical angle.
+  \item How encoder alignment and direction affect torque production.
+  \item How torque, velocity, and position modes use nested control loops.
+  \item Why current, velocity, bus-voltage, temperature, and fault limits are part of the controller design.
+  \item Why deceleration can return energy to the DC bus and cause over-voltage or regeneration faults.
+\end{itemize}
+
+\subsection{Required ODrive evidence}
+
+\begin{itemize}
+  \item Board model, firmware version, power source, motor model, pole pairs, and feedback device.
+  \item Saved configuration or a script that reproduces every changed parameter.
+  \item Calibration results, including measured resistance and inductance where available.
+  \item A low-speed closed-loop test with target and measured speed, bus voltage, current, and temperature.
+  \item Complete error output and the reasoning used to diagnose each fault.
+  \item A conclusion explaining what the ODrive test proves and what it does not prove about the custom ESC.
+\end{itemize}
+
+\Resource
+  {YouTube: Unpacking and testing the new product ODrive}
+  {https://www.youtube.com/watch?v=DVN25PbMfDE\&list=PLc2RScfrSFEDcQp6Qvc7mBNre8ABCoz9p}
+  {Practical introduction to connecting, configuring, and testing a BLDC motor with an ODrive controller.}
+
+\Resource
+  {Official ODrive reference: Motor Calibration Parameters}
+  {https://docs.odriverobotics.com/v/latest/articles/motor-parameters.html}
+  {Explains calibration current and voltage, resistance and inductance measurement, and common calibration faults.}
+
+\Resource
+  {Official ODrive reference: Hardware Configuration}
+  {https://docs.odriverobotics.com/v/latest/manual/hardware-config.html}
+  {Covers power limits, regenerated energy, braking, temperature monitoring, encoders, and sensorless configuration.}
+
+\begin{warningbox}{ODRIVE EXIT CRITERION}
+  The configuration is reproducible; calibration completes without an
+  unexplained fault; the unloaded motor starts, runs, changes speed, and stops
+  predictably at conservative limits; measured values are logged; and the
+  member can relate board behaviour to inverter, sensing, and control concepts.
+\end{warningbox}
+
+\section{ESC hardware documentation}
+
+Hardware design should begin after the team understands the power path and
+has a basic model. The schematic must be divided into functional blocks, and
+every major component must have a documented selection reason. Copying a
+reference design is acceptable only when the team verifies that its voltage,
+current, thermal, and control assumptions match the project.
+
+\subsection{Required hardware blocks}
+
+\subsubsection{MCU and timing}
+Document PWM channels, complementary outputs, dead-time support, ADC
+triggering, interrupt timing, communication, and available processing margin.
+
+\subsubsection{Gate driver}
+Document high-side and low-side drive capability, bootstrap limits, UVLO,
+fault reporting, propagation delay, peak gate current, and supported
+switching frequency.
+
+\subsubsection{MOSFET power stage}
+Document drain-source voltage margin, continuous and pulse current ratings,
+\(R_{\mathrm{DS(on)}}\), gate charge, switching loss, thermal resistance,
+package, and PCB current paths.
+
+\subsubsection{Current sensing}
+Document shunt location, resistance, power rating, amplifier range and
+bandwidth, common-mode limits, ADC range, filtering, and over-current
+protection.
+
+\subsubsection{Voltage sensing}
+Document battery and DC bus dividers, phase-voltage or back-EMF scaling,
+filtering, transient protection, and ADC input limits.
+
+\subsubsection{Power supplies}
+Document logic rails, gate-driver supply, regulator input range, start-up
+behaviour, decoupling, and power sequencing.
+
+\subsubsection{Protection and thermal design}
+Document reverse polarity, input transients, shoot-through prevention,
+over-current, under-voltage, over-voltage, over-temperature, fusing, and heat
+removal.
+
+\subsubsection{Interfaces}
+Document rotor-sensor inputs, command input, telemetry, programming, debug,
+and fault/status outputs.
+
+\subsection{Component selection record}
+
+For each critical component, record the selected part, required rating,
+calculated margin, relevant datasheet pages, alternatives considered, reason
+for selection, risks, and validation plan. Absolute maximum ratings are not
+normal operating targets; design against recommended operating conditions and
+expected transients.
+
+\section{Firmware documentation}
+
+Firmware documentation must describe the control timing and the relationship
+between software commands and physical switching. A reader should be able to
+trace a target command through commutation logic, PWM generation, ADC
+sampling, feedback calculation, protection checks, and fault response.
+
+\subsection{Minimum topics}
+
+\begin{itemize}
+  \item Timer, PWM, complementary output, dead-time, and update-event configuration.
+  \item Six-step state machine, direction control, and commutation timing.
+  \item Hall, encoder, or back-EMF input processing and validation.
+  \item ADC trigger timing, scaling, offset calibration, and filtering.
+  \item RPM calculation and timeout behaviour.
+  \item Start-up, run, stop, and fault states.
+  \item Over-current, over-voltage, under-voltage, and over-temperature responses.
+  \item Communication protocol, units, limits, and error handling.
+\end{itemize}
+
+\subsection{Function-level documentation}
+
+Important functions should state their purpose, inputs, outputs, units, valid
+range, call rate, side effects, and safety assumptions. Constants such as pole
+pairs, current-sensor gain, ADC reference, timer clock, and PWM frequency must
+have one authoritative definition. Changes to these constants should be
+reviewed because they can alter physical limits.
+
+\begin{callout}{FIRMWARE EXIT CRITERION}
+  The motor can be commanded to start and stop predictably; commutation and
+  feedback units are verified; every defined fault forces a documented safe
+  state; and the firmware version is recorded with each test.
+\end{callout}
+
+\section{Bench testing and safety}
+
+The first custom-hardware objective is deliberately narrow: rotate the motor
+reliably using six-step commutation and PWM. Test one assumption at a time and
+capture the evidence. Start with logic-level and gate-signal checks before
+connecting the motor to the complete power stage.
+
+\subsection{Minimum safety controls}
+
+\begin{itemize}
+  \item Remove the propeller unless an approved guarded thrust test specifically requires it.
+  \item Use a current-limited supply where practical, plus an appropriate fuse and accessible emergency disconnect.
+  \item Secure the motor and loose wiring before energising the system.
+  \item Verify PWM polarity, complementary outputs, dead time, and gate waveforms before applying full bus voltage.
+  \item Use differential or isolated measurements where required; do not attach an earth-referenced oscilloscope ground to an unsafe switching node.
+  \item Begin at low voltage and conservative current limits, then increase only after reviewing measurements.
+  \item Monitor MOSFET, gate driver, motor, connector, and cable temperature.
+  \item Stop immediately for unexpected current, noise, heating, loss of commutation, or unstable control.
+\end{itemize}
+
+\subsection{Test record}
+
+\begin{itemize}
+  \item Test ID, date, operator, reviewer, and objective.
+  \item Schematic/PCB revision, firmware commit, configuration, and instrument list.
+  \item Power supply voltage and current limit, motor, sensor, load, and propeller status.
+  \item Procedure, expected result, measured result, plots or oscilloscope captures, and pass/fail decision.
+  \item Unexpected behaviour, likely cause, follow-up action, and linked issue or design note.
+\end{itemize}
+
+\begin{warningbox}{FIRST HARDWARE MILESTONE}
+  The motor starts, continues rotating, and stops on command. Current remains
+  within the planned limit, temperatures remain acceptable, gate signals show
+  no shoot-through, and the result is reproducible.
+\end{warningbox}
+
+\section{Closed-loop speed and current control}
+
+\subsection{Speed feedback}
+
+Open-loop control applies a command but does not guarantee the requested
+speed. Closed-loop speed control compares target RPM with measured RPM and
+adjusts the command to reduce the error. Documentation must state how RPM is
+measured, the update rate, filtering, units, valid range, and behaviour when
+feedback is lost.
+
+\subsection{PID understanding}
+
+Proportional action reacts to present error. Integral action accumulates error
+and can remove steady-state offset, but it needs output limiting and
+anti-windup. Derivative action reacts to rate of change and is sensitive to
+measurement noise. A PI controller is often sufficient for speed control; the
+correct choice depends on the plant, sample rate, noise, and performance
+requirement. Gains must be recorded with the test conditions and must not be
+treated as universal constants.
+
+\subsection{Current control}
+
+Motor torque is strongly related to current, so a current loop provides more
+direct torque control and protects the power stage. In a cascaded controller,
+the speed loop normally generates a current or torque request, while the
+faster inner current loop controls the electrical response. The current
+sensing topology and PWM/ADC timing determine which measurements are valid.
+
+\subsection{Required control evidence}
+
+\begin{itemize}
+  \item Target, measured value, error, controller output, saturation limits, and sample time.
+  \item Step response under at least two loads or operating points.
+  \item Rise time, overshoot, settling behaviour, steady-state error, and oscillation/noise observations.
+  \item Controller gains, tuning method, anti-windup method, filters, and safety limits.
+\end{itemize}
+
+\section{Introduction to field-oriented control}
+
+FOC should begin only after phase-current measurement, rotor angle, PWM
+timing, and basic feedback control are understood. FOC transforms measured
+three-phase currents into a rotating reference frame aligned with the rotor.
+This produces d-axis and q-axis current components controlled by fast PI
+loops. In simplified terms, q-axis current is mainly associated with torque,
+while d-axis current is associated with flux. Commanded voltages are
+transformed back and applied through a modulation method such as SVPWM.
+
+\subsection{Concepts to learn}
+
+\begin{itemize}
+  \item Mechanical angle, electrical angle, and pole pairs.
+  \item Phase-current reconstruction and current-sampling windows.
+  \item Clarke and Park transforms, plus their inverse transforms.
+  \item d-axis and q-axis current references and PI current controllers.
+  \item Voltage limiting, decoupling, and PI anti-windup.
+  \item SVPWM, encoder alignment, and sensorless observers.
+\end{itemize}
+
+\Resource
+  {YouTube: Basics of Field-Oriented Control}
+  {https://www.youtube.com/watch?v=j0XfWufMM7s}
+  {STMicroelectronics introduction to BLDC/PMSM control, FOC, current sensing, and sensor/sensorless topologies.}
+
+\Resource
+  {YouTube: Field-Oriented Control on STM32 From Scratch}
+  {https://www.youtube.com/watch?v=AmS22zwl2EA}
+  {Practical reference covering encoder feedback, current measurement, transforms, and SVPWM.}
+
+\Resource
+  {Official course: STM32 Motor Control Part 5}
+  {https://www.st.com/content/st_com/en/support/learning/stm32-moocs/Motor-Control-Part-5-STM32-Field-Oriented-motor-control-training.html}
+  {ST training covering FOC theory, STM32 implementation, current sensing, observers, and practical tools.}
+
+\begin{callout}{FOC ENTRY CRITERION}
+  The team has trustworthy current measurements, a verified electrical angle,
+  deterministic PWM and ADC timing, safe current limits, and a working test
+  method. FOC should not be used to hide unverified hardware behaviour.
+\end{callout}
+
+\section{Repository structure}
+
+The repository should make the current design state easy to find. The main
+README is an entry point; detailed technical work belongs in focused Markdown
+documents and version-controlled project files.
+
+\begin{tcolorbox}[
+  breakable,
+  colback=DARESPaper,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  arc=0pt,
+  left=3mm,right=3mm,top=3mm,bottom=3mm]
+\RepoEntry{README.md}{project overview, status, and quick start}
+\RepoEntry{docs/motor-basics/}{learning notes and reviewed explanations}
+\RepoEntry{docs/control-theory/}{speed, current, FOC, and tuning notes}
+\RepoEntry{docs/datasheets/}{links or approved copies of key datasheets}
+\RepoEntry{docs/design-notes/}{engineering decisions and trade-offs}
+\RepoEntry{simulation/}{model files, parameters, and reports}
+\RepoEntry{hardware/schematic/}{schematic source, exports, and review notes}
+\RepoEntry{hardware/pcb/}{layout source, manufacturing files, and reviews}
+\RepoEntry{firmware/}{source code, configuration, and build instructions}
+\RepoEntry{testing/odrive/}{ODrive configuration, scripts, logs, and faults}
+\RepoEntry{testing/}{test plans, raw data, logs, and reports}
+\RepoEntry{results/}{approved summary plots and milestone evidence}
+\end{tcolorbox}
+
+\subsection{File and commit expectations}
+
+\begin{itemize}
+  \item Use descriptive filenames and include units or dates where they prevent ambiguity.
+  \item Do not upload an unexplained screenshot, model, binary, or data file.
+  \item Link research sources and identify the exact datasheet revision used.
+  \item Record failures as well as successes; do not remove evidence because a test failed.
+  \item Keep generated exports separate from editable source files.
+  \item Use issues or design notes for unresolved questions and link the relevant commit or test report.
+  \item Request review for changes that affect switching, sensing, current limits, protection, or safety.
+\end{itemize}
+
+\section{Required document templates}
+
+\subsection{Simulation note}
+\begin{itemize}
+  \item Objective and question being tested.
+  \item Model scope, assumptions, parameter sources, solver, and sample time.
+  \item Inputs and expected behaviour.
+  \item Results with units and explanation.
+  \item Limitations, problems, conclusion, and next action.
+\end{itemize}
+
+\subsection{Design decision record}
+\begin{itemize}
+  \item Decision and date.
+  \item Requirement or problem being addressed.
+  \item Alternatives considered and evidence reviewed.
+  \item Selected option, calculations, margins, benefits, and disadvantages.
+  \item Risks, validation plan, owner, and review status.
+\end{itemize}
+
+\subsection{Test report}
+\begin{itemize}
+  \item Test ID, objective, operator, reviewer, date, and location.
+  \item Hardware revision, firmware commit, configuration, motor, load, supply, and instruments.
+  \item Safety controls and pre-test checks.
+  \item Procedure, expected result, measured data, and uncertainty where relevant.
+  \item Pass/fail decision, fault observations, conclusion, and linked follow-up issue.
+\end{itemize}
+
+\subsection{Datasheet review}
+
+Before using a component, review at least the absolute maximum ratings,
+recommended operating conditions, pin descriptions, electrical
+characteristics, timing requirements, thermal information, and typical
+application circuit. Record which limits are design requirements and which
+must be validated during testing.
+
+\section{First tasks for new members}
+
+These tasks turn passive learning into reviewable engineering output. New
+members should work with an experienced member, but they should still form and
+test their own explanation.
+
+\subsection{Task 1 - Principle note}
+Write a short explanation of how a BLDC motor, inverter, six-step sequence,
+and PWM work together. Include the current path for each commutation state in
+words or a switching table.
+
+\subsection{Task 2 - Simulation}
+Create or reproduce a basic six-step simulation. Change duty cycle and load,
+then explain the effect on current, speed, and torque.
+
+\subsection{Task 3 - ODrive bring-up}
+Record the exact board and firmware, create a safe configuration, complete
+calibration, run a conservative closed-loop speed test, and document all
+measured values and faults.
+
+\subsection{Task 4 - Hardware block review}
+Choose one block -- gate driver, MOSFET stage, current sensing, voltage
+sensing, power supply, or protection -- and document its requirements and one
+candidate implementation.
+
+\subsection{Task 5 - GitHub submission}
+Upload the editable source, readable result, ODrive configuration or script,
+and a Markdown explanation. Link every source and state what remains
+uncertain.
+
+\subsection{Task 6 - Short presentation}
+Present what was learned, one mistake or unexpected result, how it was
+investigated, and the next test that would reduce uncertainty.
+
+\begin{callout}{REVIEW STANDARD}
+  The goal is not to appear correct on the first attempt. The goal is to make
+  assumptions visible, test them, record the evidence, and improve the next
+  design.
+\end{callout}
+
+\section{Milestones and definition of done}
+
+\subsection{Milestone 1 - Fundamentals}
+A member can explain the motor, inverter, PWM, six-step current paths, and
+position feedback without copying a diagram or script.
+
+\subsection{Milestone 2 - Simulation}
+The model runs, inputs and parameters are documented, waveforms are physically
+reasonable, and results are explained.
+
+\subsection{Milestone 3 - ODrive reference-platform bring-up}
+The ODrive configuration is reproducible; calibration is understood; the
+motor runs under conservative closed-loop limits; data and faults are
+documented.
+
+\subsection{Milestone 4 - Open-loop or commutated custom bench run}
+The motor starts, runs, and stops safely; current and temperature stay within
+limits; gate signals and commutation are verified; the test is reproducible.
+
+\subsection{Milestone 5 - Closed-loop speed}
+RPM feedback is validated; the controller tracks commands over the agreed
+operating range; gains, limits, and response measurements are documented.
+
+\subsection{Milestone 6 - Current control and FOC readiness}
+Current sensing and electrical angle are verified; PWM/ADC timing is
+deterministic; protection is tested; and the team has an agreed FOC
+validation plan.
+
+\subsection{Project-level definition of done}
+\begin{itemize}
+  \item Editable design sources and build instructions are committed.
+  \item Requirements, calculations, assumptions, and safety limits are documented.
+  \item Relevant simulation and test evidence is stored with units and version information.
+  \item Known limitations and unresolved risks are explicit.
+  \item Another team member can reproduce the result without relying on the original author.
+  \item A reviewer has approved the milestone against its stated exit criteria.
+\end{itemize}
+
+\section{Learning resources}
+
+Use these resources as starting points, then confirm implementation details
+against the relevant motor, MCU, gate-driver, MOSFET, sensor, and regulator
+datasheets. Video explanations are useful for intuition but are not the final
+authority for component limits or safety decisions.
+
+\Resource
+  {YouTube - How does a Brushless DC Motor work?}
+  {https://www.youtube.com/watch?v=Hw1q-jbhPzc}
+  {Beginner animation for motor construction and electronic commutation.}
+
+\Resource
+  {YouTube - Understanding Six-Step Commutation for BLDC Motors}
+  {https://www.youtube.com/watch?v=WYJWdMV3YMs}
+  {Six-step switching and simulated motor behaviour from MathWorks.}
+
+\Resource
+  {MathWorks - Six Step Commutation reference}
+  {https://www.mathworks.com/help/mcb/ref/sixstepcommutation.html}
+  {Official switching-sequence reference for Hall or position inputs.}
+
+\Resource
+  {YouTube - Unpacking and testing the new product ODrive}
+  {https://www.youtube.com/watch?v=DVN25PbMfDE\&list=PLc2RScfrSFEDcQp6Qvc7mBNre8ABCoz9p}
+  {Practical ODrive connection, configuration, calibration, and motor test introduction.}
+
+\Resource
+  {YouTube - Basics of Field-Oriented Control}
+  {https://www.youtube.com/watch?v=j0XfWufMM7s}
+  {FOC introduction from STMicroelectronics.}
+
+\Resource
+  {STMicroelectronics - Motor Control Part 5}
+  {https://www.st.com/content/st_com/en/support/learning/stm32-moocs/Motor-Control-Part-5-STM32-Field-Oriented-motor-control-training.html}
+  {Structured course covering FOC theory, STM32 implementation, sensing, and observers.}
+
+\Resource
+  {YouTube - Field-Oriented Control on STM32 From Scratch}
+  {https://www.youtube.com/watch?v=AmS22zwl2EA}
+  {Practical implementation reference for current sensing, encoder feedback, transforms, and SVPWM.}
+
+\subsection{Useful search terms}
+\begin{itemize}
+  \item BLDC motor working principle
+  \item three-phase inverter and half-bridge explained
+  \item MOSFET gate driver dead time and shoot-through
+  \item BLDC six-step commutation
+  \item BLDC PWM strategies
+  \item back-EMF zero-crossing sensorless BLDC
+  \item ODrive motor calibration, encoder setup, regeneration, and brake resistor
+  \item BLDC speed PI control
+  \item Clarke Park transform motor control
+  \item FOC current sensing and SVPWM
+\end{itemize}
+
+\subsection{Start this week}
+\begin{itemize}
+  \item Watch the BLDC principle, six-step commutation, and ODrive bring-up videos.
+  \item Write a one-page explanation in your own words.
+  \item Build or review a basic six-step simulation and change one parameter.
+  \item Create a version-specific ODrive safety checklist, then plan one conservative closed-loop test.
+  \item Upload editable sources and evidence, then present one unresolved question and the next test.
+\end{itemize}
+
+\end{document}
