@@ -21,7 +21,6 @@
 \usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc,shapes.misc}
 \usepackage{fancyhdr,lastpage,needspace}
 \usepackage[colorlinks=true,linkcolor=ink,urlcolor=blue,citecolor=ink]{hyperref}
-\IfFileExists{fontawesome5.sty}{\usepackage{fontawesome5}}{\providecommand{\faIcon}[2][]{}}
 
 % ---------- palette ----------
 \definecolor{ink}{HTML}{2B2B2A}
@@ -49,8 +48,8 @@
 % ---------- header / footer ----------
 \pagestyle{fancy}\fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
-\fancyhead[L]{\footnotesize\color{muted}DARES Electronics \textbullet{} Project structure proposal}
-\fancyhead[R]{\footnotesize\color{muted}Internal \textbullet{} for officer sign-off}
+\fancyhead[L]{\footnotesize\color{muted}DARES Electronics}
+\fancyhead[R]{\footnotesize\color{muted}Project Structure}
 \fancyfoot[C]{\footnotesize\color{muted}\thepage\ / \pageref{LastPage}}
 
 % ---------- reusable boxes ----------
@@ -58,7 +57,7 @@
   left=8pt,right=8pt,top=6pt,bottom=6pt,fonttitle=\bfseries,title=Summary}
 \newtcolorbox{decisionbox}{enhanced,colback=coral!6,colframe=coral,boxrule=0.6pt,arc=2pt,
   left=8pt,right=8pt,top=6pt,bottom=6pt,fonttitle=\bfseries\color{white},colbacktitle=coral,
-  title=Decisions requested at this meeting}
+  title=Decisions / confirmations}
 \newtcolorbox{callout}[1][purple]{enhanced,colback=#1!5,colframe=#1!5,borderline west={2.5pt}{0pt}{#1},
   arc=0pt,left=8pt,right=6pt,top=4pt,bottom=4pt,boxrule=0pt}
 
@@ -89,347 +88,396 @@
 % ---------- title block ----------
 {\color{muted}\footnotesize Drone Aviation Racing \& Engineering Society \textbullet{} University of Melbourne}\\[2pt]
 {\Huge\bfseries DARES Electronics}\\[2pt]
-{\LARGE Project structure proposal}\\[6pt]
-{\color{muted}Prepared by David Shmail \textbullet{} 14 September 2026 \textbullet{} v1 for internal sign-off}
+{\LARGE Project structure}\\[6pt]
+{\color{muted}Updated 15 September 2026}
 
 \vspace{8pt}
 \begin{summarybox}
-Ten people answered the onboarding form. Flight control dominates their interest (6 of 9 unique respondents), three people want to lead, and three software-oriented members have no hardware home yet. Assuming half the team commits weekly hours, we can sustain \textbf{six projects of two to three people}: the three that already exist, widened where the form asks for it, plus three new ones that give the software people a product, split the flight-control overflow, and formalise the test bench. Together they own every electrical function needed to fly, and each produces numbers the FDR depends on. Members who have not submitted the form are listed but unallocated.
+This revision keeps the electronics work centred on \textbf{two major engineering objectives}: the competition flight-control and electrical system, and the motor test bench. It records the current development state, separates aircraft-level flight control from motor-level ESC control, and keeps supporting and future research streams distinct from the current core projects. Team leaders retain responsibility for selecting initial learning resources and implementation approaches, subject to interfaces, safety requirements and validation evidence.
 \end{summarybox}
 
-% ============================================================
-\section{What the form told us}
-
-\begin{center}
-\includegraphics[width=0.98\textwidth]{figures/form_interests.png}
-\end{center}
-\vspace{-4pt}
-\begin{multicols}{2}
-\begin{itemize}[itemsep=2pt]
-  \item \textbf{Flight control is the gravity well.} Six people chose it. One project cannot hold that many; it splits into control and estimation.
-  \item \textbf{Three leads, three existing projects.} Rohan (flight control), Jayden (ESC), Changhan (BMS). This is the backbone.
-  \item \textbf{Three software people, no home.} Wenrui, Leah and Yifei picked data pipeline, ground station and ``put me where I'm useful''.
-  \item \textbf{People want the maths, not the board.} Signal processing scored 5, the IMU board 2. Estimation is a project; board design is a task inside it.
-  \item \textbf{Nine of ten want the PID + IMU workshop.} That is the first workshop, not a project.
-  \item \textbf{Scope reality.} Roughly 12 active members, half reliably present: six reliable engineers. Six projects of two is the ceiling.
-\end{itemize}
-\end{multicols}
-\vspace{-6pt}
-\begin{center}
-\includegraphics[width=0.82\textwidth]{figures/form_ownership_experience.png}
-\end{center}
-
-% ============================================================
-\clearpage\section{Proposed structure}
-
-\begin{center}
-\begin{tikzpicture}[
-  font=\footnotesize,
-  node distance=6mm and 5mm,
-  box/.style={draw=#1,fill=#1!8,rounded corners=2pt,thick,minimum height=11mm,minimum width=27mm,align=center,text=ink},
-  officer/.style={draw=ink,fill=paper,rounded corners=2pt,thick,minimum height=8mm,minimum width=44mm,align=center},
-  grp/.style={draw=#1,dashed,rounded corners=4pt,inner sep=4pt,fill=#1!3},
-  arr/.style={-{Latex[length=2mm]},thick,color=muted},
-  lblt/.style={font=\scriptsize\bfseries,text=#1}
-]
-\node[officer] (off) {\textbf{Engineering officers}\\[1pt]{\scriptsize integration, requirements, tooling, rotation}};
-
-\node[box=coral, below=9mm of off, xshift=-52mm] (md) {\textbf{Motor drive}\\ESC hw + fw};
-\node[box=coral, right=of md] (ps) {\textbf{Power systems}\\pack, BMS, PDB};
-\node[box=purple, right=of ps] (ns) {\textbf{Navigation \& sensing}\\IMU, estimation};
-\node[box=purple, right=of ns] (fc) {\textbf{Flight control}\\laws, mixer, failsafe};
-
-\node[box=teal, below=13mm of md] (tc) {\textbf{Propulsion test cell}\\thrust stand, dyno};
-\node[box=blue, below=13mm of fc] (gs) {\textbf{Ground segment}\\telemetry, GCS, data};
-
-\begin{scope}[on background layer]
-  \node[grp=slate, fit=(md)(ps)(ns)(fc), label={[lblt=slate,anchor=south west]north west:ON THE AIRCRAFT}] {};
-  \node[grp=teal, fit=(tc), label={[lblt=teal,anchor=north west]south west:ON THE BENCH}] {};
-  \node[grp=blue, fit=(gs), label={[lblt=blue,anchor=north west]south west:ON THE GROUND}] {};
-\end{scope}
-
-\draw[arr] (off.south) -- ++(0,-4mm) -| (md.north);
-\draw[arr] (off.south) -- ++(0,-4mm) -| (ps.north);
-\draw[arr] (off.south) -- ++(0,-4mm) -| (ns.north);
-\draw[arr] (off.south) -- ++(0,-4mm) -| (fc.north);
-\draw[arr,teal] (tc.north) -- node[right,font=\scriptsize,text=teal]{motor, prop, ESC maps} (md.south);
-\draw[arr,blue,{Latex[length=2mm]}-{Latex[length=2mm]}] (gs.north) -- node[right,font=\scriptsize,text=blue]{telemetry, logs, missions} (fc.south);
-\end{tikzpicture}
-\end{center}
-
-\subsection{Staffing from the form}
-
-\begin{tabularx}{\textwidth}{@{}l>{\RaggedRight}X >{\RaggedRight}p{2.6cm} >{\RaggedRight}p{3.4cm} >{\RaggedRight}p{2.9cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Project and scope} & \textbf{Lead} & \textbf{Members} & \textbf{Status}\\
-\midrule
-1 & \textbf{Flight control} -- control laws, mixer, failsafe logic, HIL & Rohan Lynch & Nicholas Tran, Alfred Wang & existing\\
-2 & \textbf{Motor drive} -- ESC hardware and firmware, commutation, FOC & Jayden Filleul & \emph{needs members} & existing\\
-3 & \textbf{Power systems} -- pack, BMS, power distribution, harness, safety switch & Changhan Zhang & Alfred Wang (shared) & existing, widened\\
-4 & \textbf{Navigation \& sensing} -- IMU/sensor board, filtering, state estimation & \emph{TBD} & Yifei Sun, Nicholas Tran (shared) & new\\
-5 & \textbf{Ground segment} -- telemetry link, ground station, logging, data pipeline & \emph{TBD} & Wenrui Chen, Leah Chen & new\\
-6 & \textbf{Propulsion test cell} -- thrust stand, dyno, motor/prop/ESC characterisation & \emph{TBD} & Zhen Rong (Drew) Fong & new; absorbs the test bench repo\\
-\bottomrule
+\vspace{7pt}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries\color{muted}}p{38mm} X@{}}
+Organisation & DARES, University of Melbourne\\
+Aircraft & Fixed-wing UAV for NFC 2027\\
+Scope & Avionics, propulsion electronics, controls and test infrastructure\\
+Engineering leadership & Jinghan Li --- Engineering Manager; engineering direction, technical structure and final engineering decisions\\
+Electrical Leader & Not yet appointed; intended to be selected from confirmed subsystem/project leaders\\
+Decision status & Proposed ownership remains subject to confirmation at an officer/management meeting\\
 \end{tabularx}
 
-\vspace{4pt}
-\begin{callout}[slate]
-\textbf{Officers, floating across all projects:} Jinghan Li (engineering officer) and David Shmail (systems and software, integration, tooling). Integration and requirements traceability are officer responsibilities, not a project; rotating members through them later is how we build system-level awareness.
+% ============================================================
+\section{Beginner onboarding \& project entry}
+
+\begin{callout}[purple]
+\textbf{Purpose.} Give new members a common, safe baseline before they enter a technical project. No previous experience is assumed. Complete and review the four milestones below in order.
 \end{callout}
 
-\begin{callout}[amber]
-\textbf{Not yet allocated -- form not submitted (13):} Amelia Zhu, Arshaan Khan, Ash Zhang, Dhirendra Singh, Harry Nguyen, Jiarong Chen, Joshua Pacifici, Kieren Lim, Mahin Shams, Shangrui Wu, Wen Gan, Zak Wan Ullok, Zixi Chen. They are placed the moment they submit the form; until then they attend the general meeting and workshops. Motor drive and the test cell are the first two projects newcomers should be steered toward: hands-on, least dependent on prior theory, and short of people.
+\begin{multicols}{2}
+\begin{project}{01 \; Download the Ground Station}{purple}{Milestone 1}
+Download and install the team-selected ground station. Open it successfully and connect to the approved simulator or training flight controller.
+\end{project}
+
+\begin{project}{02 \; Complete Basic Wiring}{slate}{Milestone 2}
+Complete the approved training wiring for power, flight controller, receiver, telemetry, servos, ESC and required sensors. Check polarity, pinout and signal ground before power-on.
+\end{project}
+
+\columnbreak
+
+\begin{project}{03 \; Complete Component Selection}{teal}{  Milestone 3}
+Complete a short selection sheet for an assigned subsystem. Check voltage, current, interface or protocol, connector and overall system compatibility.
+\end{project}
+
+\begin{project}{04 \; Complete System Setup}{amber}{Milestone 4}
+Complete basic configuration and calibration. Verify RC mapping, actuator direction, failsafe, telemetry and data logging during a bench check.
+\end{project}
+\end{multicols}
+
+\begin{callout}[teal]
+\textbf{Project team entry.} After all four milestones have been completed and reviewed by a project lead or experienced member, the beginner may join a project team and take a clearly scoped task.
 \end{callout}
 
 % ============================================================
+\clearpage
+\section{System overview}
+
+\Needspace{9\baselineskip}\begin{project}{01 \; Competition Flight-Control \& Electrical System}{purple}{Integrated aircraft system}
+\lbl{Purpose} \; Develop the complete electronics and control system required for the NFC fixed-wing aircraft.
+
+\lbl{Current development} \; Flight control; motor control / ESC; and battery management / power. Sensors and integration support these three streams; vision recognition is a separate future-facing task.
+
+\lbl{Principle} \; Hardware and software are developed together inside each subsystem. The subsystem boundaries are engineering interfaces, not automatically separate projects.
+
+\begin{callout}[purple]
+\textbf{Control separation.} Aircraft flight-control law $\rightarrow$ motor/actuator command $\rightarrow$ ESC. The ESC currently uses six-step commutation and will later develop FOC. The aircraft flight controller may use a different control method; its control law remains to be selected.
+\end{callout}
+\end{project}
+
+\Needspace{9\baselineskip}\begin{project}{02 \; Motor Test Bench}{teal}{Independent engineering deliverable}
+\lbl{Role in current plan} \; Use the existing test bench to validate the present six-step ESC, support the later FOC implementation, and measure propulsion-system behaviour for the competition aircraft.
+
+\lbl{Measurements} \; Thrust; RPM; voltage; current; electrical power; motor/ESC temperature; efficiency; command input; propeller performance.
+
+\lbl{Existing base} \; Preserve and extend the current \texttt{Motor\_testing\_bench} repository and its history.
+
+\lbl{Ownership} \; Existing contributors and the next project owner must be confirmed.
+\end{project}
+
+\begin{callout}[slate]
+\textbf{Structure rule.} A new project should require an independent deliverable, defined inputs and outputs, sufficient work and active members, and a clear reason it cannot be managed as a subsystem of an existing project.
+\end{callout}
+
+\vspace{8pt}
+\begin{center}
+{\bfseries\large High-level team and project structure}\\[4pt]
+{\footnotesize\color{muted}The diagram supplements the detailed workstream definitions.}\\[5pt]
+\IfFileExists{team_structure.png}{%
+  \includegraphics[width=0.95\textwidth,height=88mm,keepaspectratio]{team_structure.png}%
+}{%
+  \fbox{\parbox[c][70mm][c]{0.9\textwidth}{\centering Place \texttt{team\_structure.png} beside this file.}}%
+}
+\end{center}
+
+% ============================================================
+\clearpage
 \section{The projects}
 
-Each project is described the same way: purpose, what it delivers as a black box, milestones in order (not on a timeline), a broad and adoptable tool stack, what we can hand the team next week, and a self-directed research brief that names the early architectural decisions the team is expected to make for itself.
+Each project uses the same structure: purpose, black-box interface, ordered milestones, a broad tool stack, next-week actions, and a self-directed research brief. This keeps the project descriptions comparable while leaving implementation choices to the project leads.
 
 % ---------------------------------------------------------------------------
-\Needspace{9\baselineskip}\begin{project}{1 \, Flight control}{purple}{Rohan Lynch \textbullet{} Nicholas Tran \textbullet{} Alfred Wang}
-\lbl{Purpose} \; Keep the aircraft where it is told to be, recover it when things go wrong, and produce the flight behaviour the FDR predicted.
+\Needspace{9\baselineskip}\begin{project}{1 \, Flight \& Attitude Control}{purple}{Proposed: Rohan Lynch \textbullet{} Ash Zhang}
+\lbl{Purpose} \; Develop and validate the aircraft-level guidance and control system for the NFC fixed-wing aircraft, converting pilot or mission objectives into safe actuator and propulsion commands.
 
-\lbl{Black box} \; \textit{In:} state estimate, pilot or mission setpoints, link status. \; \textit{Out:} motor and servo commands, flight mode, failsafe actions, logged controller states.
+\lbl{Black box} \; \textit{In:} state estimate, pilot or mission setpoints, link status, system-health status. \; \textit{Out:} aileron, elevator, rudder and throttle commands, flight mode, failsafe actions, and logged controller states.
 
 \lbl{Milestones} \;
-\M{0} baseline platform chosen, simulator running \;$\rightarrow$\;
-\M{1} rate loop stable on the bench (HIL) \;$\rightarrow$\;
-\M{2} attitude loop and mixer, first flight on a COTS flight controller \;$\rightarrow$\;
-\M{3} failsafe and mission modes \;$\rightarrow$\;
-\M{4} predicted-vs-measured flight characterisation for the FDR.
+\M{0} aircraft requirements, model and baseline platform defined \;$\rightarrow$\;
+\M{1} fixed-wing SITL running end to end \;$\rightarrow$\;
+\M{2} rate loop, attitude loop and mixer/control allocation validated in simulation or HIL \;$\rightarrow$\;
+\M{3} first-flight baseline and failsafe behaviour validated \;$\rightarrow$\;
+\M{4} mission modes and predicted-vs-measured flight behaviour characterised for the FDR.
 
-\lbl{Stack} \; PX4 or ArduPilot as reference implementation; C/C++ on an STM32-class autopilot; MATLAB/Simulink or Python for the plant model; SITL/HIL (jMAVSim, Gazebo, Simulink) before any flight.
+\lbl{Stack} \; PX4 or ArduPilot as the reference baseline; C/C++ on an STM32-class autopilot where in-house functions are required; MATLAB/Simulink or Python for plant modelling and analysis; SITL/HIL before flight testing.
 
-\lbl{Next week} \; Pick the baseline (COTS autopilot to fly on vs. what we write ourselves); get a fixed-wing SITL running end to end; list every rule in the competition document that touches control or emergency procedures.
+\lbl{Next week} \; Define controlled states, sensor inputs, actuator outputs, performance targets and safety requirements; select the initial baseline; bring up a fixed-wing SITL; list the competition rules that affect control, failsafe and emergency behaviour.
 
 \begin{research}{purple}
-\pill{purple}{cascaded PID} \pill{purple}{rate loop} \pill{purple}{TECS} \pill{purple}{L1 / NPFG guidance} \pill{purple}{control allocation} \pill{purple}{LQR} \pill{purple}{MPC} \pill{purple}{gain scheduling} \pill{purple}{HIL / SITL} \pill{purple}{airworthiness}
+\pill{purple}{cascaded PID}
+\pill{purple}{rate loop}
+\pill{purple}{attitude loop}
+\pill{purple}{TECS}
+\pill{purple}{L1 / NPFG guidance}
+\pill{purple}{control allocation}
+\pill{purple}{LQR}
+\pill{purple}{MPC}
+\pill{purple}{gain scheduling}
+\pill{purple}{HIL / SITL}
 
 \smallskip
 \begin{multicols}{2}\RaggedRight
 \textbf{Start here.}
 \begin{itemize}
-  \item PX4 developer docs, control architecture: \href{https://docs.px4.io/main/en/flight_stack/controller_diagrams.html}{docs.px4.io}
-  \item ArduPilot developer wiki: \href{https://ardupilot.org/dev/}{ardupilot.org/dev}
-  \item Beard \& McLain, \emph{Small Unmanned Aircraft}: \href{https://github.com/byu-magicc/mavsim_public}{mavsim companion code}
-  \item Brian Douglas, control system lectures (YouTube) for intuition on every loop we will tune
-  \item acados, real-time MPC toolkit: \href{https://github.com/acados/acados}{acados on GitHub}
+  \item PX4 controller architecture: \href{https://docs.px4.io/main/en/flight_stack/controller_diagrams.html}{docs.px4.io}
+  \item ArduPilot developer documentation: \href{https://ardupilot.org/dev/}{ardupilot.org/dev}
+  \item Beard \& McLain, \emph{Small Unmanned Aircraft}, with the MAVSim companion implementation.
+  \item Brian Douglas control-system lectures for rate, attitude and loop-shaping intuition.
 \end{itemize}
 \columnbreak
 \textbf{Decide early.}
 \begin{itemize}
-  \item Fly on PX4/ArduPilot and study it, or write our own stack? (Suggest: fly on COTS, replace pieces as we prove ours.)
-  \item Fixed-wing control structure: classical cascaded loops first; MPC/LQR as R\&D once a validated model exists.
-  \item How the plant model is obtained: from the test cell and nav team, or identified in flight?
-  \item What ``failsafe'' means for the aid mission: return, loiter, or land in place?
+  \item Which functions remain on PX4/ArduPilot and which functions are candidates for in-house implementation?
+  \item What are the controlled states, required update rates and actuator limits?
+  \item What is the first validated fixed-wing control structure: classical cascaded loops, then advanced control as R\&D?
+  \item What exactly should each failsafe mode do for the competition mission?
 \end{itemize}
 \end{multicols}
 \end{research}
 \end{project}
 
 % ---------------------------------------------------------------------------
-\Needspace{9\baselineskip}\begin{project}{2 \, Motor drive}{coral}{Jayden Filleul \textbullet{} \emph{needs members}}
-\lbl{Purpose} \; Turn DC from the pack into precisely timed three-phase power, efficiently, without letting the magic smoke out.
+\Needspace{9\baselineskip}\begin{project}{2 \, Motor Control \& ESC}{coral}{Transition: Jinghan $\rightarrow$ Jayden + Shangrui}
+\lbl{Purpose} \; Develop the BLDC motor-drive and ESC hardware and firmware that converts the aircraft DC bus into controlled three-phase motor power with measurable performance and protection.
 
-\lbl{Black box} \; \textit{In:} bus voltage, throttle command, motor feedback. \; \textit{Out:} three-phase drive, telemetry (current, RPM, temperature), faults.
+\lbl{Black box} \; \textit{In:} bus voltage, propulsion/throttle command, current and rotor-speed/position information where available. \; \textit{Out:} three-phase motor drive, RPM/current/temperature telemetry, and fault states.
 
 \lbl{Milestones} \;
-\M{0} requirements set; a COTS ESC characterised on the test cell as the baseline \;$\rightarrow$\;
-\M{1} six-step commutation spinning a motor on an evaluation board \;$\rightarrow$\;
-\M{2} own PCB, revision A \;$\rightarrow$\;
-\M{3} current control, protection, thermal validation \;$\rightarrow$\;
-\M{4} field-oriented control as R\&D.
+\M{0} present six-step implementation documented and reproducible \;$\rightarrow$\;
+\M{1} six-step commutation stable on the bench and characterised on the motor test bench \;$\rightarrow$\;
+\M{2} protection, current sensing and telemetry validated \;$\rightarrow$\;
+\M{3} FOC current-control architecture implemented on development hardware \;$\rightarrow$\;
+\M{4} FOC and six-step performance compared under the same test procedure.
 
-\lbl{Stack} \; KiCad or OrCAD; LTspice/PLECS for the power stage; STM32G4 or TI C2000 class MCU in C; SimpleFOC and VESC as open reference designs; oscilloscope with a current probe.
+\lbl{Stack} \; STM32F1/F4-class development hardware and existing ESC assets; ODrive-related development hardware; C/C++; oscilloscope and current measurement; OrCAD or KiCad for hardware; LTspice/PLECS where power-stage simulation is useful; SimpleFOC, VESC and AM32 as reference implementations.
 
-\lbl{Next week} \; Write the one-page requirements sheet (voltage class, current, motor Kv range, protection); buy or borrow a motor-control evaluation kit; have the test cell measure a COTS ESC so there is a number to beat.
+\lbl{Next week} \; Freeze a one-page requirements sheet for voltage, current, motor Kv range, interfaces and protection; reproduce the current six-step setup; define the current-sensing and rotor-angle strategy required for FOC; agree the motor-test-bench measurements used for comparison.
 
 \begin{research}{coral}
-\pill{coral}{six-step} \pill{coral}{sensorless back-EMF} \pill{coral}{FOC / SVPWM} \pill{coral}{dead-time} \pill{coral}{gate driver} \pill{coral}{shunt vs inline sensing} \pill{coral}{DShot} \pill{coral}{regenerative braking} \pill{coral}{thermal derating}
+\pill{coral}{six-step}
+\pill{coral}{back-EMF}
+\pill{coral}{FOC}
+\pill{coral}{Clarke / Park}
+\pill{coral}{d/q current control}
+\pill{coral}{SVPWM}
+\pill{coral}{gate driver}
+\pill{coral}{dead-time}
+\pill{coral}{current sensing}
+\pill{coral}{DShot / telemetry}
 
 \smallskip
 \begin{multicols}{2}\RaggedRight
 \textbf{Start here.}
 \begin{itemize}
-  \item VESC project, open hardware and firmware: \href{https://vesc-project.com}{vesc-project.com}
-  \item SimpleFOC, the gentlest FOC introduction: \href{https://simplefoc.com}{simplefoc.com}
-  \item AM32, open-source drone ESC firmware: \href{https://github.com/am32-firmware/AM32}{github.com/am32-firmware/AM32}
-  \item ODrive documentation for current loop and calibration practice: \href{https://docs.odriverobotics.com}{docs.odriverobotics.com}
-  \item Vendor application notes: TI \emph{sensorless FOC} and ST \emph{Motor Control SDK} user manuals
+  \item ODrive documentation for motor calibration and current-loop practice: \href{https://docs.odriverobotics.com}{docs.odriverobotics.com}
+  \item SimpleFOC documentation: \href{https://simplefoc.com}{simplefoc.com}
+  \item VESC open hardware/firmware: \href{https://vesc-project.com}{vesc-project.com}
+  \item AM32 open-source drone ESC firmware: \href{https://github.com/am32-firmware/AM32}{github.com/am32-firmware/AM32}
 \end{itemize}
 \columnbreak
 \textbf{Decide early.}
 \begin{itemize}
-  \item Build our own ESC or fly COTS and build ours as R\&D? (Suggest: fly COTS for NFC, ship ours when the test cell says it is better.)
-  \item Voltage class and current rating, driven by the pack decision from power systems.
-  \item Sensorless six-step first, or straight to FOC with a position estimate?
-  \item MCU family, which fixes the toolchain for the whole team.
+  \item Which six-step implementation becomes the stable baseline before FOC work begins?
+  \item Which current-sensing topology and rotor-angle strategy will the FOC implementation use?
+  \item Which MCU/toolchain is the team standard for the next hardware revision?
+  \item Which measured metrics determine whether a new implementation is actually better than the baseline?
 \end{itemize}
 \end{multicols}
 \end{research}
 \end{project}
 
 % ---------------------------------------------------------------------------
-\Needspace{9\baselineskip}\begin{project}{3 \, Power systems}{coral}{Changhan Zhang \textbullet{} Alfred Wang}
-\lbl{Purpose} \; Store the energy, deliver it safely on two independent buses, and always know how much is left.
+\Needspace{9\baselineskip}\begin{project}{3 \, Battery Management \& Power}{coral}{Proposed transition: Zixi $\rightarrow$ Zi Wang}
+\lbl{Purpose} \; Adapt and validate the battery-management and power-distribution system so the aircraft can deliver propulsion and avionics power safely while measuring pack condition and enforcing protection limits.
 
-\lbl{Black box} \; \textit{In:} charged cells, load demand. \; \textit{Out:} propulsion bus through the safety switch, regulated avionics rails, state of charge and pack health to the flight controller, protection trips.
+\lbl{Black box} \; \textit{In:} battery cells, charge/discharge current, temperature and aircraft load demand. \; \textit{Out:} protected propulsion and avionics power, cell/pack measurements, balancing behaviour, health information and protection trips.
 
 \lbl{Milestones} \;
-\M{0} cell chemistry and configuration chosen inside the rules; safety-switch design \;$\rightarrow$\;
-\M{1} pack built, charge and discharge characterised \;$\rightarrow$\;
-\M{2} BMS board: monitoring, balancing, protection \;$\rightarrow$\;
-\M{3} power distribution board and harness, dual-bus integration \;$\rightarrow$\;
-\M{4} state-of-charge estimation and telemetry to the flight controller.
+\M{0} aircraft pack requirements frozen and FRBP-ESM-111A-KY difference review completed \;$\rightarrow$\;
+\M{1} reference schematic, PCB, BOM and operating assumptions reviewed \;$\rightarrow$\;
+\M{2} voltage/current/temperature measurement and protection thresholds bench-validated \;$\rightarrow$\;
+\M{3} balancing and charge/discharge behaviour validated \;$\rightarrow$\;
+\M{4} power-distribution and ESC/avionics interfaces integrated and documented.
 
-\lbl{Stack} \; KiCad or OrCAD; LTspice; a BMS front-end evaluation board (TI BQ769x2 or ADI LTC68xx class); a logging charger; Python for cell data.
+\lbl{Stack} \; FRBP-ESM-111A-KY as the reference design; OrCAD or KiCad for schematic/PCB review; LTspice where useful; battery logging/charge equipment; Python for measured data and comparison tables.
 
-\lbl{Next week} \; Extract every battery, switch and chemistry rule from the competition document into requirement IDs; shortlist cells and series/parallel configurations; sketch the two-bus topology with the safety switch placed.
+\lbl{Next week} \; Freeze pack voltage, current, temperature and interface requirements; record every retained and modified element relative to FRBP-ESM-111A-KY; define the bench-test procedure and acceptance criteria before approving hardware changes.
 
 \begin{research}{coral}
-\pill{coral}{passive vs active balancing} \pill{coral}{coulomb counting} \pill{coral}{OCV--SoC} \pill{coral}{equivalent-circuit model} \pill{coral}{Kalman SoC} \pill{coral}{C-rate} \pill{coral}{internal resistance} \pill{coral}{BEC / regulation} \pill{coral}{XT60 / XT90} \pill{coral}{safety switch}
+\pill{coral}{passive balancing}
+\pill{coral}{cell monitoring}
+\pill{coral}{over-voltage}
+\pill{coral}{under-voltage}
+\pill{coral}{over-current}
+\pill{coral}{temperature protection}
+\pill{coral}{SoC estimation}
+\pill{coral}{power distribution}
+\pill{coral}{pack validation}
 
 \smallskip
 \begin{multicols}{2}\RaggedRight
 \textbf{Start here.}
 \begin{itemize}
-  \item Plett, \emph{Battery Management Systems} vol.\ I--II, with the free companion course: \href{https://www.coursera.org/specializations/algorithms-for-battery-management-systems}{Coursera, Algorithms for BMS}
-  \item foxBMS, open-source BMS platform: \href{https://foxbms.org}{foxbms.org}
-  \item TI BQ76952 datasheet and evaluation module as a worked example of a monitor IC
-  \item Competition rules, Appendix I battery voltage limits and requirements S002--S004
+  \item FRBP-ESM-111A-KY reference design: \href{https://oshwhub.com/frostautumn/frbp-esm-111a-ky}{OSHWHub}
+  \item Review the reference schematic, PCB, BOM and design assumptions as one controlled baseline.
+  \item Build a requirement-to-test table covering voltage, current, temperature, balancing and protection.
+  \item Record measured behaviour rather than relying only on nominal component ratings.
 \end{itemize}
 \columnbreak
 \textbf{Decide early.}
 \begin{itemize}
-  \item Monitor IC plus microcontroller, or fully discrete? (Suggest: monitor IC.)
-  \item Passive balancing is almost certainly enough; decide and move on.
-  \item Is the power distribution board part of the BMS board or separate? Separate keeps the high-current path away from the sensing.
-  \item Which state-of-charge method the flight controller will trust, and what it does when the pack says ``low''.
+  \item Which parts of the reference design remain unchanged and which need a DARES-specific modification?
+  \item Which protection thresholds are hardware-enforced versus firmware-configurable?
+  \item How are propulsion and avionics power distribution separated and protected?
+  \item What evidence is required before the adapted BMS is approved for aircraft use?
 \end{itemize}
 \end{multicols}
 \end{research}
 \end{project}
 
 % ---------------------------------------------------------------------------
-\Needspace{9\baselineskip}\begin{project}{4 \, Navigation \& sensing}{purple}{Lead TBD \textbullet{} Yifei Sun \textbullet{} Nicholas Tran}
-\lbl{Purpose} \; Turn noisy, biased sensors into a state estimate the controller can trust, and measure the airspeed and attitude the FDR must predict.
+\Needspace{9\baselineskip}\begin{project}{4 \, Sensors \& State Estimation}{purple}{Supporting function; owner TBD}
+\lbl{Purpose} \; Turn noisy and biased sensor measurements into a state estimate that the flight controller can trust and that can be validated against logged aircraft behaviour.
 
-\lbl{Black box} \; \textit{In:} IMU, barometer, GPS, magnetometer, airspeed. \; \textit{Out:} attitude, angular rates, velocity, position, airspeed, wind estimate, health flags.
+\lbl{Black box} \; \textit{In:} IMU, GPS, barometer, magnetometer, pitot/airspeed and timing information. \; \textit{Out:} attitude, angular rates, position, velocity, airspeed and estimator-health information for control and logging.
 
 \lbl{Milestones} \;
-\M{0} sensor selection and a test board or breakout \;$\rightarrow$\;
-\M{1} raw data logged; noise and Allan-variance characterisation \;$\rightarrow$\;
-\M{2} attitude filter (complementary or Mahony) validated on a bench rig \;$\rightarrow$\;
-\M{3} EKF fusing GPS, baro and mag \;$\rightarrow$\;
-\M{4} airspeed and wind estimation for the performance flights.
+\M{0} required states, sensors and update rates defined \;$\rightarrow$\;
+\M{1} raw sensor data logged and characterised \;$\rightarrow$\;
+\M{2} basic attitude estimate validated on a bench test \;$\rightarrow$\;
+\M{3} GPS/barometer/magnetometer/airspeed fusion integrated \;$\rightarrow$\;
+\M{4} estimator output compared with ground truth or an accepted reference during flight tests.
 
-\lbl{Stack} \; Python (NumPy/SciPy) and MATLAB for design; C on the MCU; IMU evaluation boards (ICM-42688, BMI088 class); a rate table or a phone on a turntable for ground truth.
+\lbl{Stack} \; Existing COTS-autopilot sensors as the initial baseline; Python or MATLAB for data analysis; complementary/Mahony-style attitude filters before EKF complexity; PX4/ArduPilot estimator implementations as references; standard flight-data logging.
 
-\lbl{Next week} \; Shortlist three IMUs and one GPS; write the logging plan; implement a complementary filter on any IMU we already own and plot it against integrated gyro.
+\lbl{Next week} \; Define the state vector and update-rate requirements; choose the initial sensor source; establish the logging and ground-truth strategy; implement and test a basic complementary filter before expanding complexity.
 
 \begin{research}{purple}
-\pill{purple}{Allan variance} \pill{purple}{complementary / Mahony / Madgwick} \pill{purple}{error-state EKF} \pill{purple}{quaternions} \pill{purple}{gyro bias} \pill{purple}{notch filtering} \pill{purple}{vibration isolation} \pill{purple}{GNSS} \pill{purple}{pitot / airspeed}
+\pill{purple}{IMU}
+\pill{purple}{complementary filter}
+\pill{purple}{Mahony / Madgwick}
+\pill{purple}{Kalman filter}
+\pill{purple}{EKF}
+\pill{purple}{quaternions}
+\pill{purple}{GNSS}
+\pill{purple}{barometer}
+\pill{purple}{pitot / airspeed}
+\pill{purple}{ground truth}
 
 \smallskip
 \begin{multicols}{2}\RaggedRight
 \textbf{Start here.}
 \begin{itemize}
-  \item Labbe, \emph{Kalman and Bayesian Filters in Python}: \href{https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python}{github.com/rlabbe}
-  \item Sol\`a, \emph{Quaternion kinematics for the error-state Kalman filter}: \href{https://arxiv.org/abs/1711.02508}{arXiv:1711.02508}
-  \item PX4 EKF2 tuning guide, a production estimator explained: \href{https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf.html}{docs.px4.io}
-  \item Madgwick's original report and the Mahony filter paper; both are short
+  \item Kalman and Bayesian Filters in Python: \href{https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python}{github.com/rlabbe}
+  \item PX4 EKF2 tuning and estimator documentation: \href{https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf.html}{docs.px4.io}
+  \item Review complementary, Mahony and Madgwick attitude-estimation methods before moving to a full EKF.
+  \item Use logged sensor data to quantify noise, bias and update-rate behaviour.
 \end{itemize}
 \columnbreak
 \textbf{Decide early.}
 \begin{itemize}
-  \item Own sensor board, or use the sensors on the COTS autopilot and focus on the algorithms? (Suggest: algorithms first, board second.)
-  \item Complementary filter for the first flights; EKF once there is ground truth to validate against.
-  \item Where the estimator runs: on the autopilot, or on a separate processor talking over a bus?
-  \item Ground-truth strategy: without one, no filter can be called validated.
+  \item Use the COTS autopilot sensor suite first, or build custom sensor hardware immediately?
+  \item Which states are actually required by the first flight-control baseline?
+  \item Where does the estimator run and how is its output timestamped and logged?
+  \item What ground truth or reference will be used to claim that the estimator is validated?
 \end{itemize}
 \end{multicols}
 \end{research}
 \end{project}
 
 % ---------------------------------------------------------------------------
-\Needspace{9\baselineskip}\begin{project}{5 \, Ground segment}{blue}{Lead TBD \textbullet{} Wenrui Chen \textbullet{} Leah Chen}
-\lbl{Purpose} \; Everything that talks to the aircraft or learns from it after landing: the radio links, the ground station, logging, and the data pipeline that turns flights into FDR evidence.
+\Needspace{9\baselineskip}\begin{project}{5 \, Vision Recognition \& Higher-Level Autonomy}{blue}{Separate task; vision recognition: David}
+\lbl{Purpose} \; Develop vision-based perception that can support target/object recognition and higher-level navigation or autonomous decision-making without becoming a dependency for the first validated flight-control baseline.
 
-\lbl{Black box} \; \textit{In:} telemetry stream, onboard logs, mission plans. \; \textit{Out:} live dashboard and alerts, mission upload, archived flight datasets, predicted-vs-measured plots.
+\lbl{Black box} \; \textit{In:} camera images or video, aircraft pose/state estimate and mission context. \; \textit{Out:} detections, classifications or target/location information, confidence/health information, and logged perception results for later evaluation.
 
 \lbl{Milestones} \;
-\M{0} radio link and MAVLink end to end on the bench \;$\rightarrow$\;
-\M{1} live telemetry dashboard \;$\rightarrow$\;
-\M{2} log pipeline: raw log in, standard plots out \;$\rightarrow$\;
-\M{3} mission upload and failsafe monitoring \;$\rightarrow$\;
-\M{4} FDR-ready analysis of every flight.
+\M{0} concrete competition-relevant vision deliverable and dataset defined \;$\rightarrow$\;
+\M{1} offline detection/recognition baseline running on recorded data \;$\rightarrow$\;
+\M{2} evaluation metrics and failure cases documented \;$\rightarrow$\;
+\M{3} real-time or near-real-time inference demonstrated on the intended compute platform \;$\rightarrow$\;
+\M{4} interface to navigation/autonomy tested in simulation or replay before any flight-critical use.
 
-\lbl{Stack} \; Python (pymavlink, MAVSDK, pandas); QGroundControl or Mission Planner as the baseline GCS; PlotJuggler or Foxglove for live and replayed data; SiK/RFD900 or ExpressLRS radios; Git LFS for logs.
+\lbl{Stack} \; Python; OpenCV; PyTorch or another selected learning framework; recorded and simulated image datasets; standard plotting/evaluation tools; a clearly defined message/interface to the navigation or autonomy layer.
 
-\lbl{Next week} \; Get two telemetry radios talking with MAVLink heartbeats; define the flight log schema (what every flight must record); build a one-command script that turns a log into a first plot.
+\lbl{Next week} \; Define the exact vision deliverable, input source, output message and success metric; collect or identify a small representative dataset; build one reproducible baseline; document how the vision result would be consumed without directly taking over low-level flight control.
 
 \begin{research}{blue}
-\pill{blue}{MAVLink} \pill{blue}{ULog} \pill{blue}{915 MHz ISM (AU)} \pill{blue}{link budget} \pill{blue}{ExpressLRS} \pill{blue}{GCS / C2} \pill{blue}{time sync} \pill{blue}{pandas} \pill{blue}{Grafana / Influx} \pill{blue}{data provenance}
+\pill{blue}{object detection}
+\pill{blue}{classification}
+\pill{blue}{tracking}
+\pill{blue}{OpenCV}
+\pill{blue}{PyTorch}
+\pill{blue}{dataset design}
+\pill{blue}{precision / recall}
+\pill{blue}{latency}
+\pill{blue}{confidence}
+\pill{blue}{failure cases}
 
 \smallskip
 \begin{multicols}{2}\RaggedRight
 \textbf{Start here.}
 \begin{itemize}
-  \item MAVLink protocol and tooling: \href{https://mavlink.io}{mavlink.io}
-  \item PX4 Flight Review, the reference for what a flight report looks like: \href{https://review.px4.io}{review.px4.io}
-  \item PlotJuggler: \href{https://plotjuggler.io}{plotjuggler.io} \textbullet{} Foxglove: \href{https://foxglove.dev}{foxglove.dev}
-  \item ExpressLRS docs for the control link: \href{https://www.expresslrs.org}{expresslrs.org}
-  \item RFDesign (Australian) long-range telemetry modems: \href{https://rfdesign.com.au}{rfdesign.com.au}
+  \item Start with one clearly scoped recognition task and one reproducible dataset split.
+  \item Use an established computer-vision baseline before introducing custom architecture complexity.
+  \item Log detections, confidence, timestamps and the matching aircraft state so errors can be replayed.
+  \item Measure accuracy and inference latency separately; both matter for later onboard integration.
 \end{itemize}
 \columnbreak
 \textbf{Decide early.}
 \begin{itemize}
-  \item Separate control and telemetry links, or one bidirectional link? (Suggest: separate; reliability over elegance.)
-  \item Use QGroundControl and extend it, or write our own GCS in Python? (Suggest: QGC for flying, our own tooling for analysis.)
-  \item Log format and the single schema every project must write to; this is the interface with everyone.
-  \item Where the data lives: repository with LFS, or a shared drive with a manifest.
+  \item What competition requirement or engineering deliverable justifies the vision stream?
+  \item What does the vision module output: a class, bearing, image coordinate, world coordinate or target track?
+  \item Which compute platform is the intended deployment target?
+  \item What happens when confidence is low or the vision module stops producing valid output?
 \end{itemize}
 \end{multicols}
 \end{research}
 \end{project}
 
 % ---------------------------------------------------------------------------
-\Needspace{9\baselineskip}\begin{project}{6 \, Propulsion test cell}{teal}{Lead TBD \textbullet{} Zhen Rong (Drew) Fong}
-\lbl{Purpose} \; Measure, rather than guess, what every motor, propeller and ESC combination actually does. The FDR performance predictions start here.
+\Needspace{9\baselineskip}\begin{project}{6 \, Motor Test Bench}{teal}{Independent engineering deliverable; owner TBD}
+\lbl{Purpose} \; Measure, rather than guess, the behaviour of motor, propeller and ESC combinations and provide repeatable propulsion data for ESC development and aircraft performance modelling.
 
-\lbl{Black box} \; \textit{In:} a motor, a prop, an ESC, a throttle profile. \; \textit{Out:} thrust, torque, RPM, electrical power, efficiency and temperature versus throttle; a dataset in the ground segment's schema.
+\lbl{Black box} \; \textit{In:} motor, propeller, ESC, supply and throttle profile. \; \textit{Out:} thrust, RPM, voltage, current, electrical power, temperature, efficiency and a logged dataset tied to the test configuration.
 
 \lbl{Milestones} \;
-\M{0} existing bench inventoried; measurands and accuracy targets defined \;$\rightarrow$\;
-\M{1} thrust, torque, RPM and electrical DAQ working and calibrated \;$\rightarrow$\;
-\M{2} first full motor and propeller map \;$\rightarrow$\;
-\M{3} automated throttle sweeps and ESC efficiency \;$\rightarrow$\;
-\M{4} dataset feeding the FDR propulsion model.
+\M{0} existing bench inventoried and measurands/accuracy targets defined \;$\rightarrow$\;
+\M{1} thrust, RPM, voltage and current acquisition calibrated \;$\rightarrow$\;
+\M{2} first repeatable motor/prop/ESC map completed \;$\rightarrow$\;
+\M{3} automated throttle sweeps and temperature/efficiency logging implemented \;$\rightarrow$\;
+\M{4} test datasets used to compare six-step and FOC ESC performance and support the aircraft propulsion model.
 
-\lbl{Stack} \; Load cells with an ADC front end; RPM (optical or back-EMF); current and voltage sensing; an Arduino or STM32 DAQ; Python for acquisition and plotting; the Tyto Robotics stands as the commercial reference.
+\lbl{Stack} \; Existing \texttt{Motor\_testing\_bench} repository and hardware; load-cell measurement; RPM sensing; voltage/current sensing; STM32 or Arduino-class DAQ where appropriate; Python for acquisition, plotting and result comparison.
 
-\lbl{Next week} \; Photograph and list every part of the current bench; write the measurement list with target accuracy; run one manual test on any motor to find out what breaks.
+\lbl{Next week} \; Photograph and inventory the existing bench; define the measurement list and target accuracy; verify calibration for thrust, voltage, current and RPM; run one controlled baseline test and record every test condition needed to reproduce it.
 
 \begin{research}{teal}
-\pill{teal}{static thrust} \pill{teal}{Kv / Kt} \pill{teal}{propeller coefficients $C_T$, $C_P$} \pill{teal}{advance ratio} \pill{teal}{load-cell calibration} \pill{teal}{DAQ sampling} \pill{teal}{uncertainty budget} \pill{teal}{test procedure} \pill{teal}{safety cage}
+\pill{teal}{static thrust}
+\pill{teal}{RPM}
+\pill{teal}{voltage / current}
+\pill{teal}{efficiency}
+\pill{teal}{load-cell calibration}
+\pill{teal}{DAQ sampling}
+\pill{teal}{uncertainty}
+\pill{teal}{test procedure}
+\pill{teal}{propeller data}
+\pill{teal}{safety cage}
 
 \smallskip
 \begin{multicols}{2}\RaggedRight
 \textbf{Start here.}
 \begin{itemize}
-  \item UIUC propeller database, the standard for measured prop data: \href{https://m-selig.ae.illinois.edu/props/propDB.html}{m-selig.ae.illinois.edu}
-  \item APC propeller performance data: \href{https://www.apcprop.com/technical-information/performance-data/}{apcprop.com}
-  \item Tyto Robotics thrust-stand documentation as a design reference: \href{https://www.tytorobotics.com}{tytorobotics.com}
-  \item eCalc for quick sanity checks on motor and prop pairings: \href{https://www.ecalc.ch}{ecalc.ch}
+  \item UIUC propeller database for measured propeller data: \href{https://m-selig.ae.illinois.edu/props/propDB.html}{UIUC Propeller Database}
+  \item APC performance data for sanity checks: \href{https://www.apcprop.com/technical-information/performance-data/}{apcprop.com}
+  \item Tyto Robotics thrust-stand documentation as a commercial reference: \href{https://www.tytorobotics.com}{tytorobotics.com}
+  \item Preserve the existing repository history and add the test procedure beside the acquisition code.
 \end{itemize}
 \columnbreak
 \textbf{Decide early.}
 \begin{itemize}
-  \item Fix the existing bench or rebuild it around a proper load-cell arrangement?
-  \item Static thrust only, or plan for a wind-tunnel or car-mounted dynamic test later?
-  \item What the test procedure is, written down, before the first ``real'' data is taken.
-  \item The data schema, agreed with the ground segment, so every dataset is comparable.
+  \item Which measurements are mandatory for every run and what accuracy is acceptable?
+  \item Which parts of the existing bench are kept, repaired or redesigned?
+  \item What standard throttle profile and warm-up procedure make tests comparable?
+  \item What dataset format will be shared with motor control, flight control and the FDR work?
 \end{itemize}
 \end{multicols}
 \end{research}
@@ -551,22 +599,27 @@ Owned by the officers. One interface control document listing every connector, p
 \subsection{Workshops, in demand order}
 PID tuning and IMU filtering (9 of 10) \textbullet{} Git and GitHub (6) \textbullet{} Motors, ESCs and LiPo safety (6) \textbullet{} Low-level C (6) \textbullet{} Bench instruments (5) \textbullet{} KiCad (4) \textbullet{} Soldering (4) \textbullet{} Rules to requirements (3). The first three are the ones to run this month; they also cover exactly what the two under-staffed projects need.
 
-\columnbreak
-\subsection{Repository structure}
-One general \texttt{electronics} repository for shared material, one repository per project with an identical skeleton (\texttt{README, hardware, firmware, sim, test, docs}), and a template repository for anything new. Existing repositories are renamed, not recreated.
+% ============================================================
+\clearpage
+\section{Proposed ownership map}
 
-\subsection{Cadence}
-One general meeting a week: progress, plan, problems, presented by the project leads. Design check-ins and boundary reviews between adjacent projects every few weeks. Rotation is expected and encouraged.
-\end{multicols}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{34mm} p{45mm} X@{}}
+\toprule
+Area & Previous/current state & Proposed direction\\
+\midrule
+Flight \& attitude & Architecture and control method not yet selected & Rohan + Ash; define requirements and baseline, then validate SITL/HIL and selected control methods\\
+Motor control / ESC & Six-step commutation & Stabilise six-step, then develop FOC; Jayden + Shangrui\\
+Battery / BMS / power & Based on FRBP-ESM-111A-KY & Adapt, review and validate; Zi Wang subject to confirmation\\
+Sensors / estimation & Not clearly assigned & TBD\\
+Vision recognition & Separate future-facing task & David; define a concrete deliverable and interface before broader integration\\
+Motor test bench & Existing project and repository / existing contributors & Preserve repository history; confirm next owner and standard test procedure\\
+Autonomy / RL & Future R\&D & Shangrui; simulation-first development with conventional flight-control interface\\
+\bottomrule
+\end{tabularx}
 
+\vspace{8pt}
 \begin{decisionbox}
-\begin{enumerate}[leftmargin=1.5em,itemsep=2pt]
-  \item Confirm the six projects and the scope of each as written above.
-  \item Confirm the three leads (Rohan, Jayden, Changhan) and agree how the three vacant lead positions are filled: by nomination at the next general meeting once unallocated members have submitted the form.
-  \item Confirm officers own integration and requirements, and that the interface control document is started this week.
-  \item Approve the first three workshops and a date for the first one.
-  \item Approve the repository restructure so each project has a home before its first task is handed out.
-\end{enumerate}
+This table is a proposed responsibility map, not a record of final appointments. Each proposed lead should be consulted before confirmation.
 \end{decisionbox}
 
 \end{document}
