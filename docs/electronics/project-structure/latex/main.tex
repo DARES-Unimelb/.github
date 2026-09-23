@@ -483,8 +483,121 @@ Each project uses the same structure: purpose, black-box interface, ordered mile
 \end{research}
 \end{project}
 
+
+
+
 % ---------------------------------------------------------------------------
-\
+\Needspace{9\baselineskip}\begin{project}{7 \, Autonomy \& Reinforcement Learning}{amber}{Shangrui Wu \textbullet{} \emph{needs members}}
+
+\lbl{Purpose} \;
+Develop and evaluate learning-based autonomy for the fixed-wing UAV.
+
+\lbl{Black box} \;
+\textit{In:} aircraft state estimate, mission objectives, runway information,
+environment observations.
+\;
+\textit{Out:} high-level flight commands, trajectory or guidance targets,
+autonomous flight decisions, and logged training and evaluation data.
+
+\lbl{Milestones} \;
+\M{0} Gymnasium reinforcement-learning baseline completed \;$\rightarrow$\;
+\M{1} custom simplified fixed-wing environment \;$\rightarrow$\;
+\M{2} reinforcement learning operating in a 3D fixed-wing simulator \;$\rightarrow$\;
+\M{3} custom DARES aircraft model integrated into simulation \;$\rightarrow$\;
+\M{4} autonomous take-off and landing demonstrated in simulation \;$\rightarrow$\;
+\M{5} robustness testing and simulation-to-real investigation.
+
+\lbl{Stack} \;
+Python; PyTorch; Gymnasium; a 3D physics-based UAV simulator; Isaac Lab or MuJoCo for 3D reinforcement-learning experiments; PX4 or ArduPilot
+SITL as the conventional flight-control baseline; NumPy and Matplotlib for
+training analysis; PettingZoo as an optional multi-agent extension.
+
+\lbl{Next week} \;
+Consolidate the existing Gymnasium reinforcement-learning examples; define the
+observation space, action space, reward function and termination conditions for
+a simplified fixed-wing environment; identify suitable 3D simulation platforms
+and decide how the reinforcement-learning layer will interface with the
+conventional flight controller.
+
+\begin{research}{amber}
+
+\pill{amber}{reinforcement learning}
+\pill{amber}{Gymnasium}
+\pill{amber}{PPO}
+\pill{amber}{SAC}
+\pill{amber}{TD3}
+\pill{amber}{fixed-wing autonomy}
+\pill{amber}{custom environments}
+\pill{amber}{domain randomisation}
+\pill{amber}{sim-to-real}
+\pill{amber}{PettingZoo / MARL (optional)}
+
+\smallskip
+
+\begin{multicols}{2}\RaggedRight
+
+\textbf{Start here.}
+
+\begin{itemize}
+  \item PyTorch documentation for implementing policy and value networks:
+  \href{https://pytorch.org/docs/stable/index.html}{pytorch.org}
+
+  \item Gymnasium documentation and custom-environment tutorials:
+  \href{https://gymnasium.farama.org}{gymnasium.farama.org}
+
+  
+  \item PettingZoo documentation for optional future multi-agent reinforcement
+  learning:
+  \href{https://pettingzoo.farama.org}{pettingzoo.farama.org}
+  
+  \item Isaac Lab documentation for 3D reinforcement learning, physics-based
+  simulation, custom environments, and simulation-to-real development:
+  \href{https://isaac-sim.github.io/IsaacLab/}{isaac-sim.github.io/IsaacLab}
+
+
+\end{itemize}
+
+\columnbreak
+
+\textbf{Decide early.}
+
+\begin{itemize}
+
+  \item Define the role of reinforcement learning and its interface with the
+  conventional flight controller.
+
+  \item Define the first simplified fixed-wing environment, including
+  observations, actions and rewards.
+
+  \item Select a suitable 3D simulation platform for fixed-wing reinforcement
+  learning development.
+
+  \item Define success criteria and safety constraints for autonomous take-off
+  and landing.
+
+\end{itemize}
+
+\end{multicols}
+\end{research}
+\end{project}
+
+
+
+
+
+
+% ============================================================
+% ---- optional: screenshot of the interface map rendered in chat ----
+% Save it as figures/project_interface_map.png and uncomment:
+% \begin{center}\includegraphics[width=0.85\textwidth]{figures/project_interface_map.png}\end{center}
+\section{Cross-cutting}
+
+\begin{multicols}{2}
+\subsection{Integration and requirements}
+Owned by the officers. One interface control document listing every connector, pinout, protocol and voltage; one requirements table mapping competition rules to IDs, projects and verification methods. Both live in the general \texttt{electronics} repository, and every project links to them rather than copying them.
+
+\subsection{Workshops, in demand order}
+PID tuning and IMU filtering (9 of 10) \textbullet{} Git and GitHub (6) \textbullet{} Motors, ESCs and LiPo safety (6) \textbullet{} Low-level C (6) \textbullet{} Bench instruments (5) \textbullet{} KiCad (4) \textbullet{} Soldering (4) \textbullet{} Rules to requirements (3). The first three are the ones to run this month; they also cover exactly what the two under-staffed projects need.
 
 % ============================================================
 \clearpage
