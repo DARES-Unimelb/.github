@@ -1,0 +1,1060 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage[a4paper,margin=19mm,headheight=22pt,footskip=12mm]{geometry}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{parskip}
+\usepackage{lastpage}
+\usepackage{xurl}
+
+\definecolor{DARESNavy}{HTML}{102A43}
+\definecolor{DARESTeal}{HTML}{0B7285}
+\definecolor{DARESMuted}{HTML}{66788A}
+\definecolor{DARESLine}{HTML}{D9E2EC}
+\definecolor{DARESBlueLight}{HTML}{EAF2FF}
+\definecolor{DARESTealLight}{HTML}{E7F5F7}
+\definecolor{DARESOrangeLight}{HTML}{FFF4E6}
+\definecolor{DARESGreenLight}{HTML}{EAF7F0}
+\definecolor{DARESPaper}{HTML}{F7F9FC}
+\definecolor{DARESCoral}{HTML}{E76F51}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=DARESTeal,
+  urlcolor=DARESTeal,
+  citecolor=DARESTeal,
+  pdftitle={Unmanned Aircraft Control System - Learning and Project Documentation Guide},
+  pdfauthor={DARES Electronics},
+  pdfsubject={Fixed-wing guidance, navigation and control onboarding, simulation, and documentation},
+  pdfkeywords={UAV, fixed-wing, flight control, GNC, PX4, ArduPilot, SITL, HIL, state estimation, TECS, L1}
+}
+\urlstyle{same}
+\setcounter{tocdepth}{1}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist[itemize]{leftmargin=5.5mm,itemsep=2.5pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=7mm,itemsep=3pt,topsep=3pt}
+\emergencystretch=3em
+
+\titleformat{\section}
+  {\Large\bfseries\color{DARESNavy}}
+  {\thesection.}{0.55em}{}
+  [\vspace{2pt}\color{DARESTeal}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\color{DARESTeal}}
+  {\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{DARESNavy}}
+  {\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{14pt}{8pt}
+\titlespacing*{\subsection}{0pt}{10pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{7pt}{2pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small\bfseries\color{DARESTeal}DARES ELECTRONICS}
+\rhead{\small\color{DARESMuted}Unmanned Aircraft Control System}
+\lfoot{\scriptsize\color{DARESMuted}Learning and project documentation guide}
+\rfoot{\scriptsize\color{DARESMuted}Page \thepage\ of \pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{DARESLine}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{DARESLine}\leaders\hrule height \footrulewidth\hfill}}
+
+\newtcolorbox{callout}[1]{
+  enhanced,
+  breakable,
+  colback=DARESTealLight,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  borderline west={3pt}{0pt}{DARESTeal},
+  arc=0pt,
+  left=3mm,
+  right=3mm,
+  top=2.5mm,
+  bottom=2.5mm,
+  title={#1},
+  coltitle=DARESNavy,
+  fonttitle=\bfseries,
+  attach title to upper={\par\vspace{1mm}}
+}
+
+\newtcolorbox{warningbox}[1]{
+  enhanced,
+  breakable,
+  colback=DARESOrangeLight,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  borderline west={3pt}{0pt}{DARESCoral},
+  arc=0pt,
+  left=3mm,
+  right=3mm,
+  top=2.5mm,
+  bottom=2.5mm,
+  title={#1},
+  coltitle=DARESNavy,
+  fonttitle=\bfseries,
+  attach title to upper={\par\vspace{1mm}}
+}
+
+\newtcolorbox{resourcebox}{
+  enhanced,
+  breakable,
+  colback=DARESBlueLight,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  arc=0pt,
+  left=3mm,
+  right=3mm,
+  top=2.5mm,
+  bottom=2.5mm
+}
+
+\newcommand{\Resource}[3]{%
+  \begin{resourcebox}
+    \href{#2}{\textbf{\color{DARESTeal}#1}}\par
+    {\small #3}
+  \end{resourcebox}
+}
+
+\newcommand{\RepoEntry}[2]{%
+  \texttt{\detokenize{#1}}\hfill{\small\color{DARESMuted}#2}\par
+}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+  \thispagestyle{empty}
+  \pagecolor{DARESPaper}
+  \color{DARESNavy}
+
+  \vspace*{20mm}
+  {\large\bfseries\color{DARESTeal}DARES ELECTRONICS\par}
+  \vspace{12mm}
+
+  {\fontsize{30}{34}\selectfont\bfseries Unmanned Aircraft\par}
+  \vspace{1mm}
+  {\fontsize{30}{34}\selectfont\bfseries Control System\par}
+  \vspace{3mm}
+  {\Large\color{DARESMuted}Learning and Project Documentation Guide\par}
+
+  \vspace{15mm}
+  \begin{tcolorbox}[
+    colback=DARESNavy,
+    colframe=DARESNavy,
+    arc=0pt,
+    boxrule=0pt,
+    left=4mm,right=4mm,top=4mm,bottom=4mm]
+    \centering\bfseries\color{white}
+    PRINCIPLE \(\rightarrow\) MODEL \(\rightarrow\) SIMULATION
+    \(\rightarrow\) REFERENCE STACK \(\rightarrow\) HIL \(\rightarrow\) FLIGHT TEST
+    \(\rightarrow\) MISSION
+  \end{tcolorbox}
+
+  \vspace{15mm}
+  {\large\color{DARESMuted}
+    A beginner-friendly reference for learning fixed-wing flight mechanics,
+    building and validating a six-degree-of-freedom model, bringing up a
+    reference autopilot stack, documenting engineering work, and progressing
+    from stabilised flight toward guidance, mission autonomy and in-house
+    control functions.
+    \par}
+
+  \vfill
+  \begin{callout}{CURRENT PRIORITY}
+    Fixed-wing flight mechanics \(\rightarrow\) six-degree-of-freedom model
+    \(\rightarrow\) trim and linearisation \(\rightarrow\) SITL
+    \(\rightarrow\) rate and attitude loops \(\rightarrow\) speed and height
+    control \(\rightarrow\) path following \(\rightarrow\) HIL
+    \(\rightarrow\) first flight. Use PX4 or ArduPilot as the reference stack to
+    connect control theory to a flying aircraft before developing in-house
+    guidance and control functions.
+  \end{callout}
+
+  \vfill
+  {\color{DARESCoral}\rule{32mm}{2pt}\par}
+  \vspace{3mm}
+  {\small\color{DARESMuted}Version 1.0 \textbar\ September 2026\par}
+\end{titlepage}
+\nopagecolor
+\hypersetup{pageanchor=true}
+
+\tableofcontents
+\clearpage
+
+\section{Purpose and scope}
+
+This guide gives new Unmanned Aircraft Control System (UACS) members a shared
+starting point. It explains what to learn, what to model and simulate, what to
+configure on a reference autopilot stack, what to document, and what evidence
+is required before the team treats a control configuration as validated on the
+team's competition fixed-wing platform.
+
+\subsection{Learning objectives}
+
+By using this guide, a member should be able to:
+
+\begin{itemize}
+  \item Explain how a fixed-wing aircraft produces lift and drag, how its moments arise, and why it needs continuous control rather than only a throttle command.
+  \item Describe the reference frames, the state variables and the attitude representations a flight controller actually uses.
+  \item Build or review a six-degree-of-freedom model, trim it, linearise it and interpret its longitudinal and lateral modes.
+  \item Explain how sensors and a state estimator produce the estimate that every control loop depends on.
+  \item Describe the cascade from guidance to speed and height, attitude and angular-rate control, and how control allocation maps commands onto actuators.
+  \item Bring up a reference autopilot stack in software-in-the-loop simulation, then hardware-in-the-loop, then on a bench, then in a first flight.
+  \item Document models, simulation results, parameter sets, bench tests and flight tests so that another member can reproduce them.
+  \item Recognise when the aircraft is ready for mission modes, higher-level autonomy and in-house control functions.
+\end{itemize}
+
+\begin{callout}{IMPORTANT BOUNDARY}
+  This guide is an onboarding and documentation standard. It does not replace
+  the competition rules, airframe and component datasheets, the team's safety
+  and flight-approval procedures, airworthiness and radio requirements, or
+  validation on the actual aircraft. Where this guide and an approved procedure
+  disagree, the approved procedure wins.
+\end{callout}
+
+\subsection{Scope and interfaces}
+
+This guide covers the aircraft-level chain: state estimation, guidance,
+control, control allocation, flight modes and failsafe behaviour. It does not
+cover the design of the motor, the ESC, the battery-management system or
+vision perception. Those are separate workstreams with their own documentation,
+and the interfaces to them are listed in Section 9.
+
+\begin{callout}{SCOPE RULE}
+  A control-system member is expected to understand the interface to the other
+  subteams, not to redesign their hardware. If a control requirement implies a
+  change in the propulsion, power or perception interface, raise it as an
+  interface change with the responsible subteam rather than working around it
+  inside the flight controller.
+\end{callout}
+
+\subsection{Recommended working method}
+
+Learn enough flight mechanics to understand the physical system, build a model
+that can be explained block by block, validate the control structure in
+simulation, bring up the reference stack on the bench, compare predicted and
+measured behaviour, and only then develop in-house functions. Modelling,
+simulation, stack configuration, bench testing and flight testing are one
+chain: each step should create the evidence the next step depends on. Do not
+treat them as separate projects, and do not replace a missing measurement with
+a better-looking plot.
+
+\section{Recommended learning path}
+
+The sequence below is designed for members with no previous flight-control
+experience. Complete each stage well enough to explain it in your own words
+before moving to the next stage.
+
+\subsection{Why a fixed-wing aircraft needs a control system}
+
+A fixed-wing aircraft generates lift from airflow over a wing, and it flies
+only while airspeed is above the stall speed. Its motion is described by forces
+and moments in three axes. A wing alone is usually not stable enough, or not
+stable in the way the mission requires, so the flight controller continuously
+adjusts the control surfaces and thrust to hold a commanded attitude, speed,
+height and path. Unlike a multirotor, a fixed-wing aircraft cannot hover, must
+be launched and recovered, and couples speed and height strongly: pulling up
+trades speed for height, and adding power changes both.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Explain lift, drag, weight and thrust in straight and level flight, and what changes in a climb or a bank.
+  \item Explain why stall speed matters for every control decision, including failsafe behaviour.
+  \item Explain the roles of aileron, elevator, rudder and throttle.
+  \item Explain why a fixed-wing aircraft cannot be stabilised by thrust alone.
+\end{itemize}
+
+\subsection{Reference frames, state and attitude}
+
+A flight controller works with several frames that must not be mixed up:
+earth-fixed north-east-down, body-fixed forward-right-down, and the wind and
+stability frames used for aerodynamic angles. The state normally includes
+position, velocity, attitude and angular rate, plus the derived angles of
+attack and sideslip. Attitude is commonly carried as a quaternion inside the
+estimator and controller, and shown to a human as Euler angles.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Write down what each axis of the body frame means and which sign convention is used.
+  \item Convert between Euler angles and a rotation matrix or quaternion, and explain gimbal lock.
+  \item Explain the difference between ground speed, airspeed and wind.
+  \item Explain why an estimator cannot simply integrate gyroscope data for more than a few seconds.
+\end{itemize}
+
+\subsection{Airframe model, trim and linearisation}
+
+The airframe model relates the state and the control inputs to forces and
+moments, usually through non-dimensional aerodynamic coefficients. The model
+must be trimmed at an operating point before it means anything: trim gives the
+steady control settings for a chosen speed and height. Linearising around trim
+separates the motion into a longitudinal set and a lateral-directional set, and
+exposes the modes a controller has to handle, such as the short period, the
+phugoid, the roll subsidence, the spiral and the Dutch roll.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Explain what each aerodynamic coefficient contributes to the motion, and which ones dominate stability.
+  \item Produce a trim solution and explain why it is not unique.
+  \item Identify the aircraft's modes from a linear model and say which ones are poorly damped.
+  \item Explain what a change in centre of gravity, mass or airspeed does to trim and to stability.
+\end{itemize}
+
+\subsection{Sensors and state estimation}
+
+The estimator turns noisy, biased and differently-rate sensor data into the
+state the controller uses. Typical inputs are an inertial measurement unit, a
+magnetometer, a barometer, a GNSS receiver and, on a fixed-wing aircraft, a
+pitot-static airspeed sensor. A complementary or Mahony-style filter is the
+right first step for attitude because it can be explained and tested; a full
+extended Kalman filter adds multi-sensor fusion, bias estimation and health
+reporting, at the cost of complexity.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Explain what each sensor measures, its update rate, its noise, and its failure mode.
+  \item Explain how accelerometer and gyroscope data are combined to estimate attitude.
+  \item Explain why airspeed matters more on a fixed-wing aircraft than on a multirotor.
+  \item Explain what estimator health means and why the controller must react when it degrades.
+\end{itemize}
+
+\Resource
+  {Kalman and Bayesian Filters in Python (free online book)}
+  {https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python}
+  {Practical, code-first introduction to filters from complementary filtering through to extended and unscented Kalman filters.}
+
+\Resource
+  {PX4: ECL EKF tuning and estimator health}
+  {https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf.html}
+  {How a production estimator is configured, how innovation and health checks are interpreted, and what commonly goes wrong.}
+
+\subsection{Control loops: from angular rate to trajectory}
+
+Flight control is a cascade. The fastest loop controls angular rate; the next
+loop controls attitude; above that, speed and height are controlled together
+because they are coupled; the outer loop follows a path or a mission. A rate
+loop is damped and well conditioned, an attitude loop gives the pilot or
+guidance layer a predictable aircraft, and the speed and height layer manages
+energy. Total energy control is a common way to formalise that trade. Path
+following closes the loop onto a line or an arc.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Explain why the loops are nested and what sets the bandwidth of each one.
+  \item Explain proportional, integral and derivative action, and why an integral term needs anti-windup limits.
+  \item Explain what total energy control does and why throttle and elevator must be coordinated.
+  \item Explain how a path-following law uses a look-ahead distance and what happens when it is too short or too long.
+\end{itemize}
+
+\Resource
+  {PX4: controller diagrams}
+  {https://docs.px4.io/main/en/flight_stack/controller_diagrams.html}
+  {The full fixed-wing control cascade as implemented in a production open-source autopilot, from rate loop to total energy and path following.}
+
+\Resource
+  {ArduPilot: total energy control system tuning guide}
+  {https://ardupilot.org/plane/docs/tecs-total-energy-control-system-for-speed-height-tuning-guide.html}
+  {Explains the speed and height control problem, the parameters that shape it, and the symptoms of a badly tuned energy controller.}
+
+\Resource
+  {ArduPilot: navigation and path-following tuning}
+  {https://ardupilot.org/plane/docs/navigation-tuning.html}
+  {Practical treatment of the L1-style path-following controller, tracking quality and the effect of its parameters.}
+
+\subsection{Control allocation and actuators}
+
+Control allocation maps the commands the controller produces onto the physical
+actuators: aileron, elevator, rudder, throttle and any flaps or additional
+surfaces. It has to respect actuator limits, rates, trim offsets and direction
+conventions, and it has to fail in a defined way when an actuator saturates or
+is lost. Servo direction, travel, neutral and reversal must be verified on the
+bench before any powered test.
+
+\textbf{Learning check}
+\begin{itemize}
+  \item Explain how a roll command becomes aileron deflection, and what the rudder is doing at the same time.
+  \item Explain saturation, rate limiting and how a controller should behave when an actuator reaches its limit.
+  \item Explain how a misconfigured servo direction or reversed elevator would appear in flight, and how bench testing catches it.
+  \item Explain what changes if the aircraft is a hybrid that also has vertical-lift motors.
+\end{itemize}
+
+\section{Simulation before flight}
+
+Simulation is used to test understanding, tune a control structure and reduce
+risk before any hardware is energised. It is not a substitute for measurement.
+The first model should be simple enough that every block and every parameter
+can be explained by the member who built it.
+
+\subsection{Minimum first simulation}
+
+\begin{itemize}
+  \item A six-degree-of-freedom airframe model with documented mass, inertia, geometry and aerodynamic coefficients.
+  \item A stated source for every aerodynamic coefficient, with an explicit note where a value is estimated or borrowed from a similar aircraft.
+  \item Actuator models with documented limits, rates and time constants.
+  \item Sensor models with realistic noise, bias, latency and update rates.
+  \item Atmosphere, wind and turbulence inputs, including a steady crosswind case.
+  \item A trim routine and a linearised model at the chosen operating point.
+  \item The control structure under test, with every gain named and recorded.
+\end{itemize}
+
+\subsection{Required outputs}
+
+\begin{itemize}
+  \item Time histories of position, altitude, airspeed, attitude and angular rates.
+  \item Control surface deflections and throttle command, with the limits visible.
+  \item Estimator output compared with the simulated truth state.
+  \item Step and doublet responses for each loop, at more than one operating point.
+  \item Trim results and the linear model's modes with their damping and frequency.
+  \item Response to wind, gust and a disturbance large enough to matter.
+\end{itemize}
+
+\subsection{What the report must explain}
+
+Do not upload plots without interpretation. State the objective, the
+assumptions, the parameter sources, the solver and sample time, the expected
+behaviour, the observed behaviour and the conclusion. If the model behaves
+incorrectly, record the failure and the evidence used to diagnose it. A failed
+simulation with a clear explanation is more useful than an unexplained
+successful screenshot. Never present a tuned gain set without the model, the
+operating point and the cost function or criterion it was tuned against.
+
+\begin{callout}{SIMULATION EXIT CRITERION}
+  The aircraft can be trimmed, linearised and flown in simulation; each control
+  loop has a documented step or doublet response; the modes are identified and
+  a poorly damped mode is explained; and a wind or disturbance case has been
+  run and interpreted. A second member can rerun the model from the committed
+  files and obtain the same result.
+\end{callout}
+
+\section{Reference stack: PX4 and ArduPilot}
+
+A mature open-source autopilot stack provides the estimator, the control
+cascade, the flight-mode state machine, the failsafe logic, the parameter
+system, the logging system, the ground-station link and the simulation
+harness. It allows the team to fly and measure a real aircraft without first
+writing an entire autopilot, and it gives a reference to compare against when
+in-house functions are developed.
+
+\begin{callout}{IMPORTANT DISTINCTION}
+  Using a reference stack does not remove the need to understand the control
+  system. A member must be able to explain what the stack's loops do, why a
+  parameter has the value it has, and what the log shows, before tuning it. A
+  stack is a baseline to be understood and validated, not a black box that
+  makes the aircraft fly.
+\end{callout}
+
+\subsection{Choose one baseline and record why}
+
+PX4 and ArduPilot are both capable fixed-wing stacks with different
+architectures, parameter systems and tuning workflows. Choose one as the
+team's flight baseline and state the reason. Do not run two stacks on the same
+airframe as an experiment during a flight campaign, and do not switch stacks
+mid-campaign without retesting everything from the bench upwards.
+
+\subsection{Record the exact version and configuration first}
+
+Before following any tutorial, record the stack and version, the airframe
+configuration selected, the firmware build, the ground-station version, the
+parameter file, and the sensor and actuator mapping. Parameter names and
+default values differ between releases and between vehicle types. Treat a video
+or a blog post as a conceptual demonstration, and use documentation that
+matches the exact version for actual parameter changes.
+
+\subsection{Recommended bring-up workflow}
+
+\begin{enumerate}
+  \item Bring up software-in-the-loop simulation. Fly the simulated aircraft, change the wind, and confirm the log records what you expect.
+  \item Move to hardware-in-the-loop: the real flight controller running the real firmware, with simulated sensors and actuators. Confirm timing, mode changes and failsafe behaviour.
+  \item Power the aircraft on the bench with the propeller removed. Verify servo direction, travel, neutral, trim and mode switching, and confirm every failsafe triggers the intended action.
+  \item Check the estimator on the bench: attitude follows the aircraft, heading is plausible, airspeed reads correctly with a controlled pressure source, and health flags behave.
+  \item Configure conservative limits for speed, height, bank angle, pitch angle, climb rate, throttle and geofence before the first powered test.
+  \item Run the first powered ground test at low energy with the aircraft restrained, following the team's safety procedure.
+  \item Plan the first flight as a short, manual, low-risk flight whose purpose is to gather data, not to demonstrate autonomy.
+  \item Log everything: estimator state, controller targets and outputs, actuator commands, mode transitions, battery, link quality and failsafe events.
+\end{enumerate}
+
+\subsection{What members should learn from the reference stack}
+
+\begin{itemize}
+  \item How a real estimator fuses sensors, reports health and degrades.
+  \item How the control cascade is split into rate, attitude, energy and path loops, and which parameters shape each one.
+  \item How flight modes and failsafe behaviour are structured as a state machine.
+  \item How parameters are defined, validated and stored, and why a parameter set is part of the deliverable.
+  \item How logs are recorded, what is in them and how a flight is reconstructed afterwards.
+  \item What the stack does not do for the team: mission-specific requirements, competition rules, in-house research functions and their validation.
+\end{itemize}
+
+\subsection{Required reference-stack evidence}
+
+\begin{itemize}
+  \item Stack, firmware version, airframe configuration, ground-station version and the complete parameter file.
+  \item A reproducible simulation or HIL case with its log and a short explanation of the observed behaviour.
+  \item Bench evidence that actuator directions, travel, mode switching and every failsafe behave as intended.
+  \item A tuning record stating the parameter changed, the previous and new value, the test condition and the observed effect.
+  \item A conclusion explaining what the stack configuration proves and what it does not prove about the aircraft's mission performance.
+\end{itemize}
+
+\begin{warningbox}{REFERENCE-STACK EXIT CRITERION}
+  The team has one documented baseline stack and parameter set; simulation and
+  HIL reproduce; the bench checks pass with the propeller removed; every
+  failsafe has been triggered deliberately and observed; and the log from each
+  test can be reconstructed and explained by a member who was not present.
+\end{warningbox}
+
+\section{Flight-controller hardware and interfaces}
+
+The flight controller is one board in a system, and the system is what flies.
+Hardware documentation must make the whole chain visible: power, sensors,
+actuators, links and logging.
+
+\subsection{Required hardware blocks}
+
+\subsubsection{Flight controller and timing}
+Document the autopilot board and revision, the firmware target, the processor
+and memory margin, the sensor set on the board, the available buses, the
+logging medium, and the update rates that the control loops and estimator
+actually run at.
+
+\subsubsection{Power}
+Document the avionics power architecture, the voltage rails and their limits,
+redundancy or lack of it, the current budget with margin, the effect of a
+propulsion brownout on the flight controller, and how the system behaves at
+low battery.
+
+\subsubsection{Sensors}
+Document the inertial measurement unit, magnetometer, barometer, GNSS receiver,
+airspeed sensor and any external sensors, including their mounting location,
+orientation, vibration isolation, calibration and known failure modes.
+
+\subsubsection{Actuator interfaces}
+Document the servo and ESC outputs, their pulse or protocol definition, their
+power source, their direction and travel limits, and the consequences of an
+output loss or a stalled servo.
+
+\subsubsection{Radio, telemetry and datalinks}
+Document the RC link, the telemetry link, their ranges and failure behaviour,
+the antenna placement, the failsafe configuration on both sides, and the
+procedure to regain control.
+
+\subsubsection{Ground station and operator interface}
+Document the ground-station software and version, the parameter and mission
+upload procedure, the pre-flight checklist presented to the operator, and how a
+mode change or a failsafe is announced to the pilot.
+
+\subsubsection{Logging and telemetry bandwidth}
+Document what is logged at what rate, the storage and download procedure, and
+what is telemetered live. Data that is not logged cannot be analysed after a
+flight, and a link that is saturated is a safety problem.
+
+\subsection{Component and configuration record}
+
+For each significant item, record the selected part, the requirement it must
+meet, the margin, the relevant datasheet pages, the alternatives considered,
+the reason for the choice, the risks and the validation plan. Absolute maximum
+ratings are not operating targets; design against recommended operating
+conditions and the expected environment, including vibration, heat and
+electrical noise.
+
+\section{Software architecture, flight modes and failsafe}
+
+The software documentation must describe the timing and the relationship
+between a command and the physical response. A reader should be able to trace a
+pilot or mission command through mode logic, guidance, the control cascade,
+allocation, actuator output, and the checks that can interrupt it.
+
+\subsection{Minimum topics}
+
+\begin{itemize}
+  \item Task structure and timing: what runs at what rate, and what is the deadline for each loop.
+  \item Estimator input validation, timestamping and health reporting.
+  \item Guidance and path-following logic, including how a path is entered and left.
+  \item The control cascade, its limits, its anti-windup behaviour and its saturation handling.
+  \item Control allocation, including trim offsets and actuator failure handling.
+  \item The flight-mode state machine: which modes exist, what each one does, and what can switch between them.
+  \item Failsafe definitions: RC loss, telemetry loss, estimator failure, battery low, geofence breach, and what each one commands.
+  \item Parameter definitions with units, valid ranges and defaults.
+  \item Logging: message set, rates, and how a flight is reconstructed.
+  \item The interface to the propulsion, power and perception subteams, including units and message timing.
+\end{itemize}
+
+\subsection{Function-level documentation}
+
+Important functions should state their purpose, inputs, outputs, units, valid
+range, call rate, side effects and safety assumptions. Constants such as
+control rates, limits, look-ahead distances, time constants and unit
+conversions must have one authoritative definition. Changes to these constants
+must be reviewed, because they change the physical behaviour of the aircraft.
+
+\begin{callout}{SOFTWARE EXIT CRITERION}
+  Every mode has a documented purpose and entry condition; every failsafe has
+  been triggered in simulation or on the bench and its action observed; the
+  parameter set is version-controlled and reproducible; and a flight log can be
+  traced from a pilot input to an actuator output by reading the code and the
+  log together.
+\end{callout}
+
+\section{Ground and bench testing, and safety}
+
+The first objective is deliberately narrow: verify that the aircraft's control
+chain responds correctly and safely before it ever leaves the ground. Test one
+assumption at a time and capture the evidence.
+
+\subsection{Minimum safety controls}
+
+\begin{itemize}
+  \item Remove the propeller for every bench test unless an approved guarded test specifically requires it.
+  \item Follow the team's flight-approval procedure, and never conduct a first flight without an approved plan and a designated pilot.
+  \item Verify failsafe behaviour deliberately, on the ground, before relying on it in the air.
+  \item Confirm the geofence, height limit, distance limit and return behaviour and make sure the operator can see and reach the aircraft.
+  \item Check control directions and mode switching with the aircraft restrained and the propulsion disabled or limited.
+  \item Use a charged, inspected battery, a current-limited or instrumented supply where practical, and confirm the avionics rail holds up under load.
+  \item Do not fly with an unresolved estimator, calibration or GPS-health warning, and do not fly in wind or visibility conditions outside the approved limits.
+  \item Stop immediately for unexpected control response, oscillation, loss of link, estimator degradation or any unexplained change in behaviour.
+\end{itemize}
+
+\subsection{Bench test sequence}
+
+\begin{enumerate}
+  \item Power and communications: the flight controller boots, the ground station connects, sensors are detected and no pre-arm error is present.
+  \item Estimator: attitude tracks the aircraft as it is moved by hand, heading is correct, airspeed reads correctly against a known pressure, and health flags appear and clear as expected.
+  \item Actuators: direction, travel, neutral, trim and rate are correct for every output, with the propeller removed.
+  \item Modes: every flight mode is selected on the ground and the resulting control behaviour is observed and recorded.
+  \item Failsafe: the RC link and the telemetry link are interrupted deliberately and the aircraft's response is recorded.
+  \item Logging: a log is recorded, downloaded and opened, and the expected messages are present at the expected rates.
+\end{enumerate}
+
+\subsection{Test record}
+
+\begin{itemize}
+  \item Test ID, date, operator, safety observer and objective.
+  \item Airframe revision, firmware commit, parameter file, stack version and instrument list.
+  \item Configuration, battery state, payload, propeller status and environmental conditions.
+  \item Procedure, expected result, measured result, plots or log excerpts, and a pass or fail decision.
+  \item Unexpected behaviour, likely cause, follow-up action and a linked issue or design note.
+\end{itemize}
+
+\begin{warningbox}{FIRST POWERED MILESTONE}
+  With the aircraft restrained, the control chain responds correctly in every
+  mode, all control directions are verified, every failsafe has been triggered
+  and observed, the log contains the expected data, and the result is
+  reproducible by another member.
+\end{warningbox}
+
+\section{Flight testing and flight-data review}
+
+Flight testing is how the model is confronted with reality. The purpose of the
+first flights is to collect data safely, not to demonstrate the mission.
+
+\subsection{Planning a flight test}
+
+\begin{itemize}
+  \item State the objective in one sentence, and the single change or question the flight is meant to answer.
+  \item Define the flight card: modes to be used, the sequence, the abort criteria and the recovery procedure.
+  \item Confirm the aircraft configuration, battery, payload, centre of gravity and calibration state.
+  \item Confirm the site, the airspace and radio requirements, the weather limits and the number of people required.
+  \item Define the envelope for the day and expand it only after the data from the previous flight has been reviewed.
+  \item Agree the roles of pilot, observer and data operator before the flight, not during it.
+\end{itemize}
+
+\subsection{Envelope expansion}
+
+Expand the flight envelope in small, documented steps: one change at a time,
+reviewed before the next flight. Do not combine a new mode, a new gain set and
+a new mission in a single flight. If a flight produces an unexpected result,
+stop expanding the envelope until the cause is understood.
+
+\subsection{Flight-data review}
+
+Review the log against the flight card before the next flight. A useful review
+answers: did the aircraft do what was commanded; did any limit or failsafe
+activate; did the estimator degrade; was the control response consistent with
+the simulation; and what is the single most important change to make next. Record
+the review as a short document, not only as a conversation.
+
+\subsection{Required flight evidence}
+
+\begin{itemize}
+  \item Flight card, objective, configuration, firmware and parameter version.
+  \item The complete raw log for the flight, plus a processed summary with the axes labelled and units stated.
+  \item Commanded against measured attitude, airspeed, height and path, with the error visible.
+  \item Actuator commands and saturation events.
+  \item Estimator health, innovation and any reset during the flight.
+  \item Failsafe, mode transition and limit events with timestamps.
+  \item A conclusion separating what the flight proves, what it does not prove, and what is still uncertain.
+\end{itemize}
+
+\begin{callout}{FLIGHT-TEST EXIT CRITERION}
+  The aircraft completes the planned flight card; commanded and measured values
+  agree within the stated tolerance; no unexplained event appears in the log;
+  the data is archived with the configuration that produced it; and the next
+  flight's objective follows from this flight's data.
+\end{callout}
+
+\Resource
+  {ArduPilot: first flight and landing}
+  {https://ardupilot.org/plane/docs/first-flight-landing-page.html}
+  {A structured first-flight and landing procedure, including pre-flight checks and what to observe in the log.}
+
+\Resource
+  {PX4: flight log analysis}
+  {https://docs.px4.io/main/en/log/flight_log_analysis.html}
+  {How flight logs are recorded, downloaded and reviewed, including the tools used for plotting and comparison.}
+
+\Resource
+  {PlotJuggler}
+  {https://plotjuggler.io/}
+  {Fast time-series plotting for flight logs; useful for comparing commanded and measured signals across a whole flight.}
+
+\section{Guidance, mission autonomy and team interfaces}
+
+Guidance turns a mission into a path and a set of references the control loops
+can follow. It should be developed only after the inner loops are validated,
+because a guidance law cannot compensate for an aircraft that does not hold
+attitude or airspeed.
+
+\subsection{Concepts to learn}
+
+\begin{itemize}
+  \item Waypoint navigation, line and arc following, and how a path is entered and exited.
+  \item Look-ahead based path following, and the effect of its distance parameter at different speeds.
+  \item Total energy management of speed and height, and how a commanded climb changes the speed reference.
+  \item Mission modes: take-off, cruise, loiter, return, approach and landing, and what each one must guarantee.
+  \item Flight-data review of a mission: path tracking error, energy behaviour and mode transitions.
+  \item The boundary between conventional guidance and learning-based or optimisation-based autonomy, and why the interface between them must be defined before either is developed.
+\end{itemize}
+
+\subsection{Required guidance evidence}
+
+\begin{itemize}
+  \item A documented mission definition with waypoints, altitudes, speeds and the expected behaviour at each leg.
+  \item Simulation results showing path tracking error for at least one disturbed case.
+  \item The commanded and achieved values for speed, height and bank angle, with the limits shown.
+  \item A statement of what the guidance layer does when the mission cannot be completed safely.
+\end{itemize}
+
+\subsection{Interfaces to the other subteams}
+
+\begin{itemize}
+  \item \textbf{Motor control and ESC:} the throttle or thrust command, its units, its rate limit, its failsafe value, and the telemetry the controller may consume.
+  \item \textbf{Battery management and power:} pack state, available current, voltage limits and the low-battery policy the controller must enforce.
+  \item \textbf{Sensors and estimation:} which states are provided, at what rate, with what health indication, and what the controller does when a state is lost.
+  \item \textbf{Vision and autonomy:} what the perception layer outputs, in which frame, at what rate, with what confidence, and the rule that a perception failure must degrade to a safe conventional behaviour rather than take over flight control.
+  \item \textbf{Structures and mechanical:} mass, centre of gravity, inertia, control-surface limits and actuator installation, since all of these appear directly in the model.
+  \item \textbf{Ground station and operations:} the pre-flight checklist, the flight card and the data archive, because a control result is only usable if the operation that produced it is repeatable.
+\end{itemize}
+
+\begin{callout}{AUTONOMY ENTRY CRITERION}
+  The inner loops are validated in flight, the estimator is trustworthy, every
+  failsafe has been demonstrated, and the interface to whatever provides the
+  higher-level decision is defined in units, frames, rates and failure
+  behaviour. Autonomy must not be used to hide unverified low-level behaviour.
+\end{callout}
+
+\section{Repository structure}
+
+The repository should make the current design state easy to find. The main
+README is an entry point; detailed technical work belongs in focused Markdown
+documents and version-controlled project files.
+
+\begin{tcolorbox}[
+  breakable,
+  colback=DARESPaper,
+  colframe=DARESLine,
+  boxrule=0.4pt,
+  arc=0pt,
+  left=3mm,right=3mm,top=3mm,bottom=3mm]
+\RepoEntry{README.md}{project overview, status, and quick start}
+\RepoEntry{docs/flight-mechanics/}{learning notes and reviewed explanations}
+\RepoEntry{docs/control-theory/}{loop structure, tuning notes, and analysis}
+\RepoEntry{docs/design-notes/}{engineering decisions and trade-offs}
+\RepoEntry{docs/interfaces/}{interface definitions shared with other subteams}
+\RepoEntry{docs/datasheets/}{links or approved copies of key datasheets}
+\RepoEntry{model/}{airframe model, aerodynamic data, trim and linearisation}
+\RepoEntry{model/aero-data/}{coefficient sources, wind-tunnel or CFD results, and assumptions}
+\RepoEntry{simulation/}{SITL and HIL cases, parameters, scripts, and reports}
+\RepoEntry{autopilot/params/}{versioned parameter sets and the reason for each change}
+\RepoEntry{autopilot/scripts/}{analysis, log processing, and automation}
+\RepoEntry{hardware/}{airframe interface, wiring, sensor mounting, and review notes}
+\RepoEntry{testing/bench/}{bench procedures, results, and logs}
+\RepoEntry{testing/flight/}{flight cards, logs, reviews, and conclusions}
+\RepoEntry{results/}{approved summary plots and milestone evidence}
+\end{tcolorbox}
+
+\subsection{File and commit expectations}
+
+\begin{itemize}
+  \item Use descriptive filenames and include units or dates where they prevent ambiguity.
+  \item Do not upload an unexplained screenshot, log, model or binary file.
+  \item Link research sources and record the exact document version or datasheet revision used.
+  \item Record failures as well as successes; do not remove evidence because a test failed.
+  \item Keep generated exports separate from editable source files, and keep raw logs separate from processed results.
+  \item Version parameter sets with the flight or test that produced them; never overwrite the set that flew.
+  \item Use issues or design notes for unresolved questions and link the relevant commit, log or test report.
+  \item Request review for changes affecting control-surface direction, limits, failsafe behaviour, estimator configuration or anything that changes the aircraft's physical response.
+\end{itemize}
+
+\section{Required document templates}
+
+\subsection{Simulation note}
+\begin{itemize}
+  \item Objective and question being tested.
+  \item Model scope, assumptions, parameter sources, trim point, solver and sample time.
+  \item Inputs and expected behaviour.
+  \item Results with units and explanation.
+  \item Limitations, problems, conclusion and next action.
+\end{itemize}
+
+\subsection{Design decision record}
+\begin{itemize}
+  \item Decision and date.
+  \item Requirement or problem being addressed.
+  \item Alternatives considered and evidence reviewed.
+  \item Selected option, calculations, margins, benefits and disadvantages.
+  \item Risks, validation plan, owner and review status.
+\end{itemize}
+
+\subsection{Bench test report}
+\begin{itemize}
+  \item Test ID, objective, operator, safety observer, date and location.
+  \item Airframe and wiring revision, firmware commit, parameter file and instruments.
+  \item Safety controls and pre-test checks.
+  \item Procedure, expected result, measured data and uncertainty where relevant.
+  \item Pass or fail decision, fault observations, conclusion and linked follow-up issue.
+\end{itemize}
+
+\subsection{Flight card and flight report}
+\begin{itemize}
+  \item Flight ID, objective, site, date, pilot, observer and data operator.
+  \item Configuration, battery state, centre of gravity, firmware and parameter version.
+  \item Modes and sequence, abort criteria and recovery procedure.
+  \item Result against the objective, log reference, events and anomalies.
+  \item Conclusion, follow-up actions and the objective of the next flight.
+\end{itemize}
+
+\subsection{Datasheet review}
+
+Before using a component, review at least the absolute maximum ratings,
+recommended operating conditions, pin descriptions, electrical
+characteristics, timing requirements, thermal information and typical
+application circuit. Record which limits are design requirements and which must
+be validated during testing.
+
+\section{First tasks for new members}
+
+These tasks turn passive learning into reviewable engineering output. New
+members should work with an experienced member, but they should still form and
+test their own explanation.
+
+\subsection{Task 1 - Principle note}
+Write a short explanation of how lift, drag, moments and the four control
+channels interact to make a fixed-wing aircraft follow a commanded path.
+Include the effect of a change in airspeed and of a bank angle.
+
+\subsection{Task 2 - Model and trim}
+Take the team's airframe data, trim the model at a stated speed and height,
+linearise it, and report the modes with their frequency and damping. Say which
+coefficient you trust least and why.
+
+\subsection{Task 3 - Simulation}
+Reproduce a simulation case: a step or doublet in one channel, plus one
+disturbed case with wind. Explain the response, the limits that were reached,
+and what you would change in the control structure.
+
+\subsection{Task 4 - Reference-stack bring-up}
+Record the exact stack and version, run the aircraft in SITL, complete the
+bench tests with the propeller removed, and document every failsafe you
+triggered and what the aircraft did.
+
+\subsection{Task 5 - Interface review}
+Choose one interface from Section 9 - propulsion, power, estimation,
+perception, structures or operations - and document its units, rates, limits
+and failure behaviour, with one recommendation.
+
+\subsection{Task 6 - GitHub submission and short presentation}
+Upload the editable source, the readable result, the parameter or configuration
+file, and a Markdown explanation. Link every source, state what remains
+uncertain, and present one mistake or unexpected result and how you investigated
+it.
+
+\begin{callout}{REVIEW STANDARD}
+  The goal is not to appear correct on the first attempt. The goal is to make
+  assumptions visible, test them, record the evidence, and improve the next
+  design. A control result is only as good as the configuration and data that
+  produced it.
+\end{callout}
+
+\section{Milestones and definition of done}
+
+\subsection{Milestone 1 - Fundamentals}
+A member can explain the forces, moments, control channels and reference frames
+of a fixed-wing aircraft without copying a diagram, and can say what each
+control surface does and why.
+
+\subsection{Milestone 2 - Model, trim and linearisation}
+The six-degree-of-freedom model runs, its parameters and sources are
+documented, a trim solution exists, the linear model's modes are identified,
+and the results are explained.
+
+\subsection{Milestone 3 - Simulation and control structure}
+The control cascade runs in simulation; each loop has a documented step or
+doublet response; one disturbed case is analysed; and gains are recorded with
+the conditions that produced them.
+
+\subsection{Milestone 4 - Reference stack in SITL and HIL}
+The baseline stack and parameter set are documented; SITL reproduces; HIL
+confirms timing, modes and failsafe behaviour; and logs are archived.
+
+\subsection{Milestone 5 - Bench validation}
+With the propeller removed, every actuator direction and limit is verified,
+every mode is selected, every failsafe is triggered and observed, and the
+aircraft is declared ready for a first flight by the responsible member.
+
+\subsection{Milestone 6 - First flight and envelope expansion}
+The aircraft flies the planned card; commanded and measured values agree within
+the stated tolerance; no unexplained event appears in the log; and the envelope
+is expanded only after each flight is reviewed.
+
+\subsection{Milestone 7 - Mission modes and guidance}
+Waypoint navigation, loiter, return and approach behaviour are validated in
+simulation and then in flight, with path tracking error and energy behaviour
+documented.
+
+\subsection{Milestone 8 - Autonomy readiness}
+The inner loops are trustworthy, the estimator is validated, failsafe behaviour
+is demonstrated, the interface to the higher-level decision layer is defined,
+and the team has an agreed validation plan for autonomous functions.
+
+\subsection{Project-level definition of done}
+\begin{itemize}
+  \item Editable model, configuration and parameter sources are committed with build or run instructions.
+  \item Requirements, assumptions, aerodynamic data sources and safety limits are documented.
+  \item Simulation, bench and flight evidence is stored with units, versions and the configuration that produced it.
+  \item Known limitations and unresolved risks are explicit.
+  \item Another team member can reproduce the result without relying on the original author.
+  \item A reviewer has approved the milestone against its stated exit criteria.
+\end{itemize}
+
+\section{Learning resources}
+
+Use these resources as starting points, then confirm implementation details
+against the relevant airframe, autopilot, sensor and actuator documentation.
+Video explanations are useful for intuition but are not the final authority for
+flight limits or safety decisions.
+
+\Resource
+  {PX4 user guide: fixed-wing configuration}
+  {https://docs.px4.io/main/en/config_fw/}
+  {How a fixed-wing vehicle is configured in PX4, from airframe selection and control-surface mapping to tuning.}
+
+\Resource
+  {PX4 user guide: fixed-wing flight modes}
+  {https://docs.px4.io/main/en/flight_modes_fw/}
+  {Definitions of manual, stabilised, altitude, position, mission and return modes, and what each one commands.}
+
+\Resource
+  {PX4 user guide: simulation}
+  {https://docs.px4.io/main/en/simulation/}
+  {Software-in-the-loop and hardware-in-the-loop simulation setup, including jMAVSim, Gazebo and FlightGear back ends.}
+
+\Resource
+  {ArduPilot developer documentation}
+  {https://ardupilot.org/dev/}
+  {Architecture, build system and code structure of a mature open-source autopilot; use it to read how the control loops are actually implemented.}
+
+\Resource
+  {ArduPilot Plane documentation}
+  {https://ardupilot.org/plane/}
+  {The fixed-wing side of ArduPilot: setup, tuning, modes, failsafe and parameter reference.}
+
+\Resource
+  {Small Unmanned Aircraft: Theory and Practice - companion code}
+  {https://github.com/randybeard/uavbook}
+  {Simulation and control code accompanying the standard fixed-wing UAV textbook; a good source of implementable guidance and autopilot structure.}
+
+\Resource
+  {BYU MAGICC Lab UAV book site}
+  {https://uavbook.byu.edu/}
+  {Course material and chapter resources matching the fixed-wing UAV textbook.}
+
+\Resource
+  {MIT OpenCourseWare 16.30 Feedback Control Systems}
+  {https://ocw.mit.edu/courses/16-30-feedback-control-systems-fall-2010/}
+  {State-space control foundations: modelling, linearisation, observability, state feedback and observers.}
+
+\Resource
+  {Brian Douglas - control system lectures}
+  {https://engineeringmedia.com/}
+  {Intuitive explanations of PID, loop shaping, state-space control and Kalman filtering.}
+
+\Resource
+  {MathWorks Aerospace Blockset}
+  {https://www.mathworks.com/help/aeroblks/}
+  {Reference blocks for six-degree-of-freedom motion, atmosphere, aerodynamics and flight control, with documented conventions.}
+
+\Resource
+  {MathWorks UAV Toolbox}
+  {https://www.mathworks.com/help/uav/}
+  {Tools for UAV scenario simulation, coordinate transformations and flight-log analysis.}
+
+\Resource
+  {JSBSim flight dynamics model}
+  {https://jsbsim.sourceforge.net/}
+  {Open-source six-degree-of-freedom flight dynamics engine used by several simulators; useful for cross-checking an in-house model.}
+
+\Resource
+  {ArduPilot Methodic Configurator}
+  {https://github.com/ArduPilot/MethodicConfigurator}
+  {A structured, documented workflow for configuring a new ArduPilot aircraft parameter by parameter, with reasons recorded.}
+
+\Resource
+  {MAVLink developer guide}
+  {https://mavlink.io/en/}
+  {The message protocol between autopilot, ground station and companion computers; read it before defining an interface.}
+
+\Resource
+  {PX4 ULog file format}
+  {https://docs.px4.io/main/en/dev_log/ulog_file_format.html}
+  {The structure of a PX4 flight log, needed when writing log-processing scripts.}
+
+\Resource
+  {pyulog - PX4 log parsing in Python}
+  {https://github.com/PX4/pyulog}
+  {Python library for reading ULog files into dataframes for analysis and plotting.}
+
+\subsection{Useful search terms}
+\begin{itemize}
+  \item fixed-wing flight dynamics stability and control
+  \item aircraft equations of motion six degree of freedom
+  \item trim and linearisation longitudinal lateral modes
+  \item short period phugoid Dutch roll spiral mode
+  \item total energy control system TECS fixed wing
+  \item L1 adaptive path following UAV
+  \item control allocation aircraft
+  \item extended Kalman filter attitude estimation UAV
+  \item pitot static airspeed calibration UAV
+  \item PX4 fixed-wing tuning guide
+  \item ArduPilot plane tuning and failsafe
+  \item software in the loop and hardware in the loop autopilot
+\end{itemize}
+
+\subsection{Start this week}
+\begin{itemize}
+  \item Read the flight-mechanics and reference-frame sections of this guide and write a one-page explanation in your own words.
+  \item Open the team's simulation and run one case; change a single parameter and explain what changed.
+  \item Bring up the reference stack in SITL and fly one simulated flight, then find that flight in the log.
+  \item Review one interface in Section 9 and write down what is undefined about it.
+  \item Upload your editable source and evidence, then present one unresolved question and the next test that would reduce the uncertainty.
+\end{itemize}
+
+\end{document}
