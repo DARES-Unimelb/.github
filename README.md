@@ -8,6 +8,6 @@ This repository contains the long-term project structure and short-term mid-seme
 
 Overall project goals, system structure, and team responsibilities.
 
-### [Midterm Tasks](docs/electronics/project-structure/midterm/)
+### [Midterm Tasks](docs/electronics/midterm%20task/)
 
 Short-term tasks and deliverables for the mid-semester period.
