@@ -1,0 +1,46 @@
+function rep = sim_lib_report()
+% SIM_LIB_REPORT Check that every library block the builders add exists.
+%
+%   rep = sim_lib_report()
+%   rep.missing  cell array of library paths that could not be resolved
+%   rep.count    number of library paths checked
+%
+% add_block fails with a generic message when a library path is wrong, and on a
+% shared session a failed build costs a whole job. Checking the paths up front
+% turns that into one precise line in the build report. Reports whether each
+% block's BlockType resolves, which is what add_block needs.
+
+paths = { ...
+   'simulink/Sources/In1', ...
+   'simulink/Sinks/Out1', ...
+   'simulink/Sources/Constant', ...
+   'simulink/Sources/From Workspace', ...
+   'simulink/User-Defined Functions/Level-2 MATLAB S-Function', ...
+   'simulink/Signal Routing/Demux', ...
+   'simulink/Signal Routing/Mux', ...
+   'simulink/Signal Routing/Switch', ...
+   'simulink/Math Operations/Gain', ...
+   'simulink/Math Operations/Sum', ...
+   'simulink/Discontinuities/Saturation', ...
+   'simulink/Discrete/Discrete-Time Integrator', ...
+   'simulink/Discrete/Discrete Transfer Fcn', ...
+   'simulink/Ports & Subsystems/Subsystem'};
+
+rep = struct('checked', numel(paths), 'missing', {{}}, 'types', {{}});
+% The Simulink library must be loaded before a block path can be resolved;
+% without this every path reports as invalid.
+try
+   load_system('simulink');
+catch err
+   rep.missing{end + 1} = sprintf('load_system(''simulink''): %s', err.message);
+   return;
+end
+for k = 1:numel(paths)
+   try
+      bt = get_param(paths{k}, 'BlockType');
+      rep.types{end + 1} = sprintf('%s -> %s', paths{k}, bt);
+   catch err
+      rep.missing{end + 1} = sprintf('%s (%s)', paths{k}, err.message); %#ok<AGROW>
+   end
+end
+end

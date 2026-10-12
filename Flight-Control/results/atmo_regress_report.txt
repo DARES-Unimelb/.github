@@ -1,0 +1,87 @@
+UACS twin: rev 9 against rev 10 plant baseline, before and after
+generated 2026-10-10 15:38:08, MATLAB 24.1.0.2653294 (R2024a) Update 5
+before C:\Ash\Projects\DARES_UACS\MATLAB\results\atmo_before_plant_baseline.mat, params rev 9
+after  C:\Ash\Projects\DARES_UACS\MATLAB\results\plant_baseline.mat, params rev 10
+criterion: every rev 9 design number must be identical, not merely close
+
+[trims]
+  point    quantity                      rev 9             rev 10   difference
+  cruise   alpha_deg           -0.303253629813    -0.303253629813    0.000e+00
+  cruise   theta_deg           -0.303253629813    -0.303253629813    0.000e+00
+  cruise   de_deg              -0.811542051406    -0.811542051406    0.000e+00
+  cruise   throttle             0.430065225287     0.430065225287    0.000e+00
+  cruise   residual_norm_max     0.000000000000     0.000000000000    0.000e+00
+  cruise   qbar               382.812500000000   382.812500000000    0.000e+00
+  cruise   CL                   0.188538849981     0.188538849981    0.000e+00
+  cruise   CD                   0.033219464752     0.033219464752    0.000e+00
+  cruise   rho                  1.225000000000     1.225000000000    0.000e+00
+  cruise   x_star max                                                0.000e+00
+  cruise   u_star max                                                0.000e+00
+  cruise   residual max                                              0.000e+00
+  climb    alpha_deg            0.369364117762     0.369364117762    0.000e+00
+  climb    theta_deg            6.369364117762     6.369364117762    0.000e+00
+  climb    de_deg              -3.438764899248    -3.438764899248    0.000e+00
+  climb    throttle             0.729613896065     0.729613896065    0.000e+00
+  climb    residual_norm_max     0.000000000000     0.000000000000    0.000e+00
+  climb    qbar               324.012500000000   324.012500000000    0.000e+00
+  climb    CL                   0.220952189547     0.220952189547    0.000e+00
+  climb    CD                   0.034873750996     0.034873750996    0.000e+00
+  climb    rho                  1.225000000000     1.225000000000    0.000e+00
+  climb    x_star max                                                0.000e+00
+  climb    u_star max                                                0.000e+00
+  climb    residual max                                              0.000e+00
+  slow     alpha_deg            2.971291074235     2.971291074235    0.000e+00
+  slow     theta_deg            2.971291074235     2.971291074235    0.000e+00
+  slow     de_deg             -11.854496125419   -11.854496125419    0.000e+00
+  slow     throttle             0.152463984128     0.152463984128    0.000e+00
+  slow     residual_norm_max     0.000000000000     0.000000000000    0.000e+00
+  slow     qbar               198.450000000000   198.450000000000    0.000e+00
+  slow     CL                   0.361086642640     0.361086642640    0.000e+00
+  slow     CD                   0.043694116668     0.043694116668    0.000e+00
+  slow     rho                  1.225000000000     1.225000000000    0.000e+00
+  slow     x_star max                                                0.000e+00
+  slow     u_star max                                                0.000e+00
+  slow     residual max                                              0.000e+00
+
+[limits and envelope]
+  V_stall_mps              rev 9    9.408318618   rev 10    9.408318618   difference  0.000e+00
+  V_min_stall_mps          rev 9   11.289982341   rev 10   11.289982341   difference  0.000e+00
+  V_min_trim_mps           rev 9   15.466467447   rev 10   15.466467447   difference  0.000e+00
+  V_min_mps                rev 9   15.466467447   rev 10   15.466467447   difference  0.000e+00
+  V_max_mps                rev 9   30.000000000   rev 10   30.000000000   difference  0.000e+00
+  V_top_thrust_limited_mps rev 9   30.966467447   rev 10   30.966467447   difference  0.000e+00
+  V_mc_mps (recomputed)    rev 9   24.452667244   rev 10   24.452667244   difference  0.000e+00
+  static margin (fraction) rev 9    0.686356364   rev 10    0.686356364   difference  0.000e+00
+  sweep V_trim_min_mps     rev 9   16.000000000   rev 10   16.000000000   difference  0.000e+00
+
+[linearisation and modes]
+  max|A rev 10 - A rev 9| 0.000e+00
+  max|B rev 10 - B rev 9| 0.000e+00
+  longitudinal long_real_1    lambda rev 9 -53.490489261+0.000000000i, rev 10 -53.490489261+0.000000000i, difference 0.000e+00
+  longitudinal long_real_2    lambda rev 9 -24.363472036+0.000000000i, rev 10 -24.363472036+0.000000000i, difference 0.000e+00
+  longitudinal short_period   lambda rev 9 -0.095321803+0.420871584i, rev 10 -0.095321803+0.420871584i, difference 0.000e+00
+  lateral      roll_subsidence lambda rev 9 -94.558432712+0.000000000i, rev 10 -94.558432712+0.000000000i, difference 0.000e+00
+  lateral      dutch_roll     lambda rev 9 -11.900230145+8.071326886i, rev 10 -11.900230145+8.071326886i, difference 0.000e+00
+  lateral      spiral         lambda rev 9 -0.104705610+0.000000000i, rev 10 -0.104705610+0.000000000i, difference 0.000e+00
+
+[parameter struct]
+  9 leaves differ between the two parameter sets, all of them accounted for 1
+    P.env.T_sl                               rev 9 absent                   rev 10 present
+    P.env.p_sl                               rev 9 absent                   rev 10 present
+    P.env.L_isa                              rev 9 absent                   rev 10 present
+    P.env.R_air                              rev 9 absent                   rev 10 present
+    P.env.gamma_air                          rev 9 absent                   rev 10 present
+    P.env.h_trop_m                           rev 9 absent                   rev 10 present
+    P.atmo.model                             rev 9 absent                   rev 10 present
+    P.atmo.h_from_state                      rev 9 absent                   rev 10 present
+    P.meta.revision                          rev 9 9                        rev 10 10
+
+[verdict]
+  trims identical            PASS (max difference 0.000e+00)
+  limits identical           PASS (max difference 0.000e+00)
+  V_min_trim_mps             15.466467447394 against 15.466467447394
+  V_mc_mps                   24.452667244336 against 24.452667244336
+  static margin              0.686356364178 against 0.686356364178
+  modes identical            PASS (max difference 0.000e+00)
+  A and B identical          PASS (0.000e+00, 0.000e+00)
+  params rev 9 -> 10, 9 changed leaves, overall PASS

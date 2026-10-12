@@ -1,0 +1,12 @@
+z_cg 0.018450
+z_arm_motor_minus_cg -0.118450
+z_thrust_offset -0.280000
+T_static_max 109.9821  P_shaft_peak 5016.00  disk_area 0.129717
+cruise CL 0.232885 CD 0.032967 LD 7.0641 D 27.7646 T 27.7646 Pelec 1153.17 Ppermotor 576.58
+endurance E_Wh 384.39 pack_Wh 480.49 pack_kg 2.402 frac 0.1201
+throttle_cruise 0.2285 headroom 0.2285 d_eff 0.2285 limiting throttle headroom
+yaw_rudder 146.255 yaw_diff 45.238 ratio 0.3093 yaw_at_cap 118.781 ratio_at_cap 0.8122
+engine_out_yaw 98.984 V_mc 20.5668 vs_stall 1.9660 vs_cruise 0.8227 pitch_moment 30.795 pitch_ratio 0.3378
+V_stall 10.4613 static_margin_frac 0.09841 x_np_minus_ref 0.04490
+modes sp 6.3863 roll_tau 0.0152 dr 9.9308
+PROBE_DONE

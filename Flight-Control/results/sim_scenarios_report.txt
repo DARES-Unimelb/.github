@@ -1,0 +1,47 @@
+UACS Simulink scenario report
+generated     2026-10-11 03:27:56
+parameters    0.5.0 (b 3.400 m, S 2.3120 m^2, m 17.00 kg, cruise 25.0 m/s)
+design        trim deliverable, lin deliverable, pid deliverable, lqr deliverable
+plant         eom_6dof
+
+[V9 5 m/s crosswind, level flight]
+duration            30.0 s
+phi tail mean       0.0000 deg
+phi max             0.0000 deg
+phi max after 30%   0.0000 deg
+beta tail mean      0.0000 deg (crab angle held into the wind)
+beta max            0.0000 deg
+heading range       0.00 .. 0.00 deg
+east drift rate     0.0000 m/s (wind 5.0 m/s)
+drift residual max  0.0000 m after removing wind*t
+altitude residual   2.2262 m against the no wind run
+surface max         0.000 deg
+surface max         2.486 deg
+surface max         0.000 deg
+diverged            0
+
+[V10 step size independence]
+command window      8.0 s, pitch doublet and throttle step
+ode4                fixed step 0.00250 s, 3201 samples
+ode45               RelTol 1.0e-08, AbsTol 1.0e-10, 3883 samples
+common time base    ode4 grid, 0.00250 s
+interpolation       pchip for the criterion, linear reported for sensitivity
+state        max_diff            ptp  rel_ptp_pchip    rel_ptp_lin      rel_scale
+u           1.060e-02      1.197e+00      8.853e-03      8.853e-03      4.240e-04
+v           0.000e+00      0.000e+00      0.000e+00      0.000e+00      0.000e+00
+w           1.790e-03      3.325e+00      5.384e-04      5.384e-04      7.161e-05
+p           0.000e+00      0.000e+00      0.000e+00      0.000e+00      0.000e+00
+q           1.471e-02      1.092e+00      1.347e-02      1.347e-02      1.471e-02
+r           0.000e+00      0.000e+00      0.000e+00      0.000e+00      0.000e+00
+phi         0.000e+00      0.000e+00      0.000e+00      0.000e+00      0.000e+00
+theta       6.112e-05      3.246e-01      1.883e-04      1.883e-04      6.112e-05
+psi         0.000e+00      0.000e+00      0.000e+00      0.000e+00      0.000e+00
+pn          6.541e-04      2.001e+02      3.269e-06      3.269e-06      4.360e-06
+pe          0.000e+00      0.000e+00      0.000e+00      0.000e+00      0.000e+00
+pd          1.089e-04      4.147e+00      2.626e-05      2.626e-05      7.260e-07
+max rel to peak-to-peak   1.346555e-02  (state q)
+max rel to reference scale 1.471062e-02 (state q)
+criterion V10: max rel to peak-to-peak < 0.01 -> 0
+
+[V12 cross validation]
+Aerospace Blockset 24.1 is present; enable this case

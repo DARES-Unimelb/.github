@@ -1,0 +1,85 @@
+== 1. mass, geometry, inertia (independent recompute) ==
+mass sum            20.000000 kg   P.mass.m 20.000000   diff 0.00e+00
+x_cg -0.009225  y_cg +0.000000  z_cg +0.018450 m
+b 3.4000 m (limit 3.50)  S 1.993103 m2  cbar 0.586207 m  AR 5.800
+Vh 0.450627  Vv 0.158266
+Ixx_cg 1.9859  Iyy_cg 4.5429  Izz_cg 5.8069  Ixz_cg -0.08240 kg m2
+z_motor - z_cg -0.118450 m  (thrust line above CG)
+
+== 2. propulsion, momentum theory ==
+P_shaft_peak 2926.000 W   disk area 0.129717 m2   P_ideal full 1609.3000 W
+T_static_max 93.71572 N per motor   thrust/weight 0.95563
+  V     T_full      v_i     P_bal      FM_impl
+  0   93.71572  17.1721  1609.3000  0.550000
+  5   84.65131  14.0109  1609.3000  0.550000
+ 10   75.79441  11.2324  1609.3000  0.550000
+ 15   67.39139   8.8799  1609.3000  0.550000
+ 20   59.68220   6.9645  1609.3000  0.550000
+ 25   52.83609   5.4583  1609.3000  0.550000
+ 30   46.91385   4.3033  1609.3000  0.550000
+ 35   41.87732   3.4289  1609.3000  0.550000
+ 40   37.62825   2.7684  1609.3000  0.550000
+ 45   34.04733   2.2666  1609.3000  0.550000
+power balance spread 9.095e-13 W
+implied FM spread    3.331e-16
+V=0 thrust vs throttle exponent 0.444444  (contract 4/9 = 0.444444)
+V=0 thrust vs shaft power exponent 0.666667  (2/3 = 0.666667)
+V=25 thrust vs throttle 0.5787, vs shaft power 0.8681
+V=45 thrust vs throttle 0.6375, vs shaft power 0.9562
+
+== 3. cruise operating point ==
+q 382.8125 Pa   CL 0.257060   CD 0.034649   L/D 7.4189
+drag 26.4370 N   P_shaft 660.924 W   P_elec 1098.027 W   per motor 549.013 W
+throttle to hold cruise 0.101929
+V_stall 10.9909 m/s   V_min 13.1890 m/s   V_max 40.0
+predicted trim alpha 0.4566 deg (CL/CL_alpha linearisation)
+
+== 4. control authority at cruise ==
+Cn_beta 0.118700  Cn_r -0.237400  Cn_dr -0.028488
+Cl_p -0.387500  Cl_da 0.041200
+rudder  yaw   32.2458 N m
+aileron roll  46.6347 N m
+elevator pitch 103.2667 N m
+rudder side-force cross-check: 9.4841 N x 1.95 m = 18.4939 N m
+d_cap 0.600  d_headroom 0.101929  d_eff 0.101929
+differential: T_hi 20.3846 T_lo 0.0000 dT 20.3846 N  yaw 18.3461 N m  ratio to rudder 0.5689
+linear law T=T_static*throttle would give dT 19.1047 N, yaw 17.1942 N m, ratio 0.5332  (rel diff -6.28 %)
+total thrust with the split: 20.3846 N vs commanded 26.4370 N
+engine out: T_asym 93.7157 N  yaw 84.3442 N m  ratio to rudder 2.6157
+V_mc 40.4325 m/s  = 1.617 x cruise, 3.679 x stall, 1.011 x V_max
+
+== 5. derived-value consistency checks ==
+CL_de stored 0.353000 vs stated formula 0.6*CL_alpha*Sh/S = 0.377953  rel diff -6.60 %
+Cm_alpha -2.075417 (no downwash) vs -1.237250 (downwash factor 0.6)
+Cm_de -0.529147   CL_de/Vh/lh/cbar chain consistent: True
+analytic short-period 14.2945 rad/s (V4 window 2..8)
+analytic roll subsidence tau 0.0291 s (V4 window < 1 s)
+analytic Dutch roll 7.2820 rad/s
+
+== 6. comparison against the numbers reported by Lead ==
+OK  CL_cruise          mine     0.257060  lead     0.257000  rel   0.023 %
+OK  CD_cruise          mine     0.034649  lead     0.034650  rel   0.002 %
+OK  LD_cruise          mine     7.418891  lead     7.420000  rel   0.015 %
+OK  q_cruise           mine   382.812500  lead   383.000000  rel   0.049 %
+OK  T_req              mine    26.436970  lead    26.440000  rel   0.011 %
+OK  P_elec             mine  1098.026730  lead  1098.000000  rel   0.002 %
+OK  throttle_cruise    mine     0.101929  lead     0.102000  rel   0.070 %
+OK  T_static           mine    93.715723  lead    93.716000  rel   0.000 %
+OK  T_full_25          mine    52.836094  lead    52.836000  rel   0.000 %
+OK  twr_static         mine     0.955634  lead     0.956000  rel   0.038 %
+OK  rudder_Nm          mine    32.245810  lead    32.250000  rel   0.013 %
+OK  aileron_Nm         mine    46.634729  lead    46.630000  rel   0.010 %
+OK  elevator_Nm        mine   103.266690  lead   103.270000  rel   0.003 %
+DIFF diff_Nm            mine    18.346121  lead    17.190000  rel   6.726 %
+OK  engine_out_Nm      mine    84.344151  lead    84.340000  rel   0.005 %
+OK  V_mc               mine    40.432524  lead    40.430000  rel   0.006 %
+OK  P_ideal_full       mine  1609.300000  lead  1609.300000  rel   0.000 %
+OK  exp_throttle_V0    mine     0.444444  lead     0.444444  rel   0.000 %
+OK  exp_power_V0       mine     0.666667  lead     0.666667  rel   0.000 %
+OK  exp_power_V25      mine     0.868076  lead     0.890000  rel   2.463 %
+OK  exp_power_V45      mine     0.956244  lead     0.970000  rel   1.418 %
+DIFF V_stall            mine    10.990857  lead    13.900000  rel  20.929 %
+DIFF V_min              mine    13.189028  lead    16.700000  rel  21.024 %
+mismatches: 3
+
+RECOMPUTE_DONE

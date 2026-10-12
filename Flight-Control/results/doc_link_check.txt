@@ -1,0 +1,121 @@
+UACS 文档引用验活记录
+日期 2026-10-08
+负责人 ash-docs (task-4)
+
+一、验活通道说明
+- 工具 web_fetch 对 www.mathworks.com 返回 HTTP 403，正文为 Akamai 的 Access Denied 页。同一工具对 https://example.com/ 返回 200，说明是目标站按 User-Agent 拒绝，不是网络不通。
+- 因此 MathWorks 域名的验活改走本目录 _doc_urlcheck.mjs，使用浏览器 User-Agent、follow 重定向、记录 HTTP 状态与去标签后的正文长度。同一批地址当天可重复得到相同状态。
+- 结论只以上述通道的 HTTP 200 且正文长度大于 2000 字符为准。仅 200 但正文极短的不算验活通过。
+
+二、本报告实际引用的地址（全部为 200）
+
+200  https://www.mathworks.com/help/control/ref/lti.lqr.html                                    lqr 参考页
+200  https://www.mathworks.com/help/control/ref/ss.lqi.html                                    lqi 参考页
+200  https://www.mathworks.com/help/control/ref/ss.lqry.html                                   lqry 参考页
+200  https://www.mathworks.com/help/control/ref/ss.lqg.html                                    lqg 参考页
+200  https://www.mathworks.com/help/simulink/slref/pidcontroller.html                          PID Controller 块
+200  https://www.mathworks.com/help/simulink/ug/choose-a-solver.html                           Choose a Solver
+200  https://www.mathworks.com/help/simulink/ug/compare-solvers.html                           Compare Solvers
+200  https://www.mathworks.com/help/simulink/ug/fixed-step-solvers-in-simulink.html            Fixed-Step Solvers in Simulink
+200  https://www.mathworks.com/help/simulink/slref/discretetimeintegrator.html                 Discrete-Time Integrator
+200  https://www.mathworks.com/help/simulink/slref/sim.html                                    sim
+200  https://www.mathworks.com/help/simulink/slref/save_system.html                            save_system
+200  https://www.mathworks.com/help/simulink/slref/new_system.html                             new_system
+200  https://www.mathworks.com/help/simulink/slref/add_block.html                              add_block
+200  https://www.mathworks.com/help/simulink/slref/add_line.html                               add_line
+200  https://www.mathworks.com/help/simulink/slref/simulink.simulationinput.html               Simulink.SimulationInput
+200  https://www.mathworks.com/help/slcontrol/ug/linearize.html                                linearize
+200  https://www.mathworks.com/help/slcontrol/ug/findop.html                                   findop
+200  https://www.mathworks.com/help/slcontrol/ug/operspec.html                                 operspec
+200  https://www.mathworks.com/help/slcontrol/ug/linio.html                                    linio
+200  https://www.mathworks.com/help/optim/ug/fmincon.html                                      fmincon
+200  https://www.mathworks.com/help/matlab/ref/ode45.html                                      ode45
+200  https://www.mathworks.com/help/aeroblks/6dofeulerangles.html                              6DOF (Euler Angles)
+200  https://www.mathworks.com/help/aeroblks/6dofquaternion.html                               6DOF (Quaternion)
+200  https://www.mathworks.com/help/aeroblks/equations-of-motion-2.html                        Equations of Motion
+200  https://www.mathworks.com/help/aeroblks/coordinate-systems.html                           Coordinate Systems
+200  https://www.mathworks.com/help/aeroblks/drydenwindturbulencemodelcontinuous.html          Dryden Wind Turbulence Model (Continuous)
+
+三、验证为失效、已从报告与引用中排除的地址
+
+404  https://www.mathworks.com/help/control/ref/ss.lqr.html
+404  https://www.mathworks.com/help/control/ref/lqr.html
+404  https://www.mathworks.com/help/control/ug/linear-quadratic-regulator.html
+404  https://www.mathworks.com/help/simulink/ug/solver-behavior.html
+404  https://www.mathworks.com/help/simulink/gui/ode4.html
+404  https://www.mathworks.com/help/aeroblks/atmosphereisa.html
+404  https://www.mathworks.com/help/slcontrol/ref/findop.html
+404  https://www.mathworks.com/help/slcontrol/ref/operspec.html
+404  https://www.mathworks.com/help/slcontrol/ref/linearize.html
+
+替代关系（替代地址均已在上节单独验活为 200，写法为失效地址，替代地址）
+- /help/control/ref/ss.lqr.html 与 /help/control/ref/lqr.html，替代为 /help/control/ref/lti.lqr.html
+- /help/slcontrol/ref/findop.html，替代为 /help/slcontrol/ug/findop.html
+- /help/slcontrol/ref/operspec.html，替代为 /help/slcontrol/ug/operspec.html
+- /help/slcontrol/ref/linearize.html，替代为 /help/slcontrol/ug/linearize.html
+- /help/simulink/gui/ode4.html，替代为 /help/simulink/ug/fixed-step-solvers-in-simulink.html
+- /help/control/ug/linear-quadratic-regulator.html，暂无已验证替代，不引用
+- /help/aeroblks/atmosphereisa.html，暂无已验证替代，不引用
+
+四、对 docs/pages 预抓取页面的状态复核（供调研稿整合使用）
+
+复核方法：读每个 .txt 头三行的 URL 与 STATUS 字段，不重新抓取。
+共 63 个页面，其中 404 共 24 个。下列地址在预抓取时就是 404，任何调研稿都不得引用。
+
+404  /help/control/ref/lqr.html
+404  /help/control/ref/ss.lqr.html
+404  /help/control/ref/state-space-model.html
+404  /help/control/ug/extended-lqr-and-lqg-design.html
+404  /help/control/ug/linear-quadratic-regulator.html
+404  /help/simulink/slref/simulationinput.html
+404  /help/simulink/ug/check-and-improve-simulation-accuracy.html
+404  /help/simulink/ug/choose-and-configure-a-solver.html
+404  /help/simulink/ug/fixed-step-solver-selection.html
+404  /help/simulink/ug/run-simulations-in-parallel.html
+404  /help/simulink/ug/solver-behavior.html
+404  /help/simulink/ug/solver-types.html
+404  /help/slcontrol/ref/findop.html
+404  /help/slcontrol/ref/linearize.html
+404  /help/slcontrol/ref/operspec.html
+404  /help/slcontrol/ug/choose-operating-point-search-method.html
+404  /help/slcontrol/ug/compute-operating-point-for-simulink-model.html
+404  /help/slcontrol/ug/compute-operating-points-for-simulink-models.html
+404  /help/slcontrol/ug/linearization-basics.html
+404  /help/slcontrol/ug/linearize-simulink-model-at-operating-point.html
+404  /help/slcontrol/ug/operating-point-objects.html
+404  /help/slcontrol/ug/trim.html
+404  /help/slcontrol/ug/trimming-mechanical-systems.html
+404  /help/slcontrol/ug/trimoptions.html
+404  /help/slcontrol/ug/using-operating-points.html
+
+已验活的替代地址（上一节全部为 200）
+- /help/slcontrol/ug/findop.html
+- /help/slcontrol/ug/operspec.html
+- /help/slcontrol/ug/linearize.html
+- /help/simulink/ug/fixed-step-solvers-in-simulink.html
+- /help/simulink/slref/simulink.simulationinput.html
+- /help/simulink/ug/compare-solvers.html
+
+未找到已验证替代、因此不得引用的主题
+- 状态空间模型总览页
+- 扩展 LQR 与 LQG 设计页
+- 配平机械系统页与 trimoptions 页
+- 工作点对象页与工作点使用页
+- 并行仿真页
+- 求解器行为页与求解器类型页
+
+五、非 MathWorks 域名的候选引用（未采用）
+
+预抓取目录里另有若干第三方地址，均为预抓取者自用，本次报告不引用，故未逐个验活：
+github.com/byu-magicc/mavsim_public、raw.githubusercontent.com、underactuated.mit.edu、wpage.unina.it、mathworks.com/matlabcentral/answers/230343。
+
+六、本地地址
+
+本记录只覆盖外部 URL。项目内部路径不作为引用验活对象，由 acceptance_report.md 逐个核对存在性与时间戳。
+
+七、文件位置（2026-10-10 整理后）
+
+- 验活脚本与原始输出移到 `docs/_scratch/evidence/`：`_doc_urlcheck.mjs`、`_doc_urlcheck.tsv`、`_urlcheck_run1.txt`、`_urlcheck_run2.txt`、`_urlcheck_run3.txt`。
+- 预抓取的网页、PDF、原始源码移到 `docs/_scratch/` 下的 `pages/`、`pdfs/`、`pdftxt/`、`raw/`。
+- 一次性抓取脚本移到 `docs/_scratch/`，`probe1.html` 已删除。
+- 本记录与 `results/doc_recompute.txt` 是验活与复算的正式证据，保留在 `results/` 下。

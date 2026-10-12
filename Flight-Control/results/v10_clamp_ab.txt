@@ -1,0 +1,6 @@
+P 0.5.0 rev 11, design branch deliverable_mats
+configuration                   max_rel_ptp    rel_scale  worst_state  clamp activity
+A rev 11 as shipped              1.3466e-02   1.4711e-02            q  3 samples at a rate clamp
+B rate clamps widened to 10*bw   1.3466e-02   1.4712e-02            q  0 samples at a rate clamp
+C integral clamps narrowed to int_limit   1.3466e-02   1.4711e-02            q  3 samples at a rate clamp
+D both, the rev 10 controller    1.3466e-02   1.4712e-02            q  0 samples at a rate clamp

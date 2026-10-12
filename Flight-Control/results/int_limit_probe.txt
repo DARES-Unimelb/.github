@@ -1,0 +1,31 @@
+P 0.5.0 rev 11
+quantity                        model     linear sim    ratio
+theta integral bound      0.558505361    0.558505361   1.0000
+V integral bound         50.000000000   50.000000000   1.0000
+q_c command clamp         1.167830602    1.167830602   1.0000
+a ratio of 1.0 on every line is the point of this probe
+
+yout names: x_state, u_act, cmd, rate_cmd, M_cmd, T_cmd
+state matrix [4801 21]
+  sig  1  cols  1..12  max   212.23846874  uacs_manual_pid/plant/plant_eom
+  sig  2  cols 13..13  max     0.00000000  uacs_manual_pid/pid_phi/Ki
+  sig  3  cols 14..14  max     0.00000000  uacs_manual_pid/pid_phi/Kd
+  sig  4  cols 15..15  max     0.00000000  uacs_manual_pid/pid_h/Ki
+  sig  5  cols 16..16  max     0.49715670  uacs_manual_pid/pid_theta/Ki
+  sig  6  cols 17..17  max     0.00000000  uacs_manual_pid/pid_p/Ki
+  sig  7  cols 18..18  max     0.00000000  uacs_manual_pid/pid_q/Ki
+  sig  8  cols 19..19  max     0.00000000  uacs_manual_pid/pid_r/Ki
+  sig  9  cols 20..20  max    50.00000000  uacs_manual_pid/pid_V/Ki
+  sig 10  cols 21..21  max     8.26250200  uacs_manual_pid/pid_V/Kd
+
+--- measured behaviour on a full pitch stick at t = 2 s ---
+rate_cmd |q_c| peak 1.167831; at the 1.167831 clamp on 152 of 4801 samples
+rate_cmd |p_c| peak 0.000000
+theta peak 30.929087 deg against a 30.000000 deg command
+theta_c command peak 30.000000 deg
+elevator reach 25.000000 deg of a 25.000000 deg limit, pinned on 1549 samples
+
+Isat moved to 0.139626340: largest state change 1.757e+00 at column 10
+  that column is uacs_manual_pid/plant/plant_eom
+  its max was 208.978501192 with Isat 0.558505361
+  its max is  210.708134492 with Isat 0.139626340

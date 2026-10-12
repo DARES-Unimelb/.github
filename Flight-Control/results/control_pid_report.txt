@@ -1,0 +1,82 @@
+UACS twin: PID cascade design report (V6)
+generated 11-Oct-2026 03:01:43 by control/uacs_job_control_design.m
+parameter set rev 11, P 0.5.0
+design rules: Kp from unit loop magnitude at the P.ctrl.bw crossover; integral zero at 0.5*wc for a plant with a pole at the origin and 0.2*wc otherwise
+D filter time constant 0.0100 s, anti-windup back-calculation gain 1.00
+  aileron 0.0450 s, elevator 0.0450 s, rudder 0.0450 s, ESC 0.0600 s
+
+--- gains, u = Kp*e + Ki*int(e) + Kd*Df(e), signs already folded in ---
+p      Kp    +0.760746  Ki    +0.000000  Kd    +0.000000  Tf 0.0100  Kb 1.00  wc_target 10.00  sign +1 surface_limit 0.43633
+q      Kp    -0.863454  Ki    +0.000000  Kd    +0.000000  Tf 0.0100  Kb 1.00  wc_target 10.00  sign -1 surface_limit 0.43633
+r      Kp    -0.896236  Ki    +0.000000  Kd    +0.000000  Tf 0.0100  Kb 1.00  wc_target 10.00  sign -1 surface_limit 0.43633
+phi    Kp    +5.938286  Ki    +0.000000  Kd    +0.098971  Tf 0.0300  Kb 1.00  wc_target 3.00  sign +1 err_limit 0.26180 state_clamp 0.69813
+theta  Kp    +4.198453  Ki    +0.748481  Kd    +0.000000  Tf 0.0100  Kb 1.00  wc_target 2.50  sign +1 err_limit 0.17453 state_clamp 0.55851
+V      Kp   +16.959350  Ki   +12.093735  Kd   +30.234337  Tf 0.0100  Kb 1.00  wc_target 0.80  sign +1 err_limit 5.00000 state_clamp 50.00000
+h      Kp    +0.016092  Ki    +0.000000  Kd    +0.000000  Tf 0.0100  Kb 1.00  wc_target 0.40  sign +1 err_limit 20.00000 state_clamp 400.00000
+
+--- where the search had to give ground for stability ---
+loop   kp_nominal    kp_used     scale    zf_nom   zf_used gain_red int_red
+p         0.76075    0.76075       n/a       n/a       n/a    n/a    n/a
+q         0.86345    0.86345       n/a       n/a       n/a    n/a    n/a
+r         0.89624    0.89624       n/a       n/a       n/a    n/a    n/a
+phi       5.93829    5.93829       n/a       n/a       n/a    n/a    n/a
+theta     4.19845    4.19845       n/a       n/a       n/a    n/a    n/a
+V        16.95935   16.95935       n/a       n/a       n/a    n/a    n/a
+h         0.01609    0.01609       n/a       n/a       n/a    n/a    n/a
+kp_nominal is the value the crossover rule asks for, kp_used what the loop was
+designed with after the closed-loop stability search. A scale below one means the
+roll attitude gain had to come down to keep the spiral pole inside the left half
+plane, which is expected: that loop cancels the dihedral effect the spiral needs.
+
+--- per loop margins and step metrics, loop closed through the actuator lag ---
+loop         gm    gm_dB   pm_deg      dm_s    rise_s  over_pct  bw_rad_s wcp_rad_s    wc_tgt
+p           Inf      Inf    155.9       NaN       NaN       NaN       NaN     9.996     10.00
+q           Inf      Inf    184.9       NaN       NaN       NaN       NaN     1.926     10.00
+r         2.507     7.98     95.6       NaN       NaN       NaN       NaN     0.196     10.00
+phi      30.301    29.63     90.2       NaN    0.7570      0.00     3.004     3.018      3.00
+theta    33.680    30.55     87.8       NaN    0.9433      0.98     2.179     2.107      2.50
+V           Inf      Inf    110.5       NaN    3.2355      0.00     0.844    23.754      0.80
+h       275.480    48.80     84.2       NaN    4.9501      0.82     0.464     0.400      0.40
+rise_s is the 10-90 percent rise time of the closed loop, over_pct its overshoot,
+dm_s the delay margin in seconds, bw_rad_s the closed-loop -3 dB bandwidth,
+wcp_rad_s the achieved crossover and wc_tgt the crossover the design aimed at.
+The rate loops are near differentiators, so bw_rad_s is NaN for them by construction
+and the separation check reads wcp_rad_s instead.
+
+--- cascade separation, outer bandwidth over the inner it commands ---
+phi/p        0.300  (target 0.300)
+theta/q      1.131  (target 0.250)
+V/q          0.438  (target 0.080)
+h/theta      0.213  (target 0.160)
+h/V          0.550  (target 0.500)
+separation verdict (every ratio below 0.5): 0
+at or above the limit: theta/q 1.131, h/V 0.550
+a ratio at or above one means the outer loop is faster than its inner loop, which is
+a design-margin defect and not an instability: the eigenvalue checks still pass.
+
+--- closed-loop step response on the linear model, controller at Ts_ctrl ---
+theta_c 5 deg : rise 1.0750 s (target 0.8800), overshoot 0.00 %, settled error 2.369e-03 rad
+V_c +3 m/s    : rise 2.9325 s (target 2.7500), overshoot 7.09 %, settled error -2.220e-03 m/s
+h_c +20 m     : rise 4.4525 s (target 5.5000), overshoot 0.32 %, settled error 6.104e-03 m
+phi_c 20 deg  : rise 1.1200 s (target 0.7333), overshoot 1.00 %, settled error 2.578e-02 rad
+
+--- saturation and anti-windup, limits from P.act and P.prop ---
+theta_c 30 deg step: elevator saturated for 8.7 % of the run with anti-windup, 8.9 % without
+  with anti-windup: peak 0.5353 rad, overshoot 6.98 %, settling 5.035 s, max|int| 0.2935
+  without:         peak 0.5399 rad, overshoot 7.52 %, settling 5.152 s, max|int| 0.3086
+  the two arms differ by 0.004646 rad of pitch and 0.031781 of integral state; the state difference is the sensitive one and its detectability floor is 0.000056
+  the integral-state clamp holds the state on 0.00 % of the run; above 10.0 % the clamp is the anti-windup and the back-calculation is not, so it is a criterion too
+  state arms differ: 1, response arms differ: 1, clamp not binding: 1
+V_c -8 m/s step: throttle saturated for 95.5 % of the run with anti-windup, 98.0 % without
+  with anti-windup: undershoot 0.20 %, settling 19.988 s, max|int| 2.4312, clamp holds 0.00 % of the run
+  without:         undershoot 0.25 %, settling 20.000 s
+  the two arms differ by 0.004876 m/s of airspeed and 38.387051 of integral state; the state difference is the sensitive one
+  state arms differ: 1, response arms differ: 1, clamp not binding: 1
+
+--- coupling, measured on the linear closed loop ---
+pitch/yaw: a 20 deg bank command produces peak beta 4.225 deg and peak r 8.742 deg/s
+speed/height: a +20 m height command produces peak alpha excursion 4.477 deg and 2.175 m/s speed loss
+             a +3 m/s speed command produces 8.288 m height excursion
+handling: h drives theta_c and V drives thrust, the pairing that keeps the phugoid out of the
+altitude loop; the yaw loop is left on the pilot stick, coordination is not implemented in v1.
+V6 verdict: 0

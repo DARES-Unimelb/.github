@@ -1,0 +1,28 @@
+MATLAB 共享会话状态记录
+维护 ash-docs，最后更新 2026-10-10 15:20
+
+一、我这一侧观察到的会话故障（按时间）
+- 2026-10-08 18:01 锁被 owner=unknown 持有，job_sim_probe_mbfcn 只有开始行没有终态，会话实质卡死约两小时。证据 results/job_sim_probe_mbfcn.log 与 results/_matlab_lock/owner.json。
+- 2026-10-10 02:27 一次调用超时 11 分钟，锁为空、无作业日志、输出文件未生成。
+- 2026-10-10 03:23 一次调用超时 17 分钟，情况同上。
+- 2026-10-10 09:26 恢复后我成功跑完 run_job('plant_baseline')，用时 9.5 秒，产出 results/plant_baseline.mat。
+- 2026-10-10 09:31 同一作业在 1.7 秒内被 init 自检拦下，属于参数问题不是会话问题。
+- 2026-10-10 15:10 Lead 通报第四次卡死，连一行 disp 都超时。本轮我按第 8.3 节要求没有重试。
+
+二、我因此改成不依赖 MATLAB 的做法
+- rev 10 的全部数字改由独立 Python 实现复算：results/doc_recompute3.py 与 results/doc_recompute3.txt。
+- 复算内容含我自写的三未知量配平求解器，它把 rev 10 的巡航配平与 V_min_trim 复现到 9 位有效数字，可作为 MATLAB 恢复前的替代证据。
+
+三、会话恢复后我需要跑的，按优先级
+1. 复现 rev 10 的 plant 作业，把预测改成实测：
+   setenv('DSH_AGENT','ash-docs'); addpath(genpath('C:\Ash\Projects\DARES_UACS\MATLAB')); run_job('plant_baseline','owner','ash-docs')
+   判成功只看 results/job_plant_baseline.log 里的 === JOB DONE，并确认日志打印的 meta.revision 是 10。
+2. 用 results/plant_baseline.mat 独立回读配平点与特征值，核对我 Python 的 alpha -0.303254 / de -0.811542 / 油门 0.430065 与 V_min_trim 15.466467447。
+3. 核 control 与 sim 的落盘结果，补齐 V5 到 V11。
+
+四、如果会话再次卡死，请按这条判定
+「锁目录不存在或为空、没有任何 job_*.log 在增长、所有 MCP 请求都超时」三条同时成立，就是会话死了而不是排队。此时不要重试，写文件通报，等人工重启 MATLAB 桌面。
+
+五、会话重启后要顺手清掉的临时件
+- `results/_atmo_probe.txt`（0 字节）：ash-atmo 一次失败的探针调用留下了打开的文件句柄，MATLAB 释放前删不掉。属他自己的临时件，与判据无关，重启后删掉即可。
+- `results/_diag_job.log`、`results/_diag_vmax.log`、`results/v12_pre_test.txt`、`results/_atmo_probe.txt` 这类下划线或一次性前缀的文件都不进任何判据引用，清理时按此判定。

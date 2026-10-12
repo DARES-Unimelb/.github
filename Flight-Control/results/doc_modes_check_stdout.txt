@@ -1,0 +1,34 @@
+== independent check of the printed rev 10 linearisation ==
+method: characteristic-polynomial elementary symmetric functions from principal
+minors, against the same functions of the printed eigenvalues. For a 4x4 these
+four numbers determine the eigenvalues exactly; no re-linearisation is done.
+
+[A_long]  trace -78.04465000   det +242.68359393
+   e1: from matrix -7.80446500e+01+0.00e+00i   from printed eigenvalues -7.80446049e+01+0.00e+00i   rel 5.779e-07
+   e2: from matrix +1.31824238e+03+0.00e+00i   from printed eigenvalues +1.31824262e+03+0.00e+00i   rel 1.793e-07
+   e3: from matrix -2.62946765e+02+0.00e+00i   from printed eigenvalues -2.62947313e+02+1.11e-16i   rel 2.086e-06
+   e4: from matrix +2.42683594e+02+0.00e+00i   from printed eigenvalues +2.42683388e+02+7.11e-15i   rel 8.495e-07
+   worst relative mismatch 2.086e-06
+   max real part of printed eigenvalues -9.532180e-02
+
+[A_lat]  trace -118.46355000   det +2047.10227652
+   e1: from matrix -1.18463550e+02+0.00e+00i   from printed eigenvalues -1.18463599e+02+0.00e+00i   rel 4.103e-07
+   e2: from matrix +2.46968550e+03+0.00e+00i   from printed eigenvalues +2.46968886e+03+0.00e+00i   rel 1.360e-06
+   e3: from matrix -1.98083073e+04+0.00e+00i   from printed eigenvalues -1.98083640e+04+0.00e+00i   rel 2.861e-06
+   e4: from matrix +2.04710228e+03+0.00e+00i   from printed eigenvalues +2.04710685e+03-0.00e+00i   rel 2.232e-06
+   worst relative mismatch 2.861e-06
+   max real part of printed eigenvalues -1.047056e-01
+
+== short period identification ==
+single-derivative estimate sqrt(q*S*cbar*|Cm_alpha|/Iyy) = 26.797820 rad/s
+the two real roots of A_long are -53.490489 and -24.363472 rad/s;
+as an overdamped pair their equivalent natural frequency is sqrt(l1*l2) = 36.1001 rad/s
+that is within 34.7% of the estimate, which is the expected
+accuracy of a single-derivative form that omits the damping coupling; so the real
+pair is the short period and the 0.4315 rad/s oscillation is not.
+phugoid estimate sqrt(2)*g/V = 0.554748 rad/s vs the 0.431531 rad/s oscillation,
+same order, so the oscillation is the phugoid: wn 0.4315 rad/s, zeta 0.2209, 0.0687 Hz
+equivalent damping of the real pair (l1+l2)/(2*gm) = 1.0783, i.e. overdamped, so a damping-ratio criterion
+cannot be applied to it as written.
+
+MODES_CHECK_DONE
