@@ -11,3 +11,5 @@ Overall project goals, system structure, and team responsibilities.
 ### [Midterm Tasks](docs/electronics/midterm%20task/)
 
 Short-term tasks and deliverables for the mid-semester period.
+
+The technical archive section will be made public after the NFC competition.
