@@ -24,28 +24,27 @@ end
 fprintf('control design job on P %s rev %g, MATLAB %s\n', P.meta.version, ...
    p_rev, version('-release'));
 
-% ================= plant: trim, linearise, sizing budget =================
+%% Plant: trim, linearise, sizing budget
 trim = trim_cruise(P, P.op.cruise);
 assert(trim.exitflag > 0, 'trim failed');
 [lin, lin_info] = linearize_at(P, trim, struct('step', 1e-6, 'verbose', true));
 S = sizing_summary(P);
 
-% ================= designs =================
+%% Designs
 gains_lqr = design_lqr(P, lin);
 lqr_alt_theta = design_lqr(P, lin, struct('long_int_out', 'theta'));
 lqr_alt_beta = design_lqr(P, lin, struct('lat_int_out', 'beta'));
 gains_pid = design_pid(P, lin);
-% lin_contract returns the applied transform map only when it is asked for two
-% outputs; asking for one left mapm empty and the report stage failed on it.
+% lin_contract returns the applied transform map only when it is asked for two outputs
 [lc, mapm] = lin_contract(lin);
 
-% Snapshot right after the designs: if anything below fails, the gains are still
-% on disk and a second run does not have to redo trim, linearisation and design.
+% Snapshot right after the designs, so a failure below still leaves the gains on
+% disk and a second run does not have to redo trim, linearisation and design
 save(fullfile(resdir, 'control_design_snapshot.mat'), 'gains_lqr', 'gains_pid', ...
    'lqr_alt_theta', 'lqr_alt_beta', 'trim', 'S', 'lin', 'lc');
 fprintf('snapshot written after the design stage\n');
 
-% ================= V5: LQR =================
+%% V5: LQR
 v5 = struct();
 v5.poles_long_ok = gains_lqr.long.stable;
 v5.poles_lat_ok = gains_lqr.lat.stable;
@@ -64,15 +63,15 @@ v5.ss_lat_aug = gains_lqr.lat.ss_test.aug.error;
 v5.ss_ok = abs(v5.ss_long_unaug) > 1e-3 && abs(v5.ss_long_aug) < 1e-9 && ...
    abs(v5.ss_lat_unaug) > 1e-3 && abs(v5.ss_lat_aug) < 1e-9;
 
-% Reference self-consistency and the two feedforward sets. The residuals come from
-% the second output of lqr_reference; they are not on the ref struct.
+% Reference self-consistency and the two feedforward sets; the residuals come from
+% the second output of lqr_reference, they are not on the ref struct
 [ref0, info0] = lqr_reference(P, lin, gains_lqr, struct()); %#ok<ASGLU>
 [refc, infoc] = lqr_reference(P, lin, gains_lqr, struct('dV', 2.0, 'dtheta', deg2rad(3), ...
    'dphi', deg2rad(20)));
 v5.ref_residual = max([infoc.residual_long, infoc.residual_lat]);
 v5.ref_ok = v5.ref_residual < 1e-9;
 
-% Coordinate trap: absolute states fed to a gain designed on deviations.
+% Coordinate trap: absolute states fed to a gain designed on deviations
 Kt = gains_lqr.long.K_unaug;
 At = gains_lqr.long.A;
 Bt = gains_lqr.long.B;
@@ -85,7 +84,7 @@ fprintf('V5: poles long %d lat %d | care diff %.2e | ss err unaug %.4f aug %.2e 
    v5.poles_long_ok, v5.poles_lat_ok, max(v5.care_diff_long, v5.care_diff_lat), ...
    v5.ss_long_unaug, abs(v5.ss_long_aug), v5.ref_residual);
 
-% ================= V6: PID =================
+%% V6: PID
 v6 = struct();
 loop_names = {'p', 'q', 'r', 'phi', 'theta', 'V', 'h'};
 v6.loops = struct();
@@ -95,8 +94,8 @@ for k = 1:numel(loop_names)
 end
 v6.separation = gains_pid.verify.separation;
 
-% Closed-loop step cases on the linear model, controller at Ts_ctrl. The block is
-% guarded because a single bad case must not cost the whole run.
+% Closed-loop step cases on the linear model, controller at Ts_ctrl; the block is
+% guarded because a single bad case must not cost the whole run
 v6.sim_ok = true;
 try
 sim_theta = pid_cascade_sim(P, gains_pid, lc, struct('mode', 'attitude', ...
@@ -131,22 +130,11 @@ v6.sat_theta.de_sat_frac_on = mean(sat_on.de_sat);
 v6.sat_theta.de_sat_frac_off = mean(sat_off.de_sat);
 v6.sat_theta.i_th_max_on = max(abs(sat_on.i_th));
 v6.sat_theta.i_th_max_off = max(abs(sat_off.i_th));
-% The two arms of the comparison must be able to differ. Before rev 11 this block
-% ran both and printed them side by side without ever comparing them, and the two
-% were identical to every printed digit: the integral-state clamp was pinning the
-% state, so whatever the back-calculation did was absorbed before it reached the
-% elevator. A comparison whose arms cannot differ is decorative.
-%
-% Two differences are checked, because one alone is not enough. The integral STATE
-% is where the anti-windup acts and is the sensitive measure; the closed-loop
-% RESPONSE is what a user sees but can be insensitive, because while the actuator
-% is saturated the response barely moves whichever way the state goes. On the
-% airspeed case the state differs by 38.4 out of a 50 bound while the response
-% differs by 0.005 m/s of an 8 m/s step, so a response-only criterion would call a
-% working anti-windup broken and a state-only criterion would miss a real
-% difference in the flown response. Both floors are detectability floors at one
-% part in ten thousand of the scale involved, so they can only fail on a genuinely
-% degenerate comparison and never on ordinary integration noise.
+% The two arms of the comparison must be able to differ, in two measures, because
+% one alone is not enough: the integral STATE is where the anti-windup acts and is
+% the sensitive measure, while the closed-loop RESPONSE is what a user sees but can
+% be insensitive while the actuator is saturated. Both floors are detectability
+% floors at one part in ten thousand of the scale involved.
 v6.sat_theta.theta_abs_diff = max(abs(sat_on.theta - sat_off.theta));
 v6.sat_theta.i_th_abs_diff = max(abs(sat_on.i_th - sat_off.i_th));
 v6.sat_theta.on_pinned_frac = mean(abs(abs(sat_on.i_th) - ...
@@ -183,7 +171,7 @@ v6.sat_V.aw_non_degenerate = v6.sat_V.aw_state_differs && v6.sat_V.aw_response_d
 v6.sat_V.clamp_not_binding = v6.sat_V.on_pinned_frac < v6.sat_V.pinned_frac_max;
 v6.sat_V.ok = v6.sat_V.aw_non_degenerate && v6.sat_V.clamp_not_binding;
 
-% Coupling numbers for the report.
+% Coupling numbers for the report
 v6.coupling.beta_peak_on_phi_step_deg = rad2deg(max(abs(sim_phi.beta)));
 v6.coupling.r_peak_on_phi_step_dps = rad2deg(max(abs(sim_phi.r)));
 v6.coupling.alpha_peak_on_h_step_deg = rad2deg(max(abs(sim_h.alpha - sim_h.alpha(1))));
@@ -233,7 +221,7 @@ fprintf('V6: theta rise %.3f s / target %.3f | V rise %.3f / %.3f | h rise %.3f 
    v6.V_step_target_rise_s, v6.h_step.rise_time_s, v6.h_step_target_rise_s, ...
    v6.phi_step.rise_time_s, v6.phi_step_target_rise_s);
 
-% ================= V7: allocation =================
+%% V7: allocation
 v7 = struct();
 da_lim = deg2rad(P.act.aileron.max_deg);
 de_lim = deg2rad(P.act.elevator.max_deg);
@@ -269,7 +257,7 @@ v7.recon_tol = 1e-9;
 v7.recon_ok = v7.recon_max_rel < v7.recon_tol;
 v7.unsat_all_ok = all(v7.in_limits(~v7.sat_any));
 
-% Saturation: five times the available authority on every axis.
+% Saturation: four times the available authority on every axis
 M_huge = [4 * L_ail; 4 * M_ele; 4 * N_rud];
 [da_s, de_s, dr_s, dthl_s, dthr_s, ia_s] = allocate(P, M_huge, T_trim);
 d_eff_alloc = ia_s.limits.d_eff;
@@ -283,7 +271,7 @@ v7.sat_M_err = ia_s.M_err;
 v7.sat_d_eff = d_eff_alloc;
 v7.sat_throttle_sum_ok = abs((dthl_s + dthr_s) / 2 - ia_s.tc) < 1e-12;
 v7.tc_cruise = ia_s.tc;
-% Differential limit at the cruise throttle, against the sizing budget.
+% Differential limit at the cruise throttle, against the sizing budget
 dT_lim_cruise = ia_s.dT_lim;
 v7.dT_lim_cruise = dT_lim_cruise;
 v7.yaw_diff_alloc_Nm = abs(dT_lim_cruise) * P.prop.y_motor;
@@ -295,7 +283,7 @@ fprintf('V7: recon rel max %.3e | sat inside limits %d | d_eff %.4f vs sizing %.
    v7.recon_max_rel, v7.sat_limits_ok, ia_s.limits.d_eff, v7.d_eff_sizing);
 
 % Allocator model against the linearised plant: implied moment derivatives.
-% columns 1..3 are the aerodynamic effectors, column 4 is the differential
+% Columns 1..3 are the aerodynamic effectors and column 4 is the differential
 % thrust T_r - T_l, which acts on yaw alone; the plant's B(:,6) is the total
 % thrust command, quoted separately because it acts on pitch alone.
 Imat = [P.mass.Ixx_cg, 0, -P.mass.Ixz_cg; 0, P.mass.Iyy_cg, 0; ...
@@ -311,7 +299,7 @@ v7.M_per_dT_plant = Bmom(:, 6);
 v7.M_per_dT_expect = [0; P.prop.z_thrust_offset; 0];
 v7.M_per_dT_err = max(abs(v7.M_per_dT_plant - v7.M_per_dT_expect)) / scale;
 
-% ================= V8: differential thrust =================
+%% V8: differential thrust
 v8 = struct();
 dT_test = S.authority.diff_thrust.thrust_left_N - S.authority.diff_thrust.thrust_right_N;
 Tm = thrust_moment(P, S.authority.diff_thrust.thrust_left_N, ...
@@ -320,7 +308,7 @@ v8.analytic_Nm = y_arm * dT_test;
 v8.plant_Nm = Tm(3);
 v8.plant_vs_analytic_rel = abs(v8.plant_Nm - v8.analytic_Nm) / abs(v8.analytic_Nm);
 % Sweep the identity thrust_moment against dT*y_motor over the whole differential
-% range, including the counter-rotating sign, so V8 does not rest on one point.
+% range, including the counter-rotating sign, so V8 does not rest on one point
 T_c = T_trim / 2;
 dT_sweep = linspace(-0.95 * T_c, 0.95 * T_c, 10);
 v8.sweep_rel = zeros(size(dT_sweep));
@@ -342,7 +330,7 @@ v8.ratio_at_cap = S.authority.diff_thrust.yaw_moment_at_cap_Nm / N_rud;
 v8.limiting_factor = S.authority.diff_thrust.limiting_factor;
 v8.tol = 0.01;
 v8.ok = v8.sweep_max_rel < v8.tol;
-% Allocator path: a yaw command beyond the rudder alone forces the supplement.
+% Allocator path: a yaw command beyond the rudder alone forces the supplement
 M_yaw_big = [0; 0; 1.35 * N_rud];
 [da_y, de_y, dr_y, dthl_y, dthr_y, ia_y] = allocate(P, M_yaw_big, T_trim);
 Tl_y = throttle_to_thrust(P, dthl_y, P.op.cruise.V_mps);
@@ -356,12 +344,10 @@ v8.forced_tie_rel = abs(v8.forced_N_diff - v8.forced_N_expect) / v8.forced_N_exp
 fprintf('V8: sweep vs analytic max %.3e rel | diff yaw alloc %.2f Nm vs sizing %.2f | ratio to rudder %.4f\n', ...
    v8.sweep_max_rel, v8.alloc_Nm, v8.sizing_Nm, v8.ratio_to_rudder);
 
-% ================= reports =================
-% The whole report stage is guarded: the numbers are already in checks, so a
-% formatting slip here must not cost the run. The status file is cleared before
+%% Reports
+% The whole report stage is guarded, because the numbers are already in checks and
+% a formatting slip here must not cost the run. The status file is cleared before
 % the stage and written on BOTH outcomes, so it always describes the last run.
-% Writing it only on failure left a stale failure note on disk for an hour after
-% the fault was fixed, and the next reader took it for the current state.
 status_file = fullfile(resdir, 'control_design_status.txt');
 if exist(status_file, 'file')
    delete(status_file);
@@ -473,9 +459,8 @@ for k = 1:numel(names)
    g = gains_pid.(names{k});
    extra = '';
    if isfield(g, 'int_limit')
-      % g.int_limit is the ERROR-domain bound. The clamp the integrator actually
-      % carries is the state-domain field, and printing only the error bound is how
-      % the model and the report came to disagree by 2.5x without anyone noticing.
+      % g.int_limit is the ERROR-domain bound, while the clamp the integrator
+      % actually carries is the state-domain field; print both
       if isfield(P.ctrl.int_state_limit, g.name)
          extra = sprintf(' err_limit %.5f state_clamp %.5f', g.int_limit, ...
             P.ctrl.int_state_limit.(g.name));
@@ -511,11 +496,8 @@ Rp{end+1} = sprintf('%-6s %8s %8s %8s %9s %9s %9s %9s %9s %9s', 'loop', 'gm', 'g
    'pm_deg', 'dm_s', 'rise_s', 'over_pct', 'bw_rad_s', 'wcp_rad_s', 'wc_tgt');
 for k = 1:numel(names)
    v = gains_pid.verify.(names{k});
-   % wcp_rad_s is the ACHIEVED crossover and wc_tgt the target the design aimed at.
-   % The achieved one was previously printed under the header wc_rad_s, so the table
-   % showed the pitch rate loop at 10.00 rad/s when its loop actually crosses unity at
-   % 1.93, and reading that number as the achieved crossover inverts the sign of the
-   % cascade separation verdict. Both are printed now.
+   % wcp_rad_s is the ACHIEVED crossover and wc_tgt the target the design aimed
+   % at; reading one as the other inverts the cascade separation verdict
    Rp{end+1} = sprintf('%-6s %8.3f %8.2f %8.1f %9.5f %9.4f %9.2f %9.3f %9.3f %9.2f', ...
       v.name, v.gm, v.gm_db, v.pm_deg, v.dm_s, v.rise_time_s, v.overshoot_pct, ...
       v.bandwidth_rad_s, v.wcp_rad_s, v.wc_target_rad_s);
@@ -535,10 +517,8 @@ Rp{end+1} = sprintf('h/theta      %.3f  (target %.3f)', s.h_over_theta, s.target
 Rp{end+1} = sprintf('h/V          %.3f  (target %.3f)', s.h_over_V, s.target.h_over_V);
 Rp{end+1} = sprintf('separation verdict (every ratio below %.1f): %d', s.limit, s.ok);
 % A ratio above one means the OUTER loop is faster than the INNER loop it commands,
-% which breaks the cascade assumption the whole design rests on. It is printed with
-% the offending axes named, because this verdict has been 0 since before rev 10 and
-% was never written down anywhere: the acceptance record's V6 is a different check
-% (v_sim_v6_pid, on the model trajectory) and does not look at separation at all.
+% which breaks the cascade assumption the whole design rests on, so it is printed
+% with the offending axes named
 sep_fields = {'phi_over_p', 'theta_over_q', 'V_over_q', 'h_over_theta', 'h_over_V'};
 sep_names = {'phi/p', 'theta/q', 'V/q', 'h/theta', 'h/V'};
 sep_bad = {};

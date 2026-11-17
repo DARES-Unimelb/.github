@@ -1,9 +1,12 @@
 function figs = sim_plot_traj(traj, tag, root)
-% SIM_PLOT_TRAJ One figure per scenario, saved as PNG, closed straight after.
+% SIM_PLOT_TRAJ Write one PNG per scenario and return the written paths
 %
-% Line widths are 1 or 2 and marker sizes 1 or 2 by project convention, and the
-% tile layout uses compact spacing. Only the figures created here are closed,
-% by handle, so nothing else on the desktop is touched.
+%   traj   scenario structs with fields t, x, cmd, rate_cmd, act and name
+%   tag    prefix used in the file name and in the figure title
+%   root   project root; figures are written to <root>/results
+%   figs   cell array of written paths, one per plotted scenario
+%
+% A scenario without a cmd field is skipped
 
 figs = {};
 for k = 1:numel(traj)

@@ -1,0 +1,1038 @@
+FILE: pdfs\lewisgroup.uta.edu_ee5321_2013_20notes_3_20OP_20feedback_20and_20OPFB_20design_20for_20F16_20lateral_20regulat.html
+PAGES: 18 (extracted 18)
+
+===== PAGE 1 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 297
+8
+OUTPUT FEEDBACK
+AND STRUCTURED CONTROL
+8.1
+LINEAR QUADRATIC REGULATOR
+WITH OUTPUT FEEDBACK
+Our objective in this section is to show how to use modern control techniques to
+design stability augmentation systems (SAS). This is accomplished by regulating
+certain states of the system to zero while obtaining desirable closed-loop response
+characteristics. It involves the problem of stabilizing the system by placing the
+closed-loop poles at desirable locations.
+Using classical control theory, we were forced to take a one-loop-at-a-time
+approach to designing multivariable SAS. In this section we select a perfor-
+mance criterion that reﬂects our concern with closed-loop stability and good time
+responses, and then derive matrix equations that may be solved for all the control
+gains simultaneously. These matrix equations are solved using digital computer
+programs. This approach thus closes all the loops simultaneously and results in
+a simpliﬁed design strategy for multi-input–multi-output (MIMO) systems or
+single-input–single-output (SISO) systems with multiple feedback loops.
+Once the performance criterion has been selected, the control gains are explic-
+itly computed by matrix design equations, and closed-loop stability will generally
+be guaranteed. This means that the engineering judgment in modern control
+enters in the selection of the performance criterion. Different criteria will result
+in different closed-loop time responses and robustness properties.
+We assume the plant is given by the linear time-invariant state-variable model
+˙x = Ax + Bu
+(8.1-1)
+y = Cx,
+(8.1-2)
+297
+
+===== PAGE 2 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 298
+298
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+with x(t) ∈Rn the state, u(t) ∈Rm the control input, and y(t) ∈Rp the measured
+output. The controls will be output feedbacks of the form
+u = −Ky,
+(8.1-3)
+where K is an m × p matrix of constant feedback coefﬁcients to be determined
+by the design procedure. Since the regulator problem only involves stabilizing
+the aircraft and inducing good closed-loop time responses, u(t) will be taken as
+a pure feedback with no auxiliary input.
+Output feedback will allow us to design plant controllers of any desired struc-
+ture. This is another reason for preferring it over full-state feedback.
+In the regulator problem, we are interested in obtaining good time responses
+as well as in the stability of the closed-loop system. Therefore, we shall select a
+performance criterion in the time domain. Let us now present this criterion.
+Quadratic Performance Index
+The objective of state regulation for the system is to drive any initial condition
+error to zero, thus guaranteeing stability. This may be achieved by selecting the
+control input u(t) to minimize a quadratic cost or performance index (PI) of the
+type
+J = 1
+2
+ ∞
+0
+(xTQx + uTRu)dt,
+(8.1-4)
+where Q and R are symmetric positive semideﬁnite weighting matrices.
+Positive semideﬁniteness of a square matrix M (denoted M ≥0) is equivalent
+to all its eigenvalues being nonnegative, and also to the requirement that
+the quadratic form xTMx be nonnegative for all vectors x. Therefore, the
+deﬁniteness assumptions on Q and R guarantee that J is nonnegative and lead
+to a sensible minimization problem. This quadratic PI is a vector version of an
+integral-squared PI of the sort used in classical control.
+To emphasize the motivation for the choice of (8.1-4), consider the following.
+If the square root
+√
+M of a positive semideﬁnite matrix M is deﬁned by
+M =
+√
+M
+T√
+M,
+(8.1-5)
+then we may write (8.1-4) as
+J = 1
+2
+ ∞
+0
+
+
+Qx
+
+2
++
+
+√
+Ru
+
+2
+dt,
+(8.1-6)
+with ∥w∥the Euclidean norm of a vector w(i.e., ∥w∥= wTw). If we are able to
+select the control input u(t) so that J takes on a minimum ﬁnite value, then
+certainly the integrand must become zero for large time. This means that both
+the linear combination √Qx(t) of the states and the linear combination
+√
+Ru(t)
+of the controls must go to zero. In different designs we may select Q and R for
+
+===== PAGE 3 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 299
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+299
+different performance requirements corresponding to speciﬁed functions of the
+state and input. In particular, if Q and R are both chosen nonsingular, then the
+entire state vector x(t) and all the controls u(t) will go to zero with time if J
+has a ﬁnite value.
+Since a bounded value for J will guarantee that √Qx(t) and
+√
+Ru(t) go to
+zero with time, this formulation for the PI is appropriate for the regulator prob-
+lem, as any initial condition errors will be driven to zero. If the state vector
+x(t) consists of capacitor voltages v(t) and inductor currents i(t), then ∥x∥2 will
+contain terms like v2(t) and i2(t). Likewise, if velocity s(t) is a state component,
+then ∥x∥2 will contain terms like s2(t). Therefore, the minimization of the PI
+(8.1-4) is a generalized minimum energy problem. We are concerned with mini-
+mizing the energy in the states without using too much control energy.
+The relative magnitudes of Q and R may be selected to trade off requirements
+on the smallness of the state against requirements on the smallness of the input.
+For instance, a larger control-weighting matrix R will make it necessary for u(t)
+to be smaller to ensure that
+√
+Ru(t) is near zero. We say that a larger R penalizes
+the controls more, so that they will be smaller in norm relative to the state vector.
+On the other hand, to make x(t) go to zero more quickly with time, we may
+select a larger Q.
+As a ﬁnal remark on the PI, we shall see that the positions of the closed-loop
+poles depend on the choices for the weighting matrices Q and R. That is, Q and
+R may be chosen to yield good time responses in the closed-loop system. Let us
+now derive matrix design equations that may be used to solve for the control gain
+K that minimizes the PI. The result will be the design equations in Table 8.1-1.
+Solution of the LQR Problem
+The LQR problem with output feedback is the following. Given the linear sys-
+tem (8.1-1)–(8.1-2), ﬁnd the feedback coefﬁcient matrix K in the control input
+(8.1-3) that minimizes the value of the quadratic PI (8.1-4). In contrast with
+most of the classical control techniques given in previous chapters, this is a
+time-domain design technique. By substituting the control (8.1-3) into (8.1-1),
+the closed-loop system equations are found to be
+˙x = (A −BKC)x ≡Acx.
+(8.1-7)
+The PI may be expressed in terms of K as
+J = 1
+2
+ ∞
+0
+
+xT(Q + CTKTRKC
+
+x) dt.
+(8.1-8)
+The design problem is now to select the gain K so that J is minimized subject
+to the dynamical constraint (8.1-7).
+This dynamical optimization problem may be converted into an equivalent
+static one that is easier to solve as follows. Suppose we can ﬁnd a constant,
+
+===== PAGE 4 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 300
+300
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+symmetric, positive semi-deﬁnite matrix P so that
+d
+dt
+
+xTPx
+
+= −xT 
+Q + CTKTRKC
+
+x.
+(8.1-9)
+Then, J may be written as (Chapter 3)
+J = 1
+2xT(0)Px(0) −1
+2 lim
+t→∞xT(t)Px(t).
+(8.1-10)
+Assuming that the closed-loop system is asymptotically stable so that x(t) van-
+ishes with time, this becomes
+J = 1
+2xT(0)Px(0).
+(8.1-11)
+If P satisﬁes (8.1-9), then we may use (8.1-7) to see that
+−xT(Q + CTKTRKC)x = d
+dt(xTPx) = ˙xTPx + xTP ˙x
+= xT(AT
+c P + PAc)x.
+(8.1-12)
+Since this must hold for all initial conditions, and hence for all state trajectories
+x(t), we may write
+g ≡AT
+c P + PAc + CTKTRKC + Q = 0.
+(8.1-13)
+If K and Q are given and P is to be solved for, then this is called a Lyapunov
+equation. (A Lyapunov equation is a symmetric linear matrix equation. Note that
+the equation does not change if its transpose is taken.) In summary, for any ﬁxed
+feedback matrix K if there exists a constant, symmetric, positive semi-deﬁnite
+matrix P that satisﬁes (8.1-13), and if the closed-loop system is stable, then the
+cost J is given in terms of P by (8.1-11). This is an important result in that the
+n × n auxiliary matrix P is independent of the state. Given a feedback matrix K,
+P may be computed from the Lyapunov equation (8.1-13). Then, only the initial
+condition x(0) is required to compute the closed-loop cost under the inﬂuence of
+the feedback control (8.1-3). That is, we may compute the cost of applying the
+feedback control u = −Ky before we actually apply it.
+It is now necessary to use this result to compute the gain K that minimizes
+the PI. By using the trace identity
+tr(AB) = tr(BA)
+(8.1-14)
+for any compatibly dimensioned matrices A and B (with the trace of a matrix the
+sum of its diagonal elements) we may write (8.1-11) as
+J = 1
+2tr(PX),
+(8.1-15)
+
+===== PAGE 5 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 301
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+301
+where the n × n symmetric matrix X is deﬁned by
+X ≡x(0)xT(0).
+(8.1-16)
+It is now clear that the problem of selecting K to minimize (8.1-8) subject
+to the dynamical constraint (8.1-7) on the states is equivalent to the algebraic
+problem of selecting K to minimize (8.1-15) subject to the constraint (8.1-13)
+on the auxiliary matrix P. To solve this modiﬁed problem, we use the Lagrange
+multiplier approach to modify the problem yet again. Thus, adjoin the constraint
+to the PI by deﬁning the Hamiltonian
+H = tr(PX) + tr(gS),
+(8.1-17)
+with S a symmetric n × n matrix of Lagrange multipliers that still needs to
+be determined. Then, our constrained optimization problem is equivalent to the
+simpler problem of minimizing (8.1-17) without constraints. To accomplish this,
+we need to set the partial derivatives of H with respect to all the independent
+variables P, S, and K equal to zero. Using the facts that for any compatibly
+dimensioned matrices A, B, and C and any scalar y
+∂
+∂B tr(ABC) = ATCT
+(8.1-18)
+and
+∂y
+∂BT =
+	 ∂y
+∂B
+
+T
+,
+(8.1-19)
+the necessary conditions for the solution of the LQR problem with output feed-
+back are given by
+0 = ∂H
+∂S = g = AT
+c P + PAc + CTKTRKC + Q
+(8.1-20)
+0 = ∂H
+∂P = AcS + SAT
+c + X
+(8.1-21)
+0 = 1
+2
+∂H
+∂K = RKCSCT −BTPSCT.
+(8.1-22)
+The ﬁrst two of these are Lyapunov equations and the third is an equation for
+the gain K. If R is positive deﬁnite (i.e., all eigenvalues greater than zero, which
+implies nonsingularity; denoted R > 0) and CSCT is nonsingular, then (8.1-22)
+may be solved for K to obtain
+K = R−1BTPSCT 
+CSCT−1 .
+(8.1-23)
+To obtain the output feedback gain K minimizing the PI (8.1-4), we need to
+solve the three coupled equations (8.1-20), (8.1-21), and (8.1-23). This situation
+
+===== PAGE 6 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 302
+302
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+is quite strange, for to ﬁnd K we must determine along the way the values of two
+auxiliary and apparently unnecessary n × n matrices, P and S. These auxiliary
+quantities may, however, not be as unnecessary as it appears, for note that the
+optimal cost may be determined directly from P and the initial state by using
+(8.1-11).
+The Initial Condition Problem
+Unfortunately, the dependence of X in (8.1-16) on the initial state x(0) is unde-
+sirable, since it makes the optimal gain dependent on the initial state through
+equation (8.1-21). In many applications x(0) may not be known. This depen-
+dence is typical of output-feedback design. We saw in Chapter 3 that in the case
+of state feedback it does not occur. Meanwhile, it is usual (Levine and Athans
+1970) to sidestep this problem by minimizing not the PI (8.1-4) but its expected
+value, that is E{J }. Then, (8.1-11) and (8.1-16) are replaced by
+E{J} = 1
+2E{xT (0)Px(0)} = 1
+2tr(PX),
+(8.1-24)
+where the symmetric n × n matrix
+X ≡E{x(0)xT(0)}
+(8.1-25)
+is the initial autocorrelation of the state. It is usual to assume that nothing is
+known of x(0) except that it is uniformly distributed on a surface described by
+X. That is, we assume the actual initial state is unknown, but that it is nonzero
+with a certain expected Euclidean norm. For instance, if the initial states are
+assumed to be uniformly distributed on the unit sphere, then X = I, the identity.
+This is a sensible assumption for the regulator problem, where we are trying to
+drive arbitrary nonzero initial states to zero.
+The design equations for the LQR with output feedback are collected in
+Table 8.1-1 for convenient reference. We now discuss their solution for K.
+Determining the Optimal Feedback Gain
+The importance of this modern LQ approach to controls design is that the matrix
+equations in Table 8.1-1 are used to solve for all the m × p elements of K at once.
+This corresponds to closing all the feedback loops simultaneously. Moreover, as
+long as certain reasonable conditions (to be discussed) on the plant and PI weight-
+ing matrices hold, the closed-loop system is generally guaranteed to be stable. In
+view of the trial-and-error successive-loop-closure approach used in stabilizing
+multivariable systems using classical approaches, this is quite important.
+The equations for P, S, and K are coupled nonlinear matrix equations in three
+unknowns. It is important to discuss some aspects of their solution for the optimal
+feedback gain matrix K.
+
+===== PAGE 7 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 303
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+303
+TABLE 8.1-1
+LQR with Output Feedback
+System model:
+˙x = Ax + Bu
+y = Cx
+Control:
+u = −Ky
+Performance index:
+J = E
+ ∞
+0
+(xT Qx + uT Ru) dt
+With
+Q ≥0,
+R > 0
+Optimal gain design equations:
+0 = AT
+c P + PAc + CTKTRKC + Q
+(8.1-26)
+0 = AcS + SAT
+c + X
+(8.1-27)
+K = R−1BTPSCT(CSCT)−1,
+(8.1-28)
+Where
+Ac = A −BKC,
+X = E{x(0)xT(0)}.
+Optimal cost:
+J = tr(PX)
+(8.1-29)
+Numerical Solution Techniques
+There are three basic numerical techniques for determining the optimal output-
+feedback gain K. First, we may use a numerical optimization routine like the
+Simplex algorithm in Nelder and Mead (1964), found in MATLAB (Optimization
+Toolbox). This algorithm would use only equations (8.1-26) and (8.1-29). For a
+given value of K, it would solve the Lyapunov equation for P, and then use
+P in the second equation to determine E{J }. Based on this, it would vary the
+elements of K to minimize E{J }. The Lyapunov equation may be solved using,
+for instance, subroutine lyap.m in MATLAB (Control System Toolbox) based on
+the Bartels-Stewart algorithm.
+A second approach for computing K is to use a gradient-based routine found
+in MATLAB (Optimization Toolbox). This routine would use all of the design
+equations in Table 8.1-1. For a given value of K, it would solve the two Lyapunov
+equation in the form (8.1-22). Note that if P satisﬁes the ﬁrst Lyapunov equation,
+then g = 0 so that (see (8.1-17)) E{J} = E{H} and ∂E{J}/∂K = ∂E{H}/∂K.
+Thus, the third design equation gives the gradient of E{J } with respect to K,
+which would be used by the routine to update the value of K.
+Finally, an iterative solution algorithm was presented in Moerder and Calise
+(1985). It is given in Table 8.1-2. It was shown in Moerder and Calise (1985)
+that the algorithm converges to a local minimum for J if the following conditions
+hold.
+
+===== PAGE 8 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 304
+304
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+TABLE 8.1-2
+Optimal Output Feedback Solution Algorithm
+1.
+Initialize:
+Set k = 0
+Determine a gain K0 so that A −BK0C is asymptotically stable
+2.
+k th iteration:
+Set Ak = A −BKkC
+Solve for Pk and Sk in
+0 = AT
+k Pk + PkAk + CTKT
+k RKkC + Q
+0 = AkSk + SkAT
+k + X
+Set Jk = tr (PkX)
+Evaluate the gain update direction
+K = R−1BTPSCT(CSCT)−1 - Kk
+Update the gain by
+Kk+1 = Kk + αK
+where α is chosen so that
+A −BKk+1C is asymptotically stable
+Jk+1 ≡1
+2tr(Pk+1X) ≤Jk
+If Jk+1 and Jk are close enough to each other, go to 3 Otherwise, set k = k + 1 and
+go to 2
+3.
+Terminate:
+Set K = Kk+1, J = Jk+1 Stop
+Conditions for Convergence of the LQ Solution Algorithm
+1. There exists a gain K such that Ac is stable. If this is true, we call system
+(8.1-1)–(8.1-2) output stabilizable.
+2. The output matrix C has full row rank p.
+3. Control weighting matrix R is positive deﬁnite. This means that all the
+control inputs should be weighted in the PI.
+4. Q is positive semideﬁnite and (√Q, A) is detectable. That is, the observ-
+ability matrix polynomial
+O(s) ≡
+sI −A
+−√Q
+
+(8.1-30)
+has full rank n for all values of the complex variable s not contained in the left
+half plane (Kailath 1980).
+If these conditions hold, then the algorithm ﬁnds an output-feedback gain
+that stabilizes the plant and minimizes the PI. The detectability condition means
+that any unstable system modes must be observable in the PI. Then, if the PI is
+
+===== PAGE 9 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 305
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+305
+bounded, which it is if the optimization algorithm is successful, signals associated
+with the unstable modes must go to zero as t becomes large; that is, they are
+stabilized in the closed-loop system.
+Initial Stabilizing Gain
+Since all three algorithms for solving the matrix equations in Table 8.1-1 for
+K are iterative in nature, a basic issue for all of them is the selection of an
+initial stabilizing output-feedback gain K0. That is, to start the algorithms, it is
+necessary to provide a K0 such that (A −BK0C) is stable. See, for instance,
+Table 8.1-2.
+One technique for ﬁnding such a gain is given in Broussard and Halyo (1983).
+Another possibility is to use the eigenstructure assignment techniques of the
+previous section to determine an initial gain for the LQ solution algorithm. We
+could even select a stabilizing gain using the classical techniques, and then use
+modern design technique to tune the control gains for optimal performance. A
+quite convenient technique for ﬁnding an initial stabilizing gain K0 is discussed in
+Section 8.2. This involves ﬁnding a full m × n state-variable feedback matrix and
+then zeroing the entries that are not needed in the n × p output-feedback matrix
+for the given measured outputs. Note that there are many techniques for ﬁnding
+a full state feedback that stabilizes a system given A and B (see Chapter 3).
+Iterative Design
+Software that solves for the optimal output-feedback gain K can be found in
+the MATLAB Optimization Toolbox. Given good software, design using the LQ
+approach is straightforward. A design procedure would involve selecting the
+design parameters Q and R, determining the optimal gain K, and simulating the
+closed-loop response and frequency-domain characteristics. If the results are not
+suitable, different matrices Q and R are chosen and the design is repeated.
+This approach introduces the notion of tuning the design parameters Q and R
+for good performance. In the next two sections we present sensible techniques
+for obtaining suitable PI weighting matrices Q and R that do not depend on indi-
+vidually selecting all of their entries. Example 8.1-1 will illustrate these notions.
+Selection of the PI Weighting Matrices
+Once the PI weighting matrices Q and R have been selected, the determination
+of the optimal feedback gain K is a formal procedure relying on the solution
+of nonlinear coupled matrix equations. Therefore, the engineering judgment in
+modern LQ design appears in the selection of Q and R. There are some guidelines
+for this, which we now discuss.
+Observability in the Choice of Q
+For stabilizing solutions to the output-feedback problem, it is necessary for
+(√Q, A) to be detectable. The detectability condition basically means that Q
+
+===== PAGE 10 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 306
+306
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+should be chosen so that all unstable states are weighted in the PI. Then, if J is
+bounded so that √Qx(t) vanishes for large t, the open-loop unstable states will
+be forced to zero through the action of the control. This means exactly that the
+unstable poles must have been stabilized by the feedback control gain. A stronger
+condition than detectability is observability, which amounts to the full rank of
+O(s) for all values of s. Observability is easier to check than detectability since
+it is equivalent to the full rank n of the observability matrix
+O ≡
+⎡
+⎢⎢⎢⎢⎢⎣
+√Q
+√QA
+...
+√QAn−1
+⎤
+⎥⎥⎥⎥⎥⎦
+,
+(8.1-31)
+which is a constant matrix and so easier to deal with than O(s). In fact, O has
+full rank n if and only if the observability gramian OTO is nonsingular. Since
+the gramian is an n × n matrix, its determinant is easily examined using available
+software (e.g., singular value decomposition/condition number [MATLAB]). The
+observability of (√Q, A) means basically that all states are weighted in the
+PI. From a numerical point of view, if (√Q, A) is observable, then a positive-
+deﬁnite solution P to (8.1-26) results; otherwise, P may be singular. Since P
+helps determine K through (8.1-28), it is found that if P is singular it may result
+in some zero gain elements in K. That is, if (√Q, A) is not observable, the
+LQ algorithm can refuse to close some of the feedback loops. This observability
+condition amounts to a restriction on the selection of Q, and is a drawback of
+modern control (see Example 8.1-1).
+The Structure of Q
+The choice of Q can be confronted more easily by considering the performance
+objectives of the LQR. Suppose that a performance output
+z = Hx
+(8.1-32)
+is required to be small in the closed-loop system. For instance, in an aircraft
+lateral regulator it is desired for the sideslip angle, yaw rate, roll angle, and roll
+rate to be small (see Example 8.1-1). Therefore, we might select z = |αrp|T.
+Once z(t) has been chosen, the performance output matrix H may be formally
+written down.
+The signal z(t) may be made small by LQR design by selecting the PI
+J = 1
+2
+ ∞
+0
+(xTQx + uTRu) dt,
+(8.1-33)
+which amounts to using the PI in Table 8.1-1 with Q = H TH, so that Q may
+be computed from H . That is, by weighting performance outputs in the PI, Q is
+directly given.
+
+===== PAGE 11 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 307
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+307
+Maximum Desired Values of z(t) and u(t)
+A convenient guideline for selecting Q and R is given in Bryson and Ho (1975).
+Suppose the performance output (8.1-32) has been deﬁned so that H is given.
+Consider the PI
+J = 1
+2
+ ∞
+0
+(zTQz + uTRu) dt.
+(8.1-34)
+Then, in Table 8.1-1 we have Q = H TQH. To select Q and R, one might
+proceed as follows, using the maximum allowable deviations in z(t) and u(t).
+Deﬁne the maximum allowable deviation in component zi(t) of z(t) as ziM and
+the maximum allowable deviation in component ui(t) of the control input u(t)
+as uiM. Then, Q and R may be selected as Q = diag{qi}, R = diag{ri}, with
+qi = 1/z2
+iM,
+ri = 1/r2
+iM.
+(8.1-35)
+The rationale for this choice is easy to understand. For instance, as the allowed
+limits ziM on zi(t) decrease, the weighting in the PI placed on zi(t) increases,
+which requires smaller excursions in zi(t) in the closed-loop system.
+Asymptotic Properties of the LQR
+Consider the PI
+J = 1
+2
+ ∞
+0
+(xTQx + ρuTRu) dt,
+(8.1-36)
+where ρ is a scalar design parameter. There are some quite nice results that
+describe the asymptotic performance of the LQR as ρ becomes small and as ρ
+becomes large (Kwakernaak and Sivan 1972, Harvey and Stein 1978, Grimble
+and Johnson 1988).
+These results detail the asymptotic closed-loop eigenstructure of the LQR,
+and are of some assistance in selecting Q and R. Unfortunately, they are well
+developed only for the case of full state-variable feedback, where C = I and all
+the states are allowed for feedback.
+Example 8.1-1.
+LQR Design for F-16 Lateral Regulator
+In this example we should like to demonstrate the power of the LQ design equations in
+Table 8.1-1 by designing a lateral regulator. In our approach, we shall select the design
+parameters Q and R and then use the design equations there to close all the feedback
+loops simultaneously by computing K. The objective is to design a closed-loop controller
+to provide for the function of a lateral stability augmentation system as well as the closure
+of the roll-attitude loop. This objective involves the design of two feedback channels with
+multiple loops, but it is straightforward to deal with using modern control techniques. The
+simplicity of MIMO design using the LQR will be evident.
+
+===== PAGE 12 =====
+1 
+ 
+© Copyright F.L. Lewis 2012 
+All rights reserved 
+Updated:  Monday, November 19, 2012 
+ 
+These notes are based on the book 
+F.L. Lewis, D. Vrabie, and V.L. Syrmos, Optimal Control, 3rd edition, John Wiley 2013. 
+More details and examples are found in that book. Practical applications are given in 
+F.L. Lewis, Applied Optimal Control and Estimation:  Digital Design and 
+Implementation, Prentice-Hall, New Jersey, TI Series, Feb. 1992. 
+ 
+LQR Design for F-16 Lateral regulator 
+ 
+This example is from  
+B.L. Stevens and F.L. Lewis, Aircraft Control and Simulation, 2nd edition, John Wiley 1992. 
+More design examples appear in that book. 
+ 
+ 
+
+
+
+===== PAGE 13 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 308
+308
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+a. Aircraft State Equations
+We use the F-16 linearized lateral dynamics at the nominal ﬂight condition retaining the
+lateral states sideslip β, bank angle φ, roll rate p, and yaw rate r. Additional states δa
+and δr are introduced by the aileron and rudder actuators
+δa =
+20.2
+s + 20.2ua,
+δr =
+20.2
+s + 20.2ur.
+(1)
+A washout ﬁlter
+rw =
+s
+s + 1r
+(2)
+is used, with r the yaw rate and rw the washed-out yaw rate. The washout ﬁlter state is
+denoted xw. Thus, the entire state vector is
+x = [β
+φ
+p
+r
+δa
+δr
+xw]T.
+(3)
+The full state-variable model of the aircraft plus actuators, washout ﬁlter, and control
+dynamics is of the form
+˙x = Ax + Bu,
+(4)
+with
+A =
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+−0.3220
+0.0640
+0.0364
+−0.9917
+0.0003
+0.0008
+0
+0
+0
+1
+0.0037
+0
+0
+0
+−30.6492
+0
+−3.6784
+0.6646
+−0.7333
+0.1315
+0
+8.5396
+0
+−0.0254
+−0.4764
+−0.0319
+−0.0620
+0
+0
+0
+0
+0
+−20.2
+0
+0
+0
+0
+0
+0
+0
+−20.2
+0
+0
+0
+0
+57.2958
+0
+0
+−1
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+B =
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+0
+0
+0
+0
+0
+0
+0
+0
+20.2
+0
+0
+20.2
+0
+0
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+.
+(5)
+The control inputs are the rudder and aileron servo inputs so that
+u =
+
+ua
+ur
+
+(6)
+
+===== PAGE 14 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 309
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+309
+and the output is
+y =
+⎡
+⎢⎢⎢⎢⎣
+rw
+p
+β
+φ
+⎤
+⎥⎥⎥⎥⎦
+.
+(7)
+Thus, y = Cx, with
+C =
+⎡
+⎢⎢⎢⎢⎢⎣
+0
+0
+0
+57.2958
+0
+0
+−1
+0
+0
+57.2958
+0
+0
+0
+0
+57.2958
+0
+0
+0
+0
+0
+0
+0
+57.2958
+0
+0
+0
+0
+0
+⎤
+⎥⎥⎥⎥⎥⎦
+.
+(8)
+The factor of 57.2958 converts radians to degrees. The feedback control will be output
+feedback of the form u = −Ky, so that K is a 2 × 4 matrix. That is, we shall select eight
+feedback gains. For this system the open-loop Dutch-roll mode has poles at –0.4226 ±
+j3.064, and so has insufﬁcient damping. The spiral mode has a pole at –0.0163.
+b. LQR Output Feedback Design
+For the computation of the feedback gain K, it is necessary to select PI weighting matrices
+Q and R in Table 8.1-1. Then, software from the Optimization Toolbox is used to compute
+the optimal gain K using the design equations in the table. Our philosophy for selecting
+Q and R follows. First, let us discuss the choice of Q. It is desired to obtain good stability
+of the Dutch-roll mode, so that β2 and r2 should be weighted in the PI by factors of qdr.
+To obtain stability of the roll mode, which in closed-loop will consist primarily of p and
+φ, we may weight p2 and φ2 in the PI by factors of qr. We do not care about δa and
+δr, so it is not necessary to weight them in the PI; the control weighting matrix R will
+prevent unreasonably large control inputs. Thus, so far we have
+Q = diag{qdr, qr, qr, qdr, 0, 0, 0}.
+(9)
+We do not care directly about xw; however, it is necessary to weight it in the PI. This
+is because omitting it would cause problems with the observability condition. A square
+root of Q in (9) is
+
+Q =
+√qdr
+√qr
+√qr
+√qdr
+0
+0
+0
+
+.
+(10)
+Consequently, the observability matrix (8.1-31) has a right-hand column of zero; hence,
+the system is unobservable. This may be noted in simpler fashion by examining the A
+matrix in (5), where the seventh state xw is seen to have no inﬂuence on the states that
+are weighted in (9). To correct this potential problem, we chose
+Q = diag{qdr, qr, qr, qdr, 0, 0, 1}.
+(11)
+As far as the R matrix goes, it is generally satisfactory to select it as
+R = ρI,
+(12)
+with I the identity matrix and ρ a scalar design parameter.
+
+===== PAGE 15 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 310
+310
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+Now, the design equations in Table 8.1-1 were solved for several choices of ρ, qdr, qr.
+After some trial and error, we obtained a good result using ρ = 0.1, qdr = 50, qr = 100.
+For this selection, the optimal feedback gain was
+K =
+
+−0.56
+−0.44
+0.11
+−0.35
+−1.19
+−0.21
+−0.44
+0.26
+
+.
+(13)
+The resulting closed-loop poles were at
+s = −3.13 ± j0.83
+Dutch - roll mode(r, β)
+−0.82 ± j0.11
+roll mode(p, φ)
+−11.47 ± j17.18,
+−15.02.
+(14)
+To verify the design a simulation was performed. The initial state was selected as
+x(0) = [1 0 0 0 0 0 0]T; that is, we chose β(0) = 1. Figure 8.1-1 shows the results.
+Part (a) shows the Dutch-roll mode and part (b) the roll mode. Note that the responses
+correspond to the poles in (14), where the Dutch roll is the faster mode.
+This design has two deﬁciencies. First, it uses eight feedback gains in (13). This is
+undesirable for two reasons. (1) It requires the gain scheduling of all eight gains, and
+(2) the control system has no structure. That is, all outputs are fed back to both inputs;
+zeroing some of the gains would give the controller more structure in terms of feeding
+back certain outputs to only one or the other of the inputs. The second deﬁciency is that
+it was necessary to juggle the entries of Q to obtain a good solution. Actually, due to our
+weighting of β2 and r2 by qdr, and φ2 and p2 by qr, the design was fairly straightforward
+and took about half an hour in all. It was, however, necessary to weight the washout ﬁlter
+state xw, which is not obvious without considering the observability question.
+c. Effect of Weighting Parameters
+It is interesting to examine more closely the effects of the design parameters, namely, the
+entries of the PI weighting matrices Q and R. Using the same Q as above, we show the
+sideslip response in Fig. 8.1-2a for control weightings of ρ = 0.1, 0.5, and 1. Increased
+control weighting in the PI generally suppresses the control signals in the closed-loop
+system; that is, less control effort is allowed. As less control effort is allowed, the control
+is less effective in controlling the modes. Indeed, according to the ﬁgure, as ρ increases,
+the undershoot in β increases. Moreover, with increasing ρ the control is also less effective
+in suppressing the undesirable oscillations in the Dutch-roll mode that were noted in the
+open-loop system.
+As far as the effect of the Dutch-roll weighting qdr goes, examine Fig. 8.1-2b, where
+ρ = 0.1 and qr = 100 as in part b, but the sideslip response is shown for qr = 0, 50, and
+100. As qdr increases, the undershoot decreases, reﬂecting the fact that increased weighting
+on β2 in the PI will result in smaller excursions in β in closed loop. One last point is
+worth noting. The open-loop system is stable; therefore, it is clear that it is detectable,
+since all the unstable modes are observable for any choice of Q (there are no unstable
+modes). Thus, the design would work if we omitted the weighting on x2
+w in the Q matrix
+(although, it turns out, the closed-loop poles are not as good). In general, however, the
+detectability condition is difﬁcult to check in large systems that are open-loop unstable;
+thus, the observability condition is used instead. Failing to weight an undetectable state
+can lead to some zero elements of K, meaning that some feedback loops are not closed.
+
+===== PAGE 16 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 311
+8.1
+LINEAR QUADRATIC REGULATOR WITH OUTPUT FEEDBACK
+311
+FIGURE 8.1-1
+Closed-loop lateral response. (a) Dutch-roll states β and r. (b) Roll
+mode states φ and p.
+Thus, to guarantee that this does not occur, Q should be selected so that (√Q, A) is
+observable.
+d. Gain Scheduling
+For implementation on an aircraft, the control gains in (13) should be gain scheduled.
+To accomplish this, the nonlinear aircraft equations are linearized at several equilibrium
+ﬂight conditions over the desired ﬂight envelope to obtain state-variable models like
+
+===== PAGE 17 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 312
+312
+OUTPUT FEEDBACK AND STRUCTURED CONTROL
+FIGURE 8.1-2
+Effect of PI weighting. (a) Sideslip as a function of ρ(ρ = 0.1, 0.5, 1).
+(b) Sideslip as a function of qdr(qdr = 0, 50, 100).
+(4) with different A and B matrices. Then, the LQR design is repeated for those different
+systems.
+A major advantage of LQR design will quickly be apparent, for once the control
+structure has been selected, it takes only a minute or two to run the software to ﬁnd the
+optimal gains for a new A and B using the design equations in Table 8.1-1. Note that the
+optimal gains for one point in the gain schedule can be used as initial stabilizing gains in
+the LQ solution algorithm for the next point.
+
+===== PAGE 18 =====
+Lewis
+c08.tex
+V1 - 10/19/2011
+1:55pm
+Page 313
+8.2
+TRACKING A REFERENCE INPUT
+313
+It is important, however, to be aware of an additional consideration. The optimal
+gains at each gain scheduling point should guarantee robust stability and performance;
+that is, they should guarantee stability and good performance at points near the design
+equilibrium point. Such robust stability can be veriﬁed after the LQ design by using mul-
+tivariable frequency-domain techniques. These techniques are developed in Section 9.2,
+where the remarks on robustness to plant parameter variations are particularly relevant to
+gain scheduling.
+■
+8.2
+TRACKING A REFERENCE INPUT
+In control design we are often interested not in regulating the state near zero,
+which we discussed in the previous section, but in following a nonzero refer-
+ence command signal. For example, we may be interested in designing a control
+system for optimal step-response shaping. This reference-input tracking or ser-
+vodesign problem is important in the design of command augmentation systems
+(CAS). In this section and the next we cover tracker design.
+It should be mentioned that the optimal linear quadratic (LQ) tracker of mod-
+ern control is not a causal system (see Chapter 4). It depends on solving an
+“adjoint” system of differential equations backward in time, and so is impossible
+to implement. A suboptimal “steady-state” tracker using full state-variable feed-
+back is available, but it offers no convenient structure for the control system in
+terms of desired dynamics like PI control, washout ﬁlters, and so on.
+Modiﬁed versions of the LQ tracker have been presented in Davison and Fer-
+guson (1981) and Gangsaas et al. (1986). There, controllers of desired structure
+can be designed since the approaches are output-feedback based. The opti-
+mal gains are determined numerically to minimize a PI with, possibly, some
+constraints.
+It is possible to design a tracker by ﬁrst designing a regulator using, for
+instance, Table 8.1-1. Then, some feedforward terms are added to guarantee per-
+fect tracking (Kwakernaak and Sivan 1972). The problem with this technique is
+that the resulting tracker has no convenient structure and often requires deriva-
+tives of the reference command input. Moreover, servosystems designed using
+this approach depend on knowing the DC gain exactly. If the DC gain is not
+exactly known, the performance deteriorates. That is, the design is not robust to
+uncertainties in the model.
+Here we discuss an approach to the design of tracking control systems that is
+very useful in several control applications. This approach will allow us to design
+a servo control system that has any structure desired. This structure will include
+a unity-gain outer loop that feeds the performance output back and subtracts it
+from the reference command, thus deﬁning a tracking error e(t) that should be
+kept small. See Fig. 8.2-1. It can also include compensator dynamics, such as a
+washout ﬁlter or an integral controller. The control gains are chosen to minimize
+a quadratic performance index (PI). We are able to give explicit design equations
+for the control gains (see Table 8.2-1), which may be solved using software
+available in the MATLAB Optimization Toolbox.

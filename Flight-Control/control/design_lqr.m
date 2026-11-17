@@ -4,7 +4,7 @@ function gains = design_lqr(P, lin, opts)
 %   gains = design_lqr(P, lin)
 %   gains = design_lqr(P, lin, struct('long_int_out', 'V', 'lat_int_out', 'phi'))
 %
-% Channels, all in the deviation coordinates fixed by architecture.md 5.2
+% Channels, all in the deviation coordinates fixed by the sub-model contract
 %   long  x = [dV dalpha dq dtheta]  u = [dde dT]  integrator on the output
 %         selected by opts.long_int_out, 'V' (default) or 'theta'
 %   lat   x = [dbeta dp dr dphi]     u = [dda ddr] integrator on the output
@@ -16,14 +16,11 @@ function gains = design_lqr(P, lin, opts)
 %
 % Weights start from the Bryson values in P.lqr and are not edited. The
 % integrator weight follows the same rule as the state it regulates:
-% q_int = q_diag(index of that output), so the integrator carries the same
-% tolerance as the state itself. Any change to a weight has to be recorded in
-% docs/design_notes_control.md with its before value, after value and reason.
+% q_int = q_diag(index of that output).
 %
-% Coordinate trap this function exists to close: A and B are Jacobians about
-% the trim point, so the origin is the equilibrium and the feedforward in
-% deviation coordinates is zero. The reference is not free either: for a
-% commanded output r the reference state has to satisfy
+% A and B are Jacobians about the trim point, so the origin is the equilibrium
+% and the feedforward in deviation coordinates is zero. The reference is not free
+% either: for a commanded output r the reference state has to satisfy
 % A*x_ref + B*u_ff = 0 with C*x_ref = r, which is what lqr_reference.m solves.
 % Feeding absolute states to these gains parks the aircraft somewhere else.
 
@@ -44,7 +41,7 @@ gains.created = datestr(now, 'yyyy-mm-dd HH:MM:SS');
 gains.contract = map;
 gains.source_step = local_field(lin, 'step', NaN);
 
-% ================= longitudinal =================
+%% Longitudinal
 A = lco.A_long;
 B = lco.B_long;
 q_diag = P.lqr.long.q_diag(:)';
@@ -62,7 +59,7 @@ R = diag(r_diag);
 [K, ~, ~] = lqr(A_aug, B_aug, Q_aug, R);
 K_unaug = lqr(A, B, diag(q_diag), R);
 
-% Riccati self-check: lqr against care and against the Riccati residual.
+% Riccati self-check: lqr against care and against the Riccati residual
 [X, ~, ~] = care(A_aug, B_aug, Q_aug, R);
 K_care = R \ (B_aug' * X);
 ric = A_aug' * X + X * A_aug - X * B_aug * (R \ (B_aug' * X)) + Q_aug;
@@ -92,7 +89,7 @@ long.stable_unaug = all(real(long.poles_unaug) < 0);
 long.margins = local_loop_margins(A_aug, B_aug, K, {'de', 'dT'});
 long.margins_unaug = local_loop_margins(A, B, K_unaug, {'de', 'dT'});
 
-% V5 evidence on the augmented and unaugmented closed loop.
+% V5 evidence on the augmented and unaugmented closed loop
 test_l = 2.0;                          % m/s, step on the regulated output
 long.ss_test = local_ss_error(A, B, K_unaug, K, idx_l, test_l);
 long.ss_test.unaug.augmented = false;
@@ -106,7 +103,7 @@ long.law = ['u_dev = u_ff + K*([x_ref; 0] - [x_dev; z]); x_dev = x_abs - x_op; '
    'z = integral(C_int*x_dev - r); u_abs(u_idx_full) = u_star_full(u_idx_full) + u_dev'];
 gains.long = long;
 
-% ================= lateral-directional =================
+%% Lateral-directional
 A = lco.A_lat;
 B = lco.B_lat;
 q_diag = P.lqr.lat.q_diag(:)';
@@ -169,7 +166,7 @@ gains.weights_unchanged = true;
 gains.weights_source = 'P.lqr.long.q_diag/r_diag, P.lqr.lat.q_diag/r_diag (Bryson)';
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function idx = local_output_index(name, names, idxs)
 idx = idxs(strcmpi(name, names));
 assert(isscalar(idx), 'design_lqr: unknown integrator output %s', name);
@@ -185,8 +182,7 @@ end
 
 function m = local_loop_margins(A, B, K, labels)
 % One input broken at a time, the other loops left closed, which is the only
-% honest way to read margins off a multiloop design. Fields per architecture
-% 5.3: gm, pm, dm plus the crossover frequencies and the closed-loop poles.
+% honest way to read margins off a multiloop design
 n_in = size(B, 2);
 m = struct('loop', {}, 'gm', {}, 'gm_db', {}, 'pm_deg', {}, 'dm_s', {}, ...
    'wcg_rad_s', {}, 'wcp_rad_s', {}, 'loop_stable', {}, 'closed_loop_poles', {});
@@ -250,7 +246,7 @@ s.unaug = struct('augmented', false, 'x_ss', x_ss_u, 'out_ss', e' * x_ss_u, ...
    'error', err_u, 'error_rel', err_u / r, 'z_ss', 0);
 s.aug = struct('augmented', true, 'x_ss', x_ss_a, 'out_ss', e' * x_ss_a, ...
    'error', err_a, 'error_rel', err_a / r, 'z_ss', z_ss);
-% Both feedforwards, so the two coordinate sets can never be confused.
+% Both feedforwards, so the two coordinate sets can never be confused
 s.u_ff_dev_unaug = zeros(m_in, 1);
 s.u_ff_dev_aug = zeros(m_in, 1);
 end

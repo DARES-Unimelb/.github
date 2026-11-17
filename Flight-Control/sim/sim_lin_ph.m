@@ -1,12 +1,10 @@
 function [lin, info] = sim_lin_ph(P, trim)
-% SIM_LIN_PH Numerical linearisation of the placeholder plant.
+% SIM_LIN_PH Numerical linearisation of the placeholder plant
 %
-% Produces the same structure architecture.md 5.2 freezes for plant/linearize_at,
-% by central differences on sim_plant_rhs_ph and the same change of variables
-% control/lin_contract.m applies: body velocity components to air-data states.
+%   [lin, info] = sim_lin_ph(P, trim)
 %
-% Used only when plant/trim_cruise.m or plant/linearize_at.m cannot run, and
-% recorded in the results as lin_source = 'placeholder'.
+% Central differences on sim_plant_rhs_ph, followed by the same change of
+% variables lin_contract applies: body velocity components to air-data states
 
 hx = 1e-6;
 hu = 1e-6;

@@ -1,12 +1,13 @@
-% UACS_JOB_BENCH_RECORD_TEST Job entry: 验证 StopFcn 记录钩子在界面式跑法下真的落数据。
+% UACS_JOB_BENCH_RECORD_TEST Job entry: check that the StopFcn recording hook really
+% writes data on the interactive path.
 %
-% Run with:  addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run'); run_job('bench_record_test')
+% Run with:  addpath('<repo>/run'); run_job('bench_record_test')
 %
-% 为什么不能只看代码：StopFcn 执行的时候，仿真输出（out 或 logsout）有没有已经回到基础
-% 工作区，是这一步成不成立的关键，而这一点只有真跑一次才知道。这里用 SimulationCommand
-% 走界面按 Run 的同一条路，跑完检查两个产物是否生成、流水里写的是哪条来源。
+% Whether the simulation output has already returned to the base workspace when StopFcn
+% runs can only be settled by trying it. This uses SimulationCommand, the same path as
+% pressing Run in the UI, then checks the two artefacts and the trace line.
 %
-% 本作业会改内存里的模型参数（俯仰杆、StopTime），跑完改回去，不保存。
+% Model parameters are edited in memory and restored, nothing is saved.
 
 this = mfilename('fullpath');
 if isempty(this)

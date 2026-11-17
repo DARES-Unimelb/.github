@@ -1,8 +1,5 @@
 function R = sim_dcm(eul)
-% SIM_DCM Body-from-NED direction cosine matrix for Euler angles [phi; theta; psi].
-%
-% Transpose of the matrix eom_6dof builds, so R maps a NED vector into body axes.
-% Used by the wind shift, which is the only place the model needs a frame change.
+% SIM_DCM Body-from-NED direction cosine matrix for Euler angles [phi; theta; psi]
 
 phi = eul(1);
 theta = eul(2);

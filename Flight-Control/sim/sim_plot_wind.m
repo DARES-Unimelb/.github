@@ -1,7 +1,8 @@
 function file = sim_plot_wind(case_wind, case_nowind, root)
-% SIM_PLOT_WIND Crosswind evidence figure: ground track, bank and sideslip.
+% SIM_PLOT_WIND Write the crosswind comparison PNG and return its path
 %
-% Line widths 1 or 2, markers 1 or 2, compact tiles; only this figure is closed.
+%   case_wind, case_nowind   trajectory structs with a field x
+%   root                     project root; the figure goes to <root>/results
 
 f = figure('Visible', 'off', 'Position', [100 100 1100 700]);
 tl = tiledlayout(f, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');

@@ -1,0 +1,1518 @@
+URL: https://www.mathworks.com/help/simulink/slref/sim.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/sim.html
+
+ 
+
+ sim - Run and script programmatic simulations of Simulink models - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulation
+
+ Run Simulations
+
+ Run Individual Simulations
+
+ Simulink
+
+ Simulation
+
+ Optimize Performance
+
+ Acceleration
+
+ sim
+
+On this page
+Syntax
+DescriptionSimulink.SimulationInput Object Syntax
+Model Syntax
+
+ExamplesRun Simulations Using Current Parameter Values
+Specify Variable Values and Model Parameters for Simulation Using Simulink.SimulationInput Objects
+Speed Up Parameter Sweeps by Using Fast Restart
+Specify Model Parameters for Simulation Using Name-Value Arguments
+Specify Model Parameters for Simulation Using Structure
+Specify Configuration Set for Simulation
+
+Input Argumentssimin
+mdl
+params
+configset
+
+Name-Value ArgumentsSimulink.SimulationInput Object SyntaxUseFastRestart
+StopOnError
+ShowProgress
+ShowSimulationManager
+
+Model SyntaxConfiguration Parameter Name
+FastRestart
+SimulationMode
+CaptureErrors
+Debug
+RapidAcceleratorUpToDateCheck
+Timeout
+Trace
+
+Output Argumentsout
+
+Tips
+Version HistoryView simulation time in Simulink Editor during simulation
+Consistent error handling for sim function with scalar Simulink.SimulationInput object
+Run fast restart simulations using scalar Simulink.SimulationInput objects
+Code Analyzer warning for multiple output syntax
+Single simulation output parameter enabled by default for new models
+Run individual or multiple simulations using Simulink.SimulationInput objects
+Easily analyze results from multiple simulations using single simulation output syntax
+Syntaxes that return multiple output arguments are not recommended
+SrcWorkspace argument not recommended
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+sim
+R2026b
+Run and script programmatic simulations of Simulink models
+collapse all in page
+
+Syntax
+out = sim(simin)
+out = sim(simin,Name=Value)
+
+out = sim(mdl)
+out =
+sim(mdl,Name=Value)
+out =
+sim(mdl,params)
+out =
+sim(mdl,configset)
+
+Description
+Simulink.SimulationInput Object Syntax
+out = sim(simin) runs one
+ or more simulations of a Simulink® model according to the properties defined on one or more Simulink.SimulationInput objects.
+ If the model is not open or loaded, the function loads the model before starting
+ the simulation.
+If simin is a scalar
+ Simulink.SimulationInput object, then
+ out is a scalar
+ Simulink.SimulationOutput object.
+
+If simin is a vector, matrix, or array of
+ Simulink.SimulationInput objects, then
+ out is a vector, matrix, or array of
+ Simulink.SimulationOutput objects with the same
+ dimensions as simin.
+
+Note
+
+ Security Considerations: Before loading, opening, or
+ simulating a model, consider whether you trust the source or author of the model. Models
+ from untrusted sources might contain callbacks and custom blocks that execute unexpected
+ code when you load, open, or simulate the model. Untrusted sources include those you clone
+ from a remote repository, download, or receive as an archive.
+
+You can use a Simulink.SimulationInput object to configure options and
+ inputs for simulations, including:
+
+The model to simulate
+
+Source variables or files for external input data
+
+Block parameter values to use for the simulation
+
+Model configuration parameter values to use for the
+ simulation
+
+When a property of the Simulink.SimulationInput object modifies a model
+ or block parameter value, the value is modified during simulation and reverted
+ at the end of the simulation.
+When you configure programmatic simulations using
+ Simulink.SimulationInput objects, you can transition from
+ using the sim function to using other functions, such as
+ parsim and batchsim.
+For more information, see Run Simulations Programmatically.
+
+example
+
+out = sim(simin,Name=Value)
+ runs the simulations with additional options specified using one or more
+ name-value arguments.
+For a list of name-value arguments supported by the
+ Simulink.SimulationInput syntax, see Simulink.SimulationInput Object Syntax.
+
+example
+
+ Model Syntax
+
+ out = sim(mdl) simulates
+ the model mdl using the current configuration parameter and
+ block parameter values specified in the model. If the model is not open or
+ loaded, the function loads the model before starting the simulation.
+If the model has the Single simulation
+ output parameter or fast restart enabled,
+ out is a
+ Simulink.SimulationOutput object.
+
+If the model does not have Single simulation
+ output or fast restart enabled, out
+ is a vector that contains the simulation times. For more information,
+ see Syntaxes that return multiple output arguments are not recommended.
+
+example
+
+ out =
+sim(mdl,Name=Value) simulates the model
+ with options specified using one or more name-value arguments. For example, you
+ can modify a model configuration parameter value for the simulation by
+ specifying the parameter name and value as a name-value argument.
+When you modify model configuration parameters by providing inputs to the
+ sim function, the changes are applied during simulation
+ and reverted at the end of the simulation.
+For a list of name-value arguments supported for the model syntax, see Model Syntax.
+
+ out =
+sim(mdl,params) simulates the model using
+ the model configuration parameter values specified by the structure
+ params.
+
+example
+
+ out =
+sim(mdl,configset) simulates the model
+ using model configuration parameter values in the configuration set
+ configset.
+
+example
+
+Examples
+collapse all
+Run Simulations Using Current Parameter Values
+
+ Suppose you have a model named
+ IntegrateSine that integrates the output of a Sine
+ Wave block and logs the result using an Outport
+ block. A Scope block displays the sine wave input and the
+ integrated output. You open the model and want to simulate the model using the
+ parameter values saved in the model.
+
+Simulate the model by specifying the name of the model as input to the
+ sim function.
+out = sim(mdl);
+
+The simulation runs using the current model configuration parameters and block parameters
+ specified in the model. In this case, the model has a stop time of 10
+ seconds, and the amplitude of the Sine Wave block is
+ 1.
+
+Specify Variable Values and Model Parameters for Simulation Using 
+ Simulink.SimulationInput Objects
+
+ To modify parameters in a model for simulation without dirtying the
+ model, use a Simulink.SimulationInput object to configure the
+ simulation. When you configure simulations using
+ Simulink.SimulationInput objects, you can configure model
+ configuration parameter, block parameter, and variable values. The
+ sim function applies the configuration specified on the
+ Simulink.SimulationInput object during the simulation and
+ reverts changes to the model when the simulation completes. 
+
+ Suppose you want to simulate the model IntegrateSine
+ described in Run Simulations Using Current Parameter Values for
+ different amplitudes of the sine wave input.
+
+To parameterize the model, specify the value of the Sine
+ Wave block Amplitude parameter as a
+ variable. Open the model. Then, define the variable in the base workspace
+ and specify the value of the block parameter in the model as the
+ variable.
+mdl = &#34;IntegrateSine&#34;;
+open_system(mdl)
+a = 1;
+set_param(mdl + &#34;/Sine Wave&#34;,Amplitude=&#34;a&#34;)
+
+Create a Simulink.SimulationInput object to store the
+ simulation configuration. Specify parameter and variable values on the
+ Simulink.SimulationInput object to configure a
+ simulation that:
+Uses the solver ode45
+
+Runs through a stop time of 20 seconds
+
+Sets the amplitude of the simulated sine wave input to 2
+
+mdl = &#34;IntegrateSine&#34;;
+simin = Simulink.SimulationInput(mdl);
+simin = setModelParameter(simin,Solver=&#34;ode45&#34;,StopTime=&#34;20&#34;);
+simin = setVariable(simin,&#34;a&#34;,2);
+
+Simulate the model by specifying the
+ Simulink.SimulationInput object as input to the
+ sim function.
+out = sim(simin);
+
+The model simulates for 20 seconds, using the solver
+ ode45 and a sine wave amplitude of 2.
+
+After the simulation completes, the variable in the workspace, the solver
+ parameter, and the stop time parameter revert to their original
+ values.
+
+Speed Up Parameter Sweeps by Using Fast Restart
+
+ Fast restart speeds up parameter sweeps by compiling the model only once,
+ before the execution phase of the first simulation. Each subsequent simulation
+ reinitializes the model with specified parameter values without recompiling the
+ model, which can significantly reduce the overall time required to run the
+ parameter sweep. To enable fast restart for parameter sweeps run using a single
+ call to the sim function, specify the
+ UseFastRestart name-value argument as
+ &#34;on&#34;.
+
+ Suppose you want to simulate the model IntegrateSine
+ described in Run Simulations Using Current Parameter Values for
+ different amplitudes of the sine wave input.
+
+To parameterize the model, specify the value of the Sine
+ Wave block Amplitude parameter as a
+ variable. Open the model. Then, define the variable in the base workspace
+ and specify the value of the block parameter in the model as the
+ variable.
+mdl = &#34;IntegrateSine&#34;;
+open_system(mdl)
+a = 1;
+set_param(mdl + &#34;/Sine Wave&#34;,Amplitude=&#34;a&#34;)
+
+Create a vector of the parameter values you want to simulate. Then, create
+ an array of Simulink.SimulationInput objects that represent
+ the configuration for each simulation in the parameter sweep. In a
+ for loop, specify the value of the variable that
+ defines the parameter on each Simulink.SimulationInput
+ object.
+mdl = &#34;IntegrateSine&#34;;
+amps = [1 2 3 4 5 6];
+n = length(amps);
+simin(1:n) = Simulink.SimulationInput(mdl);
+
+for k = n:-1:1
+ simin(k) = setVariable(simin(k),&#34;a&#34;,amps(k));
+end
+
+Run the parameter sweep using a single call to the
+ sim function that enables fast restart by
+ specifying the UseFastRestart name-value argument as
+ &#34;on&#34;.
+out = sim(simin,UseFastRestart=&#34;on&#34;);
+
+[14-Apr-2026 17:31:23] Running simulations...
+[14-Apr-2026 17:31:24] Completed 1 of 6 simulation runs
+[14-Apr-2026 17:31:25] Completed 2 of 6 simulation runs
+[14-Apr-2026 17:31:25] Completed 3 of 6 simulation runs
+[14-Apr-2026 17:31:25] Completed 4 of 6 simulation runs
+[14-Apr-2026 17:31:26] Completed 5 of 6 simulation runs
+[14-Apr-2026 17:31:26] Completed 6 of 6 simulation runs
+
+The sim function returns the simulation results as an
+ array of Simulink.SimulationOutput objects. Each
+ Simulink.SimulationOutput object in the array contains
+ the results for the simulation configured using the
+ Simulink.SimulationInput object with the same index in
+ the input array. For example, the Simulink.SimulationOutput
+ object at index 1 in the output array contains the results for the
+ simulation run using the Simulink.SimulationInput object at
+ index 1 in the input array.
+Access the output data logged in the first simulation, which used an
+ amplitude of 1.
+yout1 = out(1).yout
+
+yout1 = 
+Simulink.SimulationData.Dataset 'yout' with 1 element
+
+ Name BlockPath 
+ ______ _____________________ 
+ 1 [1x1 Signal] output IntegrateSine/Outport
+
+ - Use braces { } to access, modify, or add elements using index.
+
+To suppress the progress messages, specify the
+ ShowProgress name-value argument as
+ &#34;off&#34;. To monitor progress using the Simulation
+ Manager, specify the ShowSimulationManager
+ name-value argument as &#34;on&#34;. For more information, see
+ Simulation Manager.
+
+Specify Model Parameters for Simulation Using Name-Value Arguments
+
+ To configure simulations without dirtying the model, you can
+ specify one or more name-value arguments. The sim function
+ modifies the parameters during simulation and reverts changes to the model when
+ the simulation completes. Name-value arguments can specify only model
+ configuration parameters. To configure additional parameters, such as variable
+ and block parameter values, use a Simulink.SimulationInput
+ object instead.
+
+ Suppose you want to simulate the model IntegrateSine,
+ described in Run Simulations Using Current Parameter Values, for
+ 20 seconds using the solver ode45.
+
+Simulate the model. Specify the Stop time and
+ Solver parameters for the simulation using
+ name-value arguments.
+mdl = &#34;IntegrateSine&#34;;
+out = sim(mdl,StopTime=&#34;20&#34;,Solver=&#34;ode45&#34;);
+
+To see the parameter values used in the simulation, check the simulation
+ metadata returned with the simulation results.
+slvr = out.SimulationMetadata.ModelInfo.SolverInfo.Solver
+
+slvr =
+
+ 'ode45'
+
+tstop = out.SimulationMetadata.ModelInfo.StopTime
+
+tstop =
+
+ 20
+
+Specify Model Parameters for Simulation Using Structure
+
+ To configure simulations without dirtying the model, you can
+ specify a structure that defines the name and value of each parameter you want
+ to modify. The sim function modifies the specified
+ parameters during simulation and reverts changes to the model when the
+ simulation completes. The structure can specify only model configuration
+ parameters. To configure additional parameters, such as variable and block
+ parameter values, use a Simulink.SimulationInput object
+ instead.
+
+ Suppose you want to simulate the model IntegrateSine,
+ described in Run Simulations Using Current Parameter Values, for
+ 20 seconds using the solver ode45.
+
+Create a structure that contains the fields Solver and
+ StopTime.
+simconfig.Solver = &#34;ode45&#34;;
+simconfig.StopTime = &#34;20&#34;;
+
+Simulate the model using the parameter values specified in the
+ structure.
+mdl = &#34;IntegrateSine&#34;;
+out = sim(mdl,simconfig);
+
+To see the parameter values used in the simulation, check the simulation
+ metadata returned with the simulation results.
+slvr = out.SimulationMetadata.ModelInfo.SolverInfo.Solver
+
+slvr =
+
+ 'ode45'
+
+tstop = out.SimulationMetadata.ModelInfo.StopTime
+
+tstop =
+
+ 20
+
+Specify Configuration Set for Simulation
+
+ To apply a configuration set to a simulation without dirtying
+ the model, configure the simulation using a Simulink.ConfigSet
+ object. The sim function applies the configuration set to
+ the model during simulation and reverts the change when the simulation
+ completes. A configuration set specifies only model configuration parameter
+ values. To specify additional values, such as variable and block parameter
+ values, use a Simulink.SimulationInput object instead.
+
+ Suppose you want to simulate the model IntegrateSine,
+ described in Run Simulations Using Current Parameter Values, for
+ 20 seconds using the solver ode45.
+
+To specify the parameter values to use in the simulation, create and configure a
+ Simulink.ConfigSet object. Open the model and get the
+ current configuration set. Then, create a copy of the configuration set and
+ specify the stop time and solver on the copy.
+mdl = &#34;IntegrateSine&#34;;
+open_system(mdl)
+mdlconfig = getActiveConfigSet(mdl);
+simconfig = copy(mdlconfig);
+set_param(simconfig,StopTime=&#34;20&#34;);
+set_param(simconfig,Solver=&#34;ode45&#34;);
+
+Simulate the model using the configuration set
+ simconfig.
+out = sim(mdl,simconfig);
+
+To see the parameter values used in the simulation, check the simulation
+ metadata returned with the simulation results.
+slvr = out.SimulationMetadata.ModelInfo.SolverInfo.Solver
+
+slvr =
+
+ 'ode45'
+
+tstop = out.SimulationMetadata.ModelInfo.StopTime
+
+tstop =
+
+ 20
+
+Input Arguments
+collapse all
+simin — Simulation inputs and configuration
+ 
+Simulink.SimulationInput object | array of Simulink.SimulationInput objects
+
+Simulation inputs and configuration, specified as a Simulink.SimulationInput
+ object or an array of Simulink.SimulationInput objects. The
+ properties of the Simulink.SimulationInput object specify
+ options and parameter values to use in the simulation, including:
+
+The model to simulate
+
+Source variables or files for external input data
+
+Block parameter values to use for the simulation
+
+Model configuration parameter values to use for the
+ simulation
+
+The values defined in the properties of the Simulink.SimulationInput
+ object are applied to the model for the simulation and reverted at the end
+ of simulation.
+
+mdl — Model to simulate
+ 
+string | character vector | model handle
+
+Model to simulate, specified as a string or a character vector that
+ defines the name of the model or as a model
+ handle (since R2024a).
+Example: out = sim(&#34;vdp&#34;) simulates the model named
+ vdp using the parameter values currently configured
+ in the model.
+
+Data Types: char | string
+
+params — Model parameter values to use in simulation
+ 
+structure
+
+Model parameter values to use in simulation, specified as a structure. To specify a
+ parameter value, add a field to the structure that matches the programmatic
+ name of the model parameter. For example, to specify a start time of 5
+ seconds and a stop time of 10 seconds, create this
+ structure:
+params.StartTime = &#34;5&#34;;
+params.StopTime = &#34;10&#34;;
+
+Data Types: struct
+
+configset — Configuration set to use in simulation
+ 
+Simulink.ConfigSet object
+
+Configuration set to use in simulation, specified as a Simulink.ConfigSet
+ object.
+
+Name-Value Arguments
+expand all
+Specify optional pairs of arguments as
+ Name1=Value1,...,NameN=ValueN, where Name is
+ the argument name and Value is the corresponding value.
+ Name-value arguments must appear after other arguments, but the order of the
+ pairs does not matter.
+ 
+Example: out = sim(simin,UseFastRestart=&#34;on&#34;) runs a set of simulations
+ using fast restart.
+Example: out = sim(mdl,FastRestart=&#34;on&#34;) enables fast restart and runs a
+ simulation of the model mdl.
+
+Note
+The sim function supports different name-value arguments
+ depending on whether you specify the first input as one or more
+ Simulink.SimulationInput objects or as the name or handle
+ of the model to simulate.
+
+Simulink.SimulationInput Object Syntax
+expand all
+UseFastRestart — Option to enable fast restart
+
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to enable fast restart, specified as &#34;off&#34; or
+ &#34;on&#34;. Fast restart reduces the time required to
+ run a set of simulations by compiling the model only once, before the
+ execution phase of the first simulation. For more information, see How Fast Restart Improves Iterative Simulations.
+Consider using fast restart when you run multiple simulations of a model by specifying
+ an array of Simulink.SimulationInput objects. For more
+ information, see Script Iterative or Batch Simulations Using Fast Restart.
+
+This argument is supported only when you specify the first input to the
+ sim function as one or more
+ Simulink.SimulationInput objects.
+This argument has no effect when you specify a scalar
+ Simulink.SimulationInput object. To enable fast
+ restart, specify the FastRestart parameter on the
+ Simulink.SimulationInput object using the setModelParameter
+ function. When you enable fast restart using a scalar
+ Simulink.SimulationInput object, fast restart
+ remains enabled in the model after the simulation completes.
+Example: out =
+ sim(simin,UseFastRestart=&#34;on&#34;);
+Data Types: char | string
+
+StopOnError — Option to skip subsequent simulations if simulation error 
+ occurs
+
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to skip subsequent simulations if simulation error occurs, specified as
+ &#34;off&#34; or &#34;on&#34;.
+&#34;off&#34; — If a simulation error occurs, the
+ software captures the error in the simulation output and
+ continues to run any subsequent simulations.
+For example, suppose you run five simulations using an array of
+ Simulink.SimulationInput objects. An error
+ occurs during the second simulation. The
+ sim function captures the error in the
+ output for the second simulation and continues to run the third,
+ fourth, and fifth simulations.
+
+&#34;on&#34; — If a simulation error occurs, the
+ software captures the error in the simulation output and does
+ not run any subsequent simulations.
+For example, suppose you run five simulations using an array of five
+ Simulink.SimulationInput objects. An error
+ occurs during the second simulation. The software captures the
+ error in the output for the second simulation and does not run
+ the third, fourth, and fifth simulations. The
+ sim function returns an empty
+ Simulink.SimulationOutput object for each
+ simulation that does not run.
+
+This argument has no effect when you specify the
+ first input to the sim function as a scalar
+ Simulink.SimulationInput object. (since R2024a)
+This argument is supported only when you specify the first input to the
+ sim function as one or more
+ Simulink.SimulationInput objects.
+Example: out = sim(simin,StopOnError=&#34;on&#34;);
+
+ Tips
+
+ When the first input is an array of
+ Simulink.SimulationInput objects, the
+ sim function always enables
+ CaptureErrors for each
+ simulation.
+
+View information about captured errors in the simulation output and metadata.
+
+The sim function captures
+ the error in the ErrorMessage
+ property of the
+ Simulink.SimulationOutput
+ object.
+msg = out.ErrorMessage;
+
+To view the error message in the
+ Diagnostic Viewer, use the sldiagviewer.reportSimulationMetadataDiagnostics
+ function.
+sldiagviewer.reportSimulationMetadataDiagnostics(out)
+
+The Simulink.SimulationMetadata object
+ returned by the simulation contains additional
+ information about the error, such as the
+ simulation phase in which the error occurred. The
+ error information is stored in the
+ ErrorDiagnostic field of the
+ ExecutionInfo
+ property.
+e = out.SimulationMetadata.ExecutionInfo.ErrorDiagnostic;
+
+ Data Types: char | string
+
+ShowProgress — Option to indicate simulation progress
+ 
+&#34;off&#34; | &#34;on&#34;
+
+Option to indicate simulation progress, specified as &#34;off&#34; or
+ &#34;on&#34;.
+&#34;off&#34; — Simulations run without displaying
+ progress messages.
+
+&#34;on&#34; — Progress updates are displayed as
+ simulations run.
+
+The default value for this parameter depends on the dimensions of the first input to the
+ sim function:
+
+When the first input is a scalar
+ Simulink.SimulationInput object, the
+ default value is &#34;off&#34;.
+
+When the first input is an array of
+ Simulink.SimulationInput objects, the
+ default value is &#34;on&#34;.
+
+This argument is supported only when you specify the first input to the
+ sim function as one or more
+ Simulink.SimulationInput objects.
+Example: out = sim(simin,ShowProgress=&#34;on&#34;);
+
+ShowSimulationManager — Option to monitor progress using Simulation Manager
+ 
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to monitor progress using Simulation Manager, specified as &#34;off&#34; or
+ &#34;on&#34;. Consider using the Simulation
+ Manager when you run multiple simulations using a single call
+ to the sim function.
+This argument is supported only when you specify the first input to
+ the sim function as one or more
+ Simulink.SimulationInput objects.
+
+Example: out =
+ sim(simin,ShowSimulationManager=&#34;on&#34;);
+
+Model Syntax
+expand all
+Configuration Parameter Name — Model configuration parameter value to use in simulation
+
+configuration parameter value
+
+Model configuration parameter value to use in simulation, specified as
+ a name-value argument that consists of the programmatic name of the
+ configuration parameter and the parameter value.
+For example, to configure the Stop time
+ parameter, specify the name-value argument using the name
+ StopTime and the parameter value. These commands
+ run a 100-second simulation of a model named
+ MyModel.
+mdl = &#34;MyModel&#34;;
+out = sim(mdl,StopTime=&#34;100&#34;);
+
+You can use a name-value argument to specify the value for any model
+ configuration parameter in simulations you run using the
+ sim function. The configuration parameter
+ values you specify are applied for the simulation and revert when the
+ simulation ends. When you simulate a model hierarchy, the configuration
+ parameter values you specify apply to the top model.
+Specifying model configuration parameter values as name-value
+ arguments is supported only when you specify the first input to the
+ sim function as the name or handle of the model
+ to simulate. 
+Example: out =
+ sim(&#34;MyModel&#34;,SaveOutput=&#34;on&#34;);
+
+ Tips
+
+ To specify configuration parameter values on a
+ Simulink.SimulationInput object, use
+ the setModelParameter function.
+simin = Simulink.SimulationInput(&#34;MyModel&#34;);
+simin = setModelParameter(simin,StopTime=&#34;100&#34;);
+
+To get a list of model configuration parameters, use the
+ getActiveConfigSet function and the
+ get_param function.
+configSet = getActiveConfigSet(&#34;vdp&#34;);
+configSetNames = get_param(configSet,&#34;ObjectParameters&#34;)
+
+The get_param function returns a list
+ of all the model configuration parameters, such as
+ StopTime,
+ SaveTime, SaveState,
+ SaveOutput, and
+ SignalLogging.
+
+FastRestart — Option to enable fast restart for individual simulations
+ 
+&#34;off&#34; | &#34;on&#34;
+
+Option to enable fast restart for individual simulations, specified as
+ &#34;on&#34; or &#34;off&#34;. Fast restart
+ saves time in iterative simulation workflows by skipping compilation and
+ termination after compiling the model for the first simulation you run
+ after enabling fast restart.
+&#34;on&#34; — The simulation enables the
+ FastRestart parameter in the model and
+ runs using fast restart. After the simulation ends, the
+ FastRestart parameter remains enabled in
+ the model.
+If the model is not already initialized in fast restart, the
+ software compiles the model before running the simulation. At
+ the end of the simulation, the model remains initialized in fast
+ restart. To terminate the simulation, disable fast restart. For
+ more information, see Script Iterative or Batch Simulations Using Fast Restart.
+
+&#34;off&#34; — The simulation disables the
+ FastRestart parameter in the model and
+ runs without using fast restart. The model compiles for each
+ simulation.
+If the model is already initialized in fast restart, the
+ sim function terminates the previous
+ simulation before compiling the model.
+
+By default, fast restart is disabled in models, and simulations you
+ run using the sim function do not enable fast
+ restart. If you do not specify this argument, the
+ sim function uses the value of the parameter in
+ the model.
+This argument is supported only when you specify the first input to the
+ sim function as a model name or handle.
+Example: out = sim(&#34;MyModel&#34;,FastRestart=&#34;on&#34;);
+
+ Tips
+
+ To specify this
+ parameter on a Simulink.SimulationInput
+ object, use the setModelParameter function. (since R2024a)
+simin = Simulink.SimulationInput(&#34;MyModel&#34;);
+simin = setModelParameter(simin,FastRestart=&#34;on&#34;);
+
+To run a set of simulations using fast restart, specify
+ the first input argument as an array of
+ Simulink.SimulationInput objects and
+ use the UseFastRestart name-value
+ argument instead.
+
+If you enable fast restart using the Simulink
+ Editor or the set_param
+ function, simulations you run using the
+ sim function use fast restart even
+ if you do not specify this argument.
+
+Fast restart simulations return results as a single
+ Simulink.SimulationOutput object, even
+ if the Single simulation output
+ configuration parameter is disabled.
+
+ Data Types: char | string
+
+SimulationMode — Simulation mode
+ 
+&#34;normal&#34; | &#34;accelerator&#34; | &#34;rapid-accelerator&#34;
+
+Simulation mode, specified as &#34;normal&#34;,
+ &#34;accelerator&#34;, or
+ &#34;rapid-accelerator&#34;. If you do not specify this
+ argument, the simulation uses the simulation mode specified in the
+ model.
+Value | Description | 
+&#34;normal&#34; | Run simulation using normal mode.
+Normal mode simulations use the full
+ model representation and provide the best support for interacting with the
+ model during simulation.
+Use normal mode for workflows that
+ involve modifying the structure of your model between simulations. For best
+ results, use normal mode for debugging simulations.
+ | 
+&#34;accelerator&#34; | Run simulation using accelerator mode.
+Accelerator mode simulations generate an optimized representation of the model, called a simulation target, to use in simulation. The optimizations that improve the simulation performance can reduce the ability to interact with the model during simulation. Modifying the model between accelerator mode simulations can require regenerating the simulation target.
+Use accelerator mode to speed up simulations in workflows that do not involve making structural changes to the model between simulations.
+ | 
+&#34;rapid-accelerator&#34; | Run simulation using rapid accelerator mode.
+Rapid accelerator mode
+ simulations generate a simulation target to use
+ for simulation. The simulation target provides
+ minimal support for interacting with the model
+ during simulation. Modifying the model between
+ rapid accelerator simulations can require
+ rebuilding the simulation target.
+Use
+ rapid accelerator mode for the fastest simulation
+ execution when you modify the model between
+ simulations only by tuning
+ variable and parameter values. Tuning certain
+ parameter values can require rebuilding the
+ simulation target.
+ | 
+
+For more information, see Choosing a Simulation Mode and Code Regeneration in Accelerated Models.
+
+This argument is supported only when you specify the first input to the
+ sim function as a model name or handle.
+Example: out =
+ sim(&#34;MyModel&#34;,SimulationMode=&#34;accelerator&#34;);
+
+ Tips
+
+ To specify the simulation mode on a
+ Simulink.SimulationInput object, use
+ the setModelParameter function.
+simin = Simulink.SimulationInput(&#34;MyModel&#34;);
+simin = setModelParameter(simin,SimulationMode=&#34;accelerator&#34;);
+
+ Visualization blocks update during simulation when you run simulations from a UI, such
+ as the Simulink Editor, but do not update during simulation when you run
+ rapid accelerator simulations programmatically.
+
+To prevent rebuilding the simulation target, you can disable the rapid
+ accelerator up-to-date check by specifying the
+ RapidAcceleratorUpToDateCheck parameter value as
+ &#34;off&#34;. With the up-to-date check disabled,
+ changes you make that would require rebuilding the simulation target are
+ ignored.
+
+To simulate using rapid accelerator mode, you can specify &#34;rapid&#34; as a partial match for &#34;rapid-accelerator&#34;. For more information about name-value arguments in MATLAB®, see Validate Name-Value Arguments.
+
+ Data Types: char | string
+
+CaptureErrors — Option to capture errors and return simulation output if simulation 
+ error occurs
+
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to capture errors and return simulation output if simulation
+ error occurs, specified as &#34;off&#34; or
+ &#34;on&#34;.
+Behavior | CaptureErrors=&#34;off&#34;
+ (default) | CaptureErrors=&#34;on&#34; | 
+Issuing exceptions for simulation errors | The software issues exceptions for simulation
+ errors.
+The exception stops both the
+ simulation in which the error occurred and the
+ script or function that invoked the simulation, if
+ applicable.
+ | The software does not issue exceptions for
+ simulation errors.
+If a script or another function
+ invoked the simulation, the error stops the
+ simulation but does not stop the execution of the
+ script or function.
+ | 
+Error reporting | Errors that occur during simulation are
+ reported in the MATLAB Command Window.
+ | Information about the simulation errors,
+ including the message and the simulation phase in
+ which the error occurred, is captured in the
+ simulation output.
+ | 
+Simulation results | Issuing an exception stops the simulation
+ immediately. The sim function
+ does not return simulation results.
+ | The sim function returns
+ simulation results and metadata up to the simulation
+ time at which the error occurred.
+ | 
+
+This argument is supported only when you specify the first input to the
+ sim function as a model name or handle.
+
+Example: out = sim(&#34;MyModel&#34;,CaptureErrors=&#34;on&#34;);
+
+ Tips
+
+ This option is not supported for software-in-the-loop
+ (SIL) and processor-in-the-loop (PIL) simulations.
+
+To specify this
+ parameter on a Simulink.SimulationInput
+ object, use the setModelParameter function. (since R2024a)
+simin = Simulink.SimulationInput(&#34;MyModel&#34;);
+simin = setModelParameter(simin,CaptureErrors=&#34;on&#34;);
+
+View information about captured errors in the simulation
+ output and metadata.
+
+The sim function captures
+ the error in the ErrorMessage
+ property of the
+ Simulink.SimulationOutput
+ object.
+msg = out.ErrorMessage;
+
+To view the error message in the
+ Diagnostic Viewer, use the sldiagviewer.reportSimulationMetadataDiagnostics
+ function.
+sldiagviewer.reportSimulationMetadataDiagnostics(out)
+
+The Simulink.SimulationMetadata object
+ returned by the simulation contains additional
+ information about the error, such as the
+ simulation phase in which the error occurred. The
+ error information is stored in the
+ ErrorDiagnostic field of the
+ ExecutionInfo
+ property.
+e = out.SimulationMetadata.ExecutionInfo.ErrorDiagnostic;
+
+ Data Types: char | string
+
+Debug — Option to start programmatic simulation debugging session
+ 
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to start programmatic simulation debugging session, specified
+ as &#34;off&#34; or &#34;on&#34;.
+This argument is supported only when you specify the first input to the
+ sim function as a model name or handle.
+
+Example: out = sim(&#34;MyModel&#34;,Debug=&#34;on&#34;);
+Data Types: char | string
+
+RapidAcceleratorUpToDateCheck — Option to disable rebuilding rapid accelerator target
+ 
+&#34;on&#34; (default) | &#34;off&#34;
+
+Option to disable rebuilding rapid accelerator target, specified as
+ &#34;on&#34; or &#34;off&#34;.
+&#34;on&#34; — Before each simulation, the software
+ checks whether any changes to the model require rebuilding the
+ rapid accelerator target. If a change requires rebuilding the
+ rapid accelerator target, the software rebuilds the target
+ before running the simulation.
+
+&#34;off&#34; — The software does not check whether
+ changes to the model require rebuilding the rapid accelerator
+ target and always runs the simulation without rebuilding the
+ target. Changes to the model that require rebuilding the rapid
+ accelerator target are ignored and are not reflected in the
+ simulation.
+
+This argument is supported only when you specify the first input to the
+ sim function as a model name or handle.
+Example: out =
+ sim(&#34;MyModel&#34;,RapidAcceleratorUpToDateCheck=&#34;off&#34;);
+
+ Tips
+
+ To specify this option on a Simulink.SimulationInput object, use the
+ setModelParameter
+ function.
+
+ simin = Simulink.SimulationInput(&#34;MyModel&#34;);
+simin = setModelParameter(simin,RapidAcceleratorUpToDateCheck=&#34;off&#34;);
+
+ Data Types: char | string
+
+Timeout — Maximum simulation run time
+ 
+positive scalar
+
+Maximum simulation run time, specified as a positive scalar. Specify the time, in
+ seconds, to allow the simulation to run. If the simulation runs for
+ longer than the value you specify, the software issues a warning and
+ stops the simulation. For example, if you specify
+ Timeout as 30, the software
+ stops the simulation and issues a warning if computing simulation
+ results takes more than 30 seconds.
+The Timeout parameter specifies a limit on the
+ amount of clock time for a simulation to run. To specify the maximum
+ time value to simulate, use the Stop time
+ parameter.
+
+This argument is supported only when you specify the first input to the
+ sim function as a model name or handle.
+Example: out = sim(&#34;MyModel&#34;,Timeout=60); runs a simulation with a
+ 60-second timeout.
+
+ Tips
+
+ Consider specifying a timeout when you use a variable-step
+ solver. If simulation conditions constrain the step size,
+ the solver starts taking very small time steps, which slows
+ down the simulation.
+
+To specify this option on a
+ Simulink.SimulationInput object, use
+ the setModelParameter function.
+simin = Simulink.SimulationInput(&#34;MyModel&#34;);
+simin = setModelParameter(simin,Timeout=60);
+
+Trace — Option to display summary of parameters before starting 
+ simulation
+
+&#34;siminfo&#34;
+
+Option to display summary of parameters before starting simulation,
+ specified as &#34;siminfo&#34;.
+This argument is supported only when you specify the first input to
+ the sim function as a model name or handle.
+
+Example: out =
+ sim(&#34;MyModel&#34;,Trace=&#34;siminfo&#34;);
+Data Types: char | string
+
+Output Arguments
+collapse all
+out — Simulation results and metadata
+ 
+Simulink.SimulationOutput object | array of Simulink.SimulationOutput objects | vector
+
+Simulation results and metadata, returned as a Simulink.SimulationOutput
+ object, an array of Simulink.SimulationOutput objects, or a
+ vector. The Simulink.SimulationOutput object contains all
+ data logged from simulation and metadata, such as timing information and
+ diagnostics.
+To ensure sim returns results in a consistent format for any syntax,
+ save the model with the Single simulation
+ output configuration parameter enabled.
+
+The sim function returns a vector of the simulation
+ time steps if all of these conditions are met:
+The only input argument is the name of the model.
+
+The Single simulation output parameter is
+ disabled.
+
+Fast restart is disabled.
+
+Tips
+To return results in the same format for every syntax, save the model with the
+ Single simulation output
+ parameter enabled. Returning all simulation data and metadata in a single object
+ facilitates analyzing results from multiple simulations.
+
+ To control execution and tune parameter values
+ during scripted simulations, use the Simulation object. (since R2024a) For more information, see Run Simulations Programmatically.
+
+To interact with simulations using both the MATLAB Command Window and the Simulink Editor, issue
+ simulation commands using the set_param function. For more
+ information, see Run Simulations Programmatically.
+
+When you run a simulation using the sim function, the
+ simulation runs until an error occurs or the simulation reaches the specified
+ stop time.
+
+When you simulate a model with infinite stop time, stop the simulation from
+ the MATLAB Command Window by pressing Ctrl+C. The simulation
+ stops, and simulation results are not saved in the MATLAB workspace.
+
+Results of programmatic simulations are not available when the
+ StopFcn model callback executes. To process simulation
+ results, use the PostSimFcn callback of the
+ Simulink.SimulationInput object instead.
+
+Configure logging for time, states, and outputs using the Configuration
+ Parameters dialog box. On the Modeling tab, under
+ Setup, click Model Settings. Then,
+ in the Configuration Parameters dialog box, select Data
+ Import/Export.
+
+To log signals throughout a model, use signal logging or logging blocks, such
+ as the To Workspace block or the Record block. For more information, see Save Signal Data Using Signal Logging.
+
+Version History
+Introduced before R2006aexpand all
+R2024a: View simulation time in Simulink Editor during simulation
+
+When you run normal or accelerator mode simulations using the sim
+ function and the model is open, the status bar at the bottom of the Simulink
+ Editor window for the model updates to show the current simulation time
+ during simulation.
+
+R2024a: Consistent error handling for sim function with scalar 
+ Simulink.SimulationInput object
+
+In prior releases, the sim function overwrote the
+ CaptureErrors parameter for a single simulation if you
+ specified one or more name-value arguments in addition to the scalar
+ Simulink.SimulationInput object, including the
+ StopOnError name-value argument. Now, the
+ sim function has consistent default behavior and options,
+ summarized in the table.
+Simulink.SimulationInput Dimensions | CaptureErrors | StopOnError | Behavior Change | 
+scalar | &#34;off&#34; by default.
+To enable this parameter,
+ specify the parameter on the
+ Simulink.SimulationInput object using the
+ setModelParameter
+ function.
+ | This name-value argument has no effect when you run a
+ single simulation.
+ | Some calls to the sim function in scripts or functions from
+ previous releases might not return a
+ Simulink.SimulationOutput object when the
+ same calls had returned the simulation output in previous
+ releases. To restore the prior behavior, specify the
+ CaptureErrors parameter as
+ &#34;on&#34;.
+ | 
+vector, matrix, array | Always &#34;on&#34;. | &#34;off&#34; by default.
+Specify
+ this name-value argument as &#34;on&#34; to skip
+ subsequent simulations if a simulation error
+ occurs.
+ | No change. | 
+
+R2024a: Run fast restart simulations using scalar 
+ Simulink.SimulationInput objects
+
+You can configure a Simulink.SimulationInput object to
+ enable fast restart for an individual simulation you run using the sim function and a scalar
+ Simulink.SimulationInput object. Fast restart saves time in
+ iterative simulation workflows by compiling the model only once, for the first
+ simulation that has fast restart enabled. When you enable fast restart for an
+ individual simulation using the sim function, at the end of the
+ simulation, the FastRestart parameter remains enabled in the
+ model and the model is initialized in fast restart.
+The FastRestart parameter applies for only individual simulations you
+ run one at a time. To use fast restart for multiple simulations you run together
+ using an array of Simulink.SimulationInput objects, use the
+ UseFastRestart name-value argument.
+For more information, see How Fast Restart Improves Iterative Simulations.
+
+R2024a: Code Analyzer warning for multiple output syntax
+
+The Code
+ Analyzer warns about calls to the sim function that
+ return multiple output arguments. Since R2009b, the single simulation output
+ syntaxes have been recommended, and the multiple output syntaxes have been
+ discouraged.
+Support for syntaxes that return multiple output arguments will be removed in a
+ future release.
+
+R2019a: Single simulation output parameter enabled by default for 
+ new models
+
+The Single simulation output
+ parameter is enabled by default for new models. When you simulate a model that has
+ the Single simulation output parameter enabled, the simulation
+ always returns simulation results as a single Simulink.SimulationOutput
+ object.
+Single simulation output syntaxes of the sim function have
+ been recommended since R2009b. To ensure that the sim function
+ always returns simulation results in a consistent format, save your models with the
+ Single simulation output parameter enabled.
+
+R2017a: Run individual or multiple simulations using 
+ Simulink.SimulationInput objects
+
+The sim function has new syntaxes to support configuring simulations
+ using one or more Simulink.SimulationInput objects. The
+ Simulink.SimulationInput object represents a specification for
+ the simulation that includes the initial state or operating point, external inputs,
+ model parameter values, block parameter values, and variable values to use in the
+ simulation. The values on the Simulink.SimulationInput object
+ override values saved in the model for the simulation but do not modify or dirty the
+ model.
+The Simulink.SimulationInput object provides improved support and is
+ recommended for parallel simulations along with the new parsim function.
+
+R2009b: Easily analyze results from multiple simulations using single simulation output 
+ syntax
+
+Using the new single-output syntaxes, you can return all simulation results and
+ metadata as a single output argument. The single simulation output is a Simulink.SimulationOutput object
+ that contains all data logged in the simulation as well as simulation metadata.
+ Returning a single output argument provides better support for parallel simulations
+ and facilitates analyzing results from multiple simulations.
+To always return simulation results as a single output, save your model with the
+ Single simulation output
+ parameter enabled.
+
+R2009b: Syntaxes that return multiple output arguments are not recommended
+
+The sim function provides enhanced compatibility with
+ parallel computing, including an option to simplify data and variable management by
+ returning results as a single output. Syntaxes that return more than one output
+ argument are not recommended.
+To return results as a single output object, enable the Single simulation output
+ configuration parameter in the model.
+To simulate a model programmatically in R2009a and earlier, use this
+ syntax.
+[T,X,Y1,Y2,Yn] = sim('model',Timespan,Options,UT);
+
+Only the model argument is required.
+If you do not specify other arguments, the simulation uses values in the
+ model.
+
+If you specify additional arguments, those arguments override the values
+ in the model.
+
+If you specify an argument as [], the simulation uses
+ the value in the model.
+
+The tables describe the input and output arguments and provide information about
+ how to update your code to use syntaxes recommended for R2009b and later.
+Input Argument Descriptions and Replacements
+Input Argument | Argument Purpose and Value for R2009a and Earlier | Replacement | 
+model | Name of model to simulate, specified as a character
+ vector. | No change required.
+Starting in R2017a, you can specify the model to
+ simulate using a Simulink.SimulationInput
+ object that can also configure the model for
+ simulation.
+ | 
+Timespan | Simulation start and stop times, specified as a scalar or a
+ vector.
+TFinal — Specifies the stop time
+ for the simulation, which starts from zero.
+
+[TStart TFinal] — Specifies the
+ start time and the stop time for the simulation.
+
+[TStart OutputTimes TFinal] —
+ Specifies start and stop times for the simulation along
+ with output times for which to calculate a value. When
+ you do not specify output times, the simulation engine
+ determines the times for which to calculate values.
+ Specifying output times ensures that the simulation
+ computes a value for each time you specify.
+
+ | Configure these options by specifying model configuration
+ parameters as name-value arguments:
+Stop
+ time — Specify the stop time for the
+ simulation.
+
+Start
+ time — Specify the start time for the
+ simulation.
+
+Output
+ times — Specify output times for which
+ to calculate a value.
+
+Starting in R2017a, you can configure these
+ options using a Simulink.SimulationInput
+ object.
+ | 
+Options | One or more simulation parameters, specified as a
+ structure.
+ | Specify model configuration parameters using name-value
+ arguments.
+Starting in R2017a, you can configure
+ simulation options using a
+ Simulink.SimulationInput
+ object.
+ | 
+UT | External input data for root-level input
+ ports.
+ | Specify input data for root-level input ports using the
+ Input
+ parameter. Specify the parameter as a name-value
+ argument.
+Starting in R2017a, you can specify
+ external inputs using a
+ Simulink.SimulationInput
+ object.
+ | 
+
+Output Argument Descriptions and Replacements
+Output Argument | Argument Purpose and Value for R2009a and Earlier | Replacement | 
+T | Simulation times, returned as a vector.
+ | Access time, states, and output data through the Simulink.SimulationOutput object. When you log
+ time, states, and outputs, the SimulationOutput
+ object contains the logged data, which you can access as a
+ property using a dot and the variable name for the logged data.
+ For example, if the SimulationOutput object is
+ returned as the variable out, and you save
+ time data to the variable
+ tout:
+tout = out.tout;
+
+Use
+ the model configuration parameters to specify data to log and
+ the variables names for the logged data. 
+Time
+
+States
+
+Output
+
+ | 
+X | Logged states, returned as an array or a
+ structure.
+ | 
+Y1,Y2,...,YN | Logged outputs, returned as one or more
+ vectors.
+ | 
+
+R2009b: SrcWorkspace argument not recommended
+
+Starting in R2009b, the SrcWorkspace name-value argument is not
+ recommended. Specifying this argument can lead to transparency violations for
+ parallel simulations. Instead of using values defined in a workspace, specify values
+ for simulation as inputs to the sim function.
+Before R2017a, specify parameter values for simulation using a structure
+ that contains fields with names that match the parameter names and values
+ that indicate the value to use for the parameter.
+
+Starting in R2017a, configure model parameter, block parameter, and
+ variable values using a Simulink.SimulationInput
+ object.
+
+See Also
+Functions
+parsim | sldebug
+Objects
+Simulink.SimulationInput | Simulink.SimulationOutput | Simulink.ConfigSet
+Model Settings
+Single simulation output
+Topics
+Run Simulations Programmatically
+Script Iterative or Batch Simulations Using Fast Restart
+Running Multiple Simulations in Simulink
+Manage Configuration Sets for a Model
+Set Model Configuration Parameters for a Model
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

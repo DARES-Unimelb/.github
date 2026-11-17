@@ -1,0 +1,144 @@
+=== uacs_plant : 4 top-level blocks, file 61443 bytes
+   u_act            Inport                       
+   wind_ned         Inport                       
+   plant_eom        M-S-Function                 
+   x_state          Outport                      
+=== uacs_manual_pid : 49 top-level blocks, file 116783 bytes
+   G_gain           Gain                         
+   T_sum            Sum                          
+   V_err            Sum                          
+   act_split        Demux                        
+   alloc            M-S-Function                 
+   cmd_pilot        M-S-Function                 
+   cmd_split        Demux                        
+   const_Ttrim      Constant                     
+   const_mode       Constant                     
+   const_utrim      Constant                     
+   const_zero       Constant                     
+   da_sum           Sum                          
+   de_sum           Sum                          
+   dr_sum           Sum                          
+   h_err            Sum                          
+   h_gain           Gain                         
+   meas             M-S-Function                 
+   meas_split       Demux                        
+   p_c_lim          Saturate                     
+   p_err            Sum                          
+   phi_err          Sum                          
+   pid_V            SubSystem                    
+   pid_h            SubSystem                    
+   pid_p            SubSystem                    
+   pid_phi          SubSystem                    
+   pid_q            SubSystem                    
+   pid_r            SubSystem                    
+   pid_theta        SubSystem                    
+   plant            SubSystem                    
+   q_c_lim          Saturate                     
+   q_err            Sum                          
+   r_c_lim          Saturate                     
+   r_err            Sum                          
+   rate_mux         Mux                          
+   stick_src        FromWorkspace                
+   surf_mux         Mux                          
+   theta_err        Sum                          
+   theta_lim        Saturate                     
+   theta_switch     Switch                       
+   u_mux            Mux                          
+   utrim_split      Demux                        
+   wind_src         FromWorkspace                
+   x_split          Demux                        
+   x_state          Outport                      
+   u_act            Outport                      
+   cmd              Outport                      
+   rate_cmd         Outport                      
+   M_cmd            Outport                      
+   T_cmd            Outport                      
+   -- inside plant: 5 blocks
+      uacs_manual_pid/plant SubSystem
+      u_act          Inport
+      wind_ned       Inport
+      plant_eom      M-S-Function
+      x_state        Outport
+=== uacs_lqr : 56 top-level blocks, file 100061 bytes
+   C_lat            Gain                         
+   C_long           Gain                         
+   G_gain           Gain                         
+   K_lat            Gain                         
+   K_long           Gain                         
+   T_sum            Sum                          
+   Tref_lat         Gain                         
+   Tref_long        Gain                         
+   Uff_lat          Gain                         
+   Uff_long         Gain                         
+   act_split        Demux                        
+   alloc            M-S-Function                 
+   const_Ttrim      Constant                     
+   const_utrim      Constant                     
+   const_xop_lat    Constant                     
+   const_xop_long   Constant                     
+   const_zero       Constant                     
+   lat_abs          Mux                          
+   lat_aug_dev      Mux                          
+   lat_aug_ref      Mux                          
+   lat_dev          Sum                          
+   lat_err          Sum                          
+   lat_int          DiscreteIntegrator           
+   lat_int_err      Sum                          
+   lat_uff_sum      Sum                          
+   long_abs         Mux                          
+   long_aug_dev     Mux                          
+   long_aug_ref     Mux                          
+   long_dev         Sum                          
+   long_err         Sum                          
+   long_int         DiscreteIntegrator           
+   long_int_err     Sum                          
+   long_uff_sum     Sum                          
+   meas             M-S-Function                 
+   meas_split       Demux                        
+   plant            SubSystem                    
+   ref_lat          Mux                          
+   ref_long         Mux                          
+   ref_split        Demux                        
+   ref_src          FromWorkspace                
+   surf_inc         Mux                          
+   surf_sum         Sum                          
+   u_dev_lat_split  Demux                        
+   u_dev_long_split Demux                        
+   u_dev_mux        Mux                          
+   u_mux            Mux                          
+   wind_src         FromWorkspace                
+   x_split          Demux                        
+   xi_mux           Mux                          
+   x_state          Outport                      
+   u_act            Outport                      
+   M_cmd            Outport                      
+   T_cmd            Outport                      
+   u_dev            Outport                      
+   ref              Outport                      
+   xi               Outport                      
+   -- inside plant: 5 blocks
+      uacs_lqr/plant SubSystem
+      u_act          Inport
+      wind_ned       Inport
+      plant_eom      M-S-Function
+      x_state        Outport
+=== uacs_plant_ref : 13 top-level blocks, file 74259 bytes
+   u_act            Inport                       
+   wind_ned         Inport                       
+   aero             M-S-Function                 
+   eom              SubSystem                    6DOF EA Bridge
+   h_isa            Constant                     
+   h_mode           Constant                     
+   h_state_gain     Gain                         
+   h_switch         Switch                       
+   isa              SubSystem                    International Standard Atmosphere Model
+   x_mux            Mux                          
+   xe_split         Demux                        
+   x_state          Outport                      
+   aux              Outport                      
+
+=== P.tags aliases exposed to Simulink ===
+rho, g, m, b, S, cbar, AR
+
+=== sim_* base workspace variables (0) ===
+

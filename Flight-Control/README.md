@@ -14,8 +14,6 @@ be added to the MATLAB path by hand.
 | `model/uacs_lqr.slx`, `model/uacs_manual_pid.slx` | The two controllers as standalone models, used for the recorded acceptance runs. |
 | `model/uacs_plant.slx`, `model/uacs_plant_ref.slx` | The plant alone, and the plant against a reference implementation. |
 | `docs/design_tutorial_report_en.md` | Full English write-up: how the control law is designed, what every block does, and what is still wrong. |
-| `docs/design_tutorial_report.md` | The same report in Chinese, including the flight-test data. |
-| `docs/handover.md` | Working notes for whoever picks this up next. |
 | `uacs_go.m` | The one file you edit to change parameters. Everything else follows from it. |
 | `params/`, `plant/`, `control/`, `sim/`, `verify/`, `sizing/` | The code the models call. |
 

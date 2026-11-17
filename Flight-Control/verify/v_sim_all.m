@@ -2,16 +2,11 @@ function out = v_sim_all(varargin)
 % V_SIM_ALL Run every Simulink side acceptance case and report the verdicts.
 %
 %   out = v_sim_all()
+%   out = v_sim_all('verbose', true)
 %
-% Each case is executed in turn and its failure is caught, so one failure still
-% leaves the other verdicts on the record. The function then raises if anything
-% failed: the table is evidence, the assertion is the criterion.
-%
-% V12 needs the Aerospace Blockset, and it is added to the list only when the
-% toolbox is present: an absent toolbox is a SKIP with its reason, never a silent
-% pass, which is the rule in architecture.md section 9. When the toolbox is there
-% but the cross check has not been run yet, the case raises v_sim_v12:NoData and
-% is reported as SKIP for the same reason: no measurement, no verdict.
+% Each case's failure is caught so the other verdicts still reach the record, then the
+% function raises if any case failed.
+% A case whose measurement or toolbox is absent is reported as SKIP, never as a pass.
 
 ip = inputParser;
 ip.addParameter('verbose', true, @(x) islogical(x) || isnumeric(x));

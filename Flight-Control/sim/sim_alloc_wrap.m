@@ -1,12 +1,9 @@
 function info = sim_alloc_wrap(P, M_cmd, T_cmd)
-% SIM_ALLOC_WRAP Control allocation plus its own info struct.
+% SIM_ALLOC_WRAP Control allocation plus its own info struct
 %
 %   info = sim_alloc_wrap(P, M_cmd, T_cmd)
 %   info.act  5x1  [da de dr dth_l dth_r]
-%   info.src  'allocate' when the delivered allocator was used
-%
-% Scenario scripts use this when they want allocate's diagnostics; the model
-% path uses sim_alloc_act, which returns the bare five commands.
+%   info.src  'allocate' when the delivered allocator was used, else 'placeholder'
 
 if nargin < 1 || isempty(P)
    P = evalin('base', 'P');

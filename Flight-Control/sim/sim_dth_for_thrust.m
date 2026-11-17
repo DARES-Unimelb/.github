@@ -1,9 +1,9 @@
 function dth = sim_dth_for_thrust(P, V, T_per_motor)
-% SIM_DTH_FOR_THRUST Throttle that produces a wanted per-motor thrust.
+% SIM_DTH_FOR_THRUST Throttle that produces a wanted per-motor thrust
 %
-% Monotone bisection on sim_thrust, which is monotone increasing in throttle.
-% Used by the placeholder allocator and by the scenario scripts when they need a
-% trim throttle for a thrust they computed themselves.
+%   dth = sim_dth_for_thrust(P, V, T_per_motor)
+%
+% Bisection on sim_thrust, which increases monotonically with throttle
 
 lo = P.prop.esc.min_throttle;
 hi = P.prop.esc.max_throttle;

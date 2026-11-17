@@ -1,0 +1,6 @@
+empty specs class struct size [0 0]
+PROBE FAILED MATLAB:UndefinedFunction | Undefined function 'run_spec_probe' for input arguments of type 'cell'.
+  at LiveEditorEvaluationHelperEmatlab_mcp_server line 13
+  at mcpEval line 48
+  at fevalMatlab line 0
+  at fevalJSON line 0

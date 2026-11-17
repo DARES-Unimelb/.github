@@ -1,6 +1,4 @@
 % UACS_JOB_SIM_SCENARIOS_V10 Job entry: V10 step-size independence only.
-% V9 already has data in results/sim_wind_crosswind.mat, so re-running it would
-% cost another five minutes for nothing.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_scenarios_v10only');

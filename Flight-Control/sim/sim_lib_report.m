@@ -1,14 +1,10 @@
 function rep = sim_lib_report()
-% SIM_LIB_REPORT Check that every library block the builders add exists.
+% SIM_LIB_REPORT Check that every library block the builders add exists
 %
 %   rep = sim_lib_report()
-%   rep.missing  cell array of library paths that could not be resolved
-%   rep.count    number of library paths checked
-%
-% add_block fails with a generic message when a library path is wrong, and on a
-% shared session a failed build costs a whole job. Checking the paths up front
-% turns that into one precise line in the build report. Reports whether each
-% block's BlockType resolves, which is what add_block needs.
+%   rep.checked  number of library paths checked
+%   rep.missing  library paths that could not be resolved
+%   rep.types    resolved path -> BlockType strings
 
 paths = { ...
    'simulink/Sources/In1', ...
@@ -27,8 +23,7 @@ paths = { ...
    'simulink/Ports & Subsystems/Subsystem'};
 
 rep = struct('checked', numel(paths), 'missing', {{}}, 'types', {{}});
-% The Simulink library must be loaded before a block path can be resolved;
-% without this every path reports as invalid.
+% the Simulink library must be loaded first, or every path reports as invalid
 try
    load_system('simulink');
 catch err

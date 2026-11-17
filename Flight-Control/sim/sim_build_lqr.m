@@ -1,25 +1,22 @@
 function info = sim_build_lqr(P, opts)
-% SIM_BUILD_LQR Build and save model/uacs_lqr.slx.
+% SIM_BUILD_LQR Build and save model/uacs_lqr.slx
 %
-% Full-state feedback with integral augmentation, in the deviation coordinates
-% control/design_lqr.m designs on, closed through the same allocation the manual
-% model uses:
-%   x_dev = x_abs - x_op                                  (Sum with a Constant)
-%   z     = integral(C_int*x_dev - r)                      (Discrete-Time Integrator)
-%   u_dev = u_ff + K*([x_ref; 0] - [x_dev; z])             (Gain on a 5-vector)
-%   surf  = u_trim + [dda dde ddr]                         (surfaces are absolute)
+% Full-state feedback with integral augmentation in the deviation coordinates the
+% design uses, closed through the same allocation as the manual PID model
+%   x_dev = x_abs - x_op                                   Sum against a Constant
+%   z     = integral(C_int*x_dev - r)                      Discrete-Time Integrator
+%   u_dev = u_ff + K*([x_ref; 0] - [x_dev; z])             Gain on a 5-vector
+%   surf  = u_trim + [dda dde ddr]                         surfaces are absolute
 %   M_cmd = G_surf*surf,  T_cmd = T_trim + dT
 %   allocate -> [da de dr dth_l dth_r] -> plant
 %
-% The reference comes from sim_lqr_ref_ts as commanded deviations
-% [dV_c dtheta_c dphi_c dbeta_c]; the reference state and the feedforward are
-% produced by two matrix Gains, which is exact because lqr_reference solves a
-% linear system in those commands. sim_lqr_refmap builds the matrices and checks
-% them against a direct solve at a non-unit command.
+% sim_lqr_ref_ts supplies the commanded deviations [dV_c dtheta_c dphi_c dbeta_c];
+% sim_lqr_refmap builds the two matrix Gains that turn them into the reference
+% state and the feedforward
 %
 % The plant's longitudinal states are [V alpha q theta] and the lateral ones are
 % [beta p r phi], so V and alpha come from the air-data block and the rest are
-% selected straight out of the state vector.
+% selected straight out of the state vector
 
 if nargin < 2
    opts = struct();
@@ -28,7 +25,7 @@ mdl = 'uacs_lqr';
 file = fullfile(sim_root(), 'model', [mdl '.slx']);
 sim_new_model(mdl, file);
 
-% ---------------- sources ----------------
+%% Sources
 sim_add_block(mdl, 'ref_src', 'simulink/Sources/From Workspace', sim_pos(0, 0, 90, 40), ...
    'VariableName', 'sim_lqr_ref_ts', 'Interpolate', 'on', ...
    'OutputAfterFinalValue', 'Holding final value');
@@ -46,7 +43,7 @@ sim_add_block(mdl, 'const_xop_lat', 'simulink/Sources/Constant', sim_pos(2, 6, 8
 sim_add_block(mdl, 'const_zero', 'simulink/Sources/Constant', sim_pos(6, 0, 60, 30), ...
    'Value', 'sim_c_zero');
 
-% ---------------- reference path ----------------
+%% Reference path
 sim_add_block(mdl, 'ref_split', 'simulink/Signal Routing/Demux', sim_pos(1, 0, 40, 90), ...
    'Outputs', '4');
 sim_add_block(mdl, 'ref_long', 'simulink/Signal Routing/Mux', sim_pos(2, 0, 20, 40), ...
@@ -62,7 +59,7 @@ sim_add_block(mdl, 'Tref_lat', 'simulink/Math Operations/Gain', sim_pos(3, 5, 80
 sim_add_block(mdl, 'Uff_lat', 'simulink/Math Operations/Gain', sim_pos(3, 6, 80, 40), ...
    'Gain', 'sim_lqr_Uff_lat', 'Multiplication', 'Matrix(K*u)');
 
-% ---------------- measurement and state selection ----------------
+%% Measurement and state selection
 sim_add_block(mdl, 'meas', 'simulink/User-Defined Functions/Level-2 MATLAB S-Function', ...
    sim_pos(1, 2, 100, 40), 'FunctionName', 'sim_meas_sfun');
 sim_add_block(mdl, 'meas_split', 'simulink/Signal Routing/Demux', sim_pos(2, 2, 40, 90), ...
@@ -70,7 +67,7 @@ sim_add_block(mdl, 'meas_split', 'simulink/Signal Routing/Demux', sim_pos(2, 2, 
 sim_add_block(mdl, 'x_split', 'simulink/Signal Routing/Demux', sim_pos(1, 8, 40, 260), ...
    'Outputs', '12');
 
-% ---------------- longitudinal loop ----------------
+%% Longitudinal loop
 sim_add_block(mdl, 'long_abs', 'simulink/Signal Routing/Mux', sim_pos(3, 2, 20, 90), ...
    'Inputs', '4');
 sim_add_block(mdl, 'long_dev', 'simulink/Math Operations/Sum', sim_pos(4, 2, 40, 40), ...
@@ -96,7 +93,7 @@ sim_add_block(mdl, 'long_uff_sum', 'simulink/Math Operations/Sum', sim_pos(11, 1
 sim_add_block(mdl, 'u_dev_long_split', 'simulink/Signal Routing/Demux', sim_pos(12, 1, 40, 50), ...
    'Outputs', '2');
 
-% ---------------- lateral loop ----------------
+%% Lateral loop
 sim_add_block(mdl, 'lat_abs', 'simulink/Signal Routing/Mux', sim_pos(3, 5, 20, 90), ...
    'Inputs', '4');
 sim_add_block(mdl, 'lat_dev', 'simulink/Math Operations/Sum', sim_pos(4, 5, 40, 40), ...
@@ -122,7 +119,7 @@ sim_add_block(mdl, 'lat_uff_sum', 'simulink/Math Operations/Sum', sim_pos(11, 4,
 sim_add_block(mdl, 'u_dev_lat_split', 'simulink/Signal Routing/Demux', sim_pos(12, 4, 40, 50), ...
    'Outputs', '2');
 
-% ---------------- mixing, allocation, plant ----------------
+%% Mixing, allocation, plant
 sim_add_block(mdl, 'surf_inc', 'simulink/Signal Routing/Mux', sim_pos(6, 9, 20, 50), ...
    'Inputs', '3');
 sim_add_block(mdl, 'surf_sum', 'simulink/Math Operations/Sum', sim_pos(7, 9, 40, 40), ...
@@ -143,7 +140,7 @@ sim_add_block(mdl, 'u_dev_mux', 'simulink/Signal Routing/Mux', sim_pos(13, 1, 20
 sim_add_block(mdl, 'xi_mux', 'simulink/Signal Routing/Mux', sim_pos(13, 5, 20, 50), ...
    'Inputs', '2');
 
-% ---------------- outputs ----------------
+%% Outputs
 sim_add_block(mdl, 'x_state', 'simulink/Sinks/Out1', sim_pos(12, 9, 30, 14), 'Port', '1');
 sim_add_block(mdl, 'u_act', 'simulink/Sinks/Out1', sim_pos(12, 10, 30, 14), 'Port', '2');
 sim_add_block(mdl, 'M_cmd', 'simulink/Sinks/Out1', sim_pos(12, 11, 30, 14), 'Port', '3');
@@ -152,7 +149,7 @@ sim_add_block(mdl, 'u_dev', 'simulink/Sinks/Out1', sim_pos(14, 1, 30, 14), 'Port
 sim_add_block(mdl, 'ref', 'simulink/Sinks/Out1', sim_pos(14, 3, 30, 14), 'Port', '6');
 sim_add_block(mdl, 'xi', 'simulink/Sinks/Out1', sim_pos(14, 5, 30, 14), 'Port', '7');
 
-% ---------------- wiring ----------------
+%% Wiring
 sim_connect(mdl, 'ref_src/1', 'ref_split/1', 'ref_src/1', 'ref/1');
 sim_connect(mdl, 'ref_split/1', 'ref_long/1', 'ref_split/2', 'ref_long/2', ...
    'ref_long/1', 'Tref_long/1', 'ref_long/1', 'Uff_long/1');

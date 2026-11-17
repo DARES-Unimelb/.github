@@ -1,19 +1,18 @@
 function rep = bench_stick_report()
-% BENCH_STICK_REPORT 满杆矩阵的结果整理：指标表、分组表与图。
+% BENCH_STICK_REPORT Metrics and tables for the full stick matrix. Reads
+% results/bench_stick_traj.mat and writes
+%   results/bench_stick_metrics.csv     one row per run, column names are the metric names
+%   docs/report_sources/stick_tables.md grouped markdown tables
 %
-% 读 results/bench_stick_traj.mat，写
-%   results/bench_stick_metrics.csv  每个工况一行，列名就是指标名
-%   docs/_work/stick_tables.md       分组排好的 markdown 表，供报告正文取用
-%   results/figs/stick_*.png         轨迹图
+%   rep = bench_stick_report()
 %
-% 通道口径（与 sim/sim_build_bench.m 的记录说明一致）
-%   inst 七路  V m/s、h m、alpha deg、phi deg、theta deg、失速标志、r deg/s
-%   att  四路  phi_c、phi、theta_c、theta，rad
-%   rate 六路  p_c、p、q_c、q、r_c、r，rad/s
-%   act  五路  da、de、dr rad，左油门、右油门 0 到 1
+% Channel layout
+%   inst seven  V m/s, h m, alpha deg, phi deg, theta deg, stall flag, r deg/s
+%   att  four   phi_c, phi, theta_c, theta, rad
+%   rate six    p_c, p, q_c, q, r_c, r, rad/s
+%   act  five   da, de, dr rad, left and right throttle 0 to 1
 %
-% 末段口径一律取最后 25 % 的时间窗取均值。包线与舵面限幅是 rev 11 的冻结值，与
-% results/bench_stick_meta.txt 里记的一致。
+% Tail values are means over the last 25 % of the run
 
 root = fileparts(fileparts(mfilename('fullpath')));
 traj_file = fullfile(root, 'results', 'bench_stick_traj.mat');
@@ -117,7 +116,7 @@ for k = 1:n
    M(k) = m;
 end
 
-% ---------------- CSV ----------------
+% CSV
 fn = fieldnames(M);
 csv = fullfile(root, 'results', 'bench_stick_metrics.csv');
 fid = fopen(csv, 'w', 'n', 'UTF-8');
@@ -143,7 +142,7 @@ for k = 1:n
 end
 fclose(fid);
 
-% ---------------- 分组表 ----------------
+% Grouped tables
 md = fullfile(root, 'docs', 'report_sources', 'stick_tables.md');
 if ~exist(fullfile(root, 'docs', 'report_sources'), 'dir')
    mkdir(fullfile(root, 'docs', 'report_sources'));
@@ -185,7 +184,7 @@ fprintf('指标表 %s\n', csv);
 fprintf('分组表 %s\n', md);
 end
 
-% ------------------------------------------------------------------------
+% Local helpers
 function m = local_blank_metrics()
 m = struct('case_id', 0, 'ctrl', 0, 'roll', 0, 'pitch', 0, 'yaw', 0, 'thr_stick', 0, ...
    'label', '', 'wall_s', 0, 't_end', 0, ...
@@ -228,7 +227,7 @@ c = sum(diff(sign(d)) ~= 0);
 end
 
 function f = local_fdom(t, x)
-% 末段 4 s 内除直流外幅值最大的频率，用来量化颤振的基频。
+% Frequency of largest amplitude above DC in the last 4 s, the chatter base frequency
 k = find(t >= t(end) - 4, 1);
 if isempty(k)
    k = 1;

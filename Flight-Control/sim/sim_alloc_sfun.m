@@ -1,17 +1,12 @@
 function sim_alloc_sfun(block)
-% SIM_ALLOC_SFUN Level-2 MATLAB S-Function: control allocation.
+% SIM_ALLOC_SFUN Level-2 MATLAB S-Function wrapping the control allocator
 %
 % Ports
 %   in  1  M_cmd 3x1  desired body aerodynamic moment, N*m
 %   in  2  T_cmd 1x1  desired total thrust, N
 %   out 1  act   5x1  [da de dr dth_l dth_r]
 %
-% Wraps control/allocate.m, so the weighted pseudo-inverse, the elevator
-% priority and every saturation come from the delivered allocator. The plant's
-% sixth input dT stays zero because allocate realises the thrust through the two
-% throttles, which is what its own header states.
-%
-% Sample time is P.sim.Ts_alloc.
+% Sample time is sim_ts_alloc, read from the base workspace
 
 setup(block);
 end

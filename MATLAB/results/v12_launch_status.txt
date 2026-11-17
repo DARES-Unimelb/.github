@@ -1,0 +1,1 @@
+launcher reached 2026-10-10 15:04:18, arming sim_v12

@@ -1,0 +1,2921 @@
+URL: https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/main?recursive=1
+STATUS: 200
+FINAL: https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/main?recursive=1
+
+{
+ "sha": "10363e0eaeb16a61a7463505f8e122a9eb7e2b4e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/10363e0eaeb16a61a7463505f8e122a9eb7e2b4e",
+ "tree": [
+ {
+ "path": ".gitignore",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a158ead23b0f30d8e5904c4c8169c47a5f9358f2",
+ "size": 2490,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a158ead23b0f30d8e5904c4c8169c47a5f9358f2"
+ },
+ {
+ "path": "LICENSE",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+ "size": 35149,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+ },
+ {
+ "path": "README.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d14139ca37aec4d8d2f5eec850a68783516ccb8c",
+ "size": 13556,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d14139ca37aec4d8d2f5eec850a68783516ccb8c"
+ },
+ {
+ "path": "bookcover.jpg",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1ce2b3f89886897074d6fbbe31eda1f38bda1d95",
+ "size": 2214,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1ce2b3f89886897074d6fbbe31eda1f38bda1d95"
+ },
+ {
+ "path": "legacy_mavsim_python",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "79c5019b54015c6b49a353cfe17029812bcd2792",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/79c5019b54015c6b49a353cfe17029812bcd2792"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "de71b6ab68248538de2dff68072d347b3c236b4a",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/de71b6ab68248538de2dff68072d347b3c236b4a"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/.name",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "756b669227d4a66cd294a1dd4557674287237c9d",
+ "size": 10,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/756b669227d4a66cd294a1dd4557674287237c9d"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/encodings.xml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "15a15b218a29e09c9190992732698d646e4d659a",
+ "size": 135,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/15a15b218a29e09c9190992732698d646e4d659a"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/mavsimpy.iml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9a8b2b304d7217049d40a6b4f4031e5cd9e55805",
+ "size": 521,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9a8b2b304d7217049d40a6b4f4031e5cd9e55805"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/misc.xml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7220790496fd16ff61b913295b100ad1e87ad417",
+ "size": 275,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7220790496fd16ff61b913295b100ad1e87ad417"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/modules.xml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "90e4c0195250fd174b78768d501e06ae1e094f80",
+ "size": 268,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/90e4c0195250fd174b78768d501e06ae1e094f80"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/vcs.xml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "89af880ce3f4a8e17bd498f09bd09e7ac8f82c6f",
+ "size": 298,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/89af880ce3f4a8e17bd498f09bd09e7ac8f82c6f"
+ },
+ {
+ "path": "legacy_mavsim_python/.idea/workspace.xml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "cca9708c34200cc89dafe0df76f36d6605fa4346",
+ "size": 12839,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/cca9708c34200cc89dafe0df76f36d6605fa4346"
+ },
+ {
+ "path": "legacy_mavsim_python/README.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6c8dc967195160c83f33a128fa4a175374f521d0",
+ "size": 98,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6c8dc967195160c83f33a128fa4a175374f521d0"
+ },
+ {
+ "path": "legacy_mavsim_python/chap10",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "5e6dc776d2a0093b88871380c4292a5bc3682a0e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/5e6dc776d2a0093b88871380c4292a5bc3682a0e"
+ },
+ {
+ "path": "legacy_mavsim_python/chap10/draw_path.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7a6cd3d8e58eef7d8893a2f498d6091bb51af623",
+ "size": 2665,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7a6cd3d8e58eef7d8893a2f498d6091bb51af623"
+ },
+ {
+ "path": "legacy_mavsim_python/chap10/mavsim_chap10.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "aeb7919dcb367d89a892686f16a1fb981d5992ee",
+ "size": 3356,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/aeb7919dcb367d89a892686f16a1fb981d5992ee"
+ },
+ {
+ "path": "legacy_mavsim_python/chap10/path_follower.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ba4c19a889095bd5ecc5245aab23616156d84ee1",
+ "size": 1927,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ba4c19a889095bd5ecc5245aab23616156d84ee1"
+ },
+ {
+ "path": "legacy_mavsim_python/chap10/path_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "158b9786f60b126ecd9efd3e7ea374c66887e08c",
+ "size": 2104,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/158b9786f60b126ecd9efd3e7ea374c66887e08c"
+ },
+ {
+ "path": "legacy_mavsim_python/chap11",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "fe6f8564da2f0b21c1f96e243e25c511563499ed",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/fe6f8564da2f0b21c1f96e243e25c511563499ed"
+ },
+ {
+ "path": "legacy_mavsim_python/chap11/draw_waypoints.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "914d7bec04d1da51c4d18cd65f33a782c38d745e",
+ "size": 6302,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/914d7bec04d1da51c4d18cd65f33a782c38d745e"
+ },
+ {
+ "path": "legacy_mavsim_python/chap11/dubins_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d6cc9671d1d5893bd22b8d07a51820c1530168f0",
+ "size": 3417,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d6cc9671d1d5893bd22b8d07a51820c1530168f0"
+ },
+ {
+ "path": "legacy_mavsim_python/chap11/mavsim_chap11.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "79c691b3f54308a9611147f92ae9789674f9399b",
+ "size": 3457,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/79c691b3f54308a9611147f92ae9789674f9399b"
+ },
+ {
+ "path": "legacy_mavsim_python/chap11/path_manager.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c933610b3c7a3e672d12a41b1488afd32c66eba8",
+ "size": 3967,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c933610b3c7a3e672d12a41b1488afd32c66eba8"
+ },
+ {
+ "path": "legacy_mavsim_python/chap11/waypoint_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "654079ac40a5c88b624d3cf8603595530e0c1f8c",
+ "size": 2436,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/654079ac40a5c88b624d3cf8603595530e0c1f8c"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "29c0e51982fa915fdc81e420fc7b3fa920d9a570",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/29c0e51982fa915fdc81e420fc7b3fa920d9a570"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12/draw_map.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a58429d8f9eaa1dff297261dc308e88f2eda1fe1",
+ "size": 4459,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a58429d8f9eaa1dff297261dc308e88f2eda1fe1"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12/mavsim_chap12.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0c064847a16153c7be2d8ba3ba962c757a3b130f",
+ "size": 3254,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0c064847a16153c7be2d8ba3ba962c757a3b130f"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12/path_planner.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "082dc4e5a7bbefd4c2813c4be6b8dc84ac773c95",
+ "size": 3882,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/082dc4e5a7bbefd4c2813c4be6b8dc84ac773c95"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12/rrt_dubins.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "774d49417dc02e511c224737018c024a00a00787",
+ "size": 5748,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/774d49417dc02e511c224737018c024a00a00787"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12/rrt_straight_line.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c189c7a3875a6956b4e4c2234154512af18b16fd",
+ "size": 4667,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c189c7a3875a6956b4e4c2234154512af18b16fd"
+ },
+ {
+ "path": "legacy_mavsim_python/chap12/world_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bde7365448c8c257e45341fd37f188ad3d78ac56",
+ "size": 2790,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/bde7365448c8c257e45341fd37f188ad3d78ac56"
+ },
+ {
+ "path": "legacy_mavsim_python/chap2",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "8f38c47553065fd78e9ea254d5122fe6c778f2a6",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/8f38c47553065fd78e9ea254d5122fe6c778f2a6"
+ },
+ {
+ "path": "legacy_mavsim_python/chap2/draw_mav.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5d0d7bcc3c815c3066ef22e4dd9913d8ee80f512",
+ "size": 4741,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5d0d7bcc3c815c3066ef22e4dd9913d8ee80f512"
+ },
+ {
+ "path": "legacy_mavsim_python/chap2/mav_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "07844c6fc1352cc43f15c6dcbefac4562995dafc",
+ "size": 1937,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/07844c6fc1352cc43f15c6dcbefac4562995dafc"
+ },
+ {
+ "path": "legacy_mavsim_python/chap2/mavsim_chap2.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0f8689b1f7a48462d92017c418a00cbec39d5361",
+ "size": 1689,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0f8689b1f7a48462d92017c418a00cbec39d5361"
+ },
+ {
+ "path": "legacy_mavsim_python/chap2/video_writer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "41e81f741bce6c47cf1d7a106cb16f2c27cb7019",
+ "size": 1319,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/41e81f741bce6c47cf1d7a106cb16f2c27cb7019"
+ },
+ {
+ "path": "legacy_mavsim_python/chap3",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "a57ebaa120a32f63e39a047a6a59d279390e9c94",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/a57ebaa120a32f63e39a047a6a59d279390e9c94"
+ },
+ {
+ "path": "legacy_mavsim_python/chap3/data_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "24d2cfa2bfc2dc64f032ad01ba1f3d0eabeb4880",
+ "size": 8979,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/24d2cfa2bfc2dc64f032ad01ba1f3d0eabeb4880"
+ },
+ {
+ "path": "legacy_mavsim_python/chap3/mav_dynamics.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e4906a9a31ae814ca9b44f4433bafe5ce7b37631",
+ "size": 4757,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e4906a9a31ae814ca9b44f4433bafe5ce7b37631"
+ },
+ {
+ "path": "legacy_mavsim_python/chap3/mavsim_chap3.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d1a7e1589f0a3a83f2b9c04cc8734ccff8b6a1a0",
+ "size": 1954,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d1a7e1589f0a3a83f2b9c04cc8734ccff8b6a1a0"
+ },
+ {
+ "path": "legacy_mavsim_python/chap4",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "43059fb10d47b5980f62ec519370dc7b03fe6990",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/43059fb10d47b5980f62ec519370dc7b03fe6990"
+ },
+ {
+ "path": "legacy_mavsim_python/chap4/mav_dynamics.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e2af5003bfc2f3867b3f7706a3ed1ee1f90d06e6",
+ "size": 8754,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e2af5003bfc2f3867b3f7706a3ed1ee1f90d06e6"
+ },
+ {
+ "path": "legacy_mavsim_python/chap4/mavsim_chap4.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2cb9bf4c5ed7dd1d8cf3cc3b385efd3a54f79ef1",
+ "size": 2138,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/2cb9bf4c5ed7dd1d8cf3cc3b385efd3a54f79ef1"
+ },
+ {
+ "path": "legacy_mavsim_python/chap4/wind_simulation.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a6dc7b27633cebf3f46922875ac475f07e8237b1",
+ "size": 1722,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a6dc7b27633cebf3f46922875ac475f07e8237b1"
+ },
+ {
+ "path": "legacy_mavsim_python/chap5",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "ff890ce3a0bdb2dacf79ee9c41737437901ceb32",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/ff890ce3a0bdb2dacf79ee9c41737437901ceb32"
+ },
+ {
+ "path": "legacy_mavsim_python/chap5/compute_models.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5d614cbb40e1f56517d3cea0e7bd09a243dbb1f6",
+ "size": 5935,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5d614cbb40e1f56517d3cea0e7bd09a243dbb1f6"
+ },
+ {
+ "path": "legacy_mavsim_python/chap5/mavsim_chap5.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7308f99a6f277ade39fd393e9c0b44b17e6329b6",
+ "size": 2671,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7308f99a6f277ade39fd393e9c0b44b17e6329b6"
+ },
+ {
+ "path": "legacy_mavsim_python/chap5/trim.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "698c79096c8b71f9c44770bbaa88181c25d8aeec",
+ "size": 3323,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/698c79096c8b71f9c44770bbaa88181c25d8aeec"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "4ef80a872dc3c6c358c7d274d737c9078ba0ca1b",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/4ef80a872dc3c6c358c7d274d737c9078ba0ca1b"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6/autopilot.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6ad3dfabd87e2ce7edf7f13e194b328f5ca0e66f",
+ "size": 2945,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6ad3dfabd87e2ce7edf7f13e194b328f5ca0e66f"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6/autopilot_tecs.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "76c18223ea063f8ee5c077e69e761f20e9b511a6",
+ "size": 3392,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/76c18223ea063f8ee5c077e69e761f20e9b511a6"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6/mavsim_chap6.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8e999030c95f0803894af3efc500452a73dabeca",
+ "size": 2991,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8e999030c95f0803894af3efc500452a73dabeca"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6/pd_control_with_rate.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1427b4fa7104de3b62dce20d9a6d7516bdd30fc0",
+ "size": 795,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1427b4fa7104de3b62dce20d9a6d7516bdd30fc0"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6/pi_control.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "102f8995e268337f279fc5ea4a41ebf3fc21dde5",
+ "size": 1379,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/102f8995e268337f279fc5ea4a41ebf3fc21dde5"
+ },
+ {
+ "path": "legacy_mavsim_python/chap6/pid_control.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f1cedf4829d36d25042b0c9569bff98dce62fad7",
+ "size": 3024,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/f1cedf4829d36d25042b0c9569bff98dce62fad7"
+ },
+ {
+ "path": "legacy_mavsim_python/chap7",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "06a0f16c18409c0b2829c13ae5e7c97d8ef1775d",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/06a0f16c18409c0b2829c13ae5e7c97d8ef1775d"
+ },
+ {
+ "path": "legacy_mavsim_python/chap7/mav_dynamics.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9999214fbdbeccd27daf8c69fa07dde85cf9a4ee",
+ "size": 10990,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9999214fbdbeccd27daf8c69fa07dde85cf9a4ee"
+ },
+ {
+ "path": "legacy_mavsim_python/chap7/mavsim_chap7.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "53307d709d5f7b716372081a4c7c196e53fd0b72",
+ "size": 3190,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/53307d709d5f7b716372081a4c7c196e53fd0b72"
+ },
+ {
+ "path": "legacy_mavsim_python/chap7/sensor_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ebe1d3591f97f0428cc5c0196cfbd4d230d027c0",
+ "size": 5178,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ebe1d3591f97f0428cc5c0196cfbd4d230d027c0"
+ },
+ {
+ "path": "legacy_mavsim_python/chap8",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "57697e06af9cf04af923372ed33d9ddffe2c8326",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/57697e06af9cf04af923372ed33d9ddffe2c8326"
+ },
+ {
+ "path": "legacy_mavsim_python/chap8/mavsim_chap8.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "da6131d0f9761a927c24f3104e9ebb52cb9aafb0",
+ "size": 3242,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/da6131d0f9761a927c24f3104e9ebb52cb9aafb0"
+ },
+ {
+ "path": "legacy_mavsim_python/chap8/observer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "63054bbe4df523bb52f9553036ecd7ff10198e68",
+ "size": 8527,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/63054bbe4df523bb52f9553036ecd7ff10198e68"
+ },
+ {
+ "path": "legacy_mavsim_python/chap8/observer_full.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a22969c6506f5d90982a967321a07e2d429058f3",
+ "size": 5755,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a22969c6506f5d90982a967321a07e2d429058f3"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "83096dbff69f8b729af838c70be78f04f08dd31d",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/83096dbff69f8b729af838c70be78f04f08dd31d"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_autopilot.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3c9cb3f370d85e65a0e4a9d86ddb4521235b1b46",
+ "size": 481,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3c9cb3f370d85e65a0e4a9d86ddb4521235b1b46"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_delta.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "43cbf5112bedc778bced8b3c4b997a9c67115f20",
+ "size": 1090,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/43cbf5112bedc778bced8b3c4b997a9c67115f20"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_path.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e0fe43e7b49a9544ce8df8497c166e9b52afb2e8",
+ "size": 1004,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e0fe43e7b49a9544ce8df8497c166e9b52afb2e8"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_sensors.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "32c138763629ec978d907db4b1a12a34ad04c636",
+ "size": 1062,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/32c138763629ec978d907db4b1a12a34ad04c636"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_state.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7ee8b4949e4f4f212c728e1a892402af00582df0",
+ "size": 1435,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7ee8b4949e4f4f212c728e1a892402af00582df0"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_waypoints.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "366e03cab3d6f30702ff1697d6a9ba71c6b494da",
+ "size": 1966,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/366e03cab3d6f30702ff1697d6a9ba71c6b494da"
+ },
+ {
+ "path": "legacy_mavsim_python/message_types/msg_world_map.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1a4cb357e57504aa5ebad2c19ac618b062f4b217",
+ "size": 1379,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1a4cb357e57504aa5ebad2c19ac618b062f4b217"
+ },
+ {
+ "path": "legacy_mavsim_python/parameters",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "0a6f06276b726b6801afe89d1170ffb59b1231ec",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/0a6f06276b726b6801afe89d1170ffb59b1231ec"
+ },
+ {
+ "path": "legacy_mavsim_python/parameters/aerosonde_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ea53e35abf52f229a2d5008432f553bd8158b153",
+ "size": 4360,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ea53e35abf52f229a2d5008432f553bd8158b153"
+ },
+ {
+ "path": "legacy_mavsim_python/parameters/control_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f95fc38ee7c2445dd789b5e1413b120432e98676",
+ "size": 950,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/f95fc38ee7c2445dd789b5e1413b120432e98676"
+ },
+ {
+ "path": "legacy_mavsim_python/parameters/planner_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a82839b604b617475a5aaf7fdd012e0ce0e5562c",
+ "size": 707,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a82839b604b617475a5aaf7fdd012e0ce0e5562c"
+ },
+ {
+ "path": "legacy_mavsim_python/parameters/sensor_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a2f8b01c6d9c8545d1c52674a237097acbec3555",
+ "size": 1017,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a2f8b01c6d9c8545d1c52674a237097acbec3555"
+ },
+ {
+ "path": "legacy_mavsim_python/parameters/simulation_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9d70fa71c70fef57fc1cf5ccf81b32cd39f049a8",
+ "size": 560,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9d70fa71c70fef57fc1cf5ccf81b32cd39f049a8"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "ebf1d5ffb599783c9b5b67c039c05c2d423628f1",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/ebf1d5ffb599783c9b5b67c039c05c2d423628f1"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/Plotter.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "8e1926ac84d0591a0761836f1c50ea716decec8b",
+ "size": 11394,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8e1926ac84d0591a0761836f1c50ea716decec8b"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/__init__.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+ "size": 0,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/plotter_args.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "db16400c725edfb09e5a2601fbc679587636adad",
+ "size": 7530,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/db16400c725edfb09e5a2601fbc679587636adad"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/state_data.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "590083d74ca6773fb8576c0067c08ff1c78d995c",
+ "size": 2904,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/590083d74ca6773fb8576c0067c08ff1c78d995c"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/state_plot.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "64f933b871055c6c772f7e63c06bb389f0172054",
+ "size": 5292,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/64f933b871055c6c772f7e63c06bb389f0172054"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/state_plotbox.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "a1be8265285718af4e00eae5d0f733dbf16f9ac8",
+ "size": 3805,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a1be8265285718af4e00eae5d0f733dbf16f9ac8"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/test",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "b69f4f8bfebc18fef32b79e6a4f3651a984eed0d",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/b69f4f8bfebc18fef32b79e6a4f3651a984eed0d"
+ },
+ {
+ "path": "legacy_mavsim_python/state_plotter/test/test_plotting.py",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "006f5005ec7c41b36bb42149ce3bce96ae26de6d",
+ "size": 3593,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/006f5005ec7c41b36bb42149ce3bce96ae26de6d"
+ },
+ {
+ "path": "legacy_mavsim_python/tools",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "44936ce419793b41d0609478c7568e7f13983c21",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/44936ce419793b41d0609478c7568e7f13983c21"
+ },
+ {
+ "path": "legacy_mavsim_python/tools/rotations.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "53151b2dc21009b1f79e3a8308341104f6636556",
+ "size": 4376,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/53151b2dc21009b1f79e3a8308341104f6636556"
+ },
+ {
+ "path": "legacy_mavsim_python/tools/signals.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7f245ef179fdd2f150a7ffc1b2937eed34a4c49a",
+ "size": 4615,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7f245ef179fdd2f150a7ffc1b2937eed34a4c49a"
+ },
+ {
+ "path": "legacy_mavsim_python/tools/transfer_function.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "87cadd36b2e5e72316cec038ef3e7dd4cdb5c655",
+ "size": 2987,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/87cadd36b2e5e72316cec038ef3e7dd4cdb5c655"
+ },
+ {
+ "path": "legacy_mavsim_python/tools/wrap.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9b1876ab5188570e6238b5603b26ebccded585f2",
+ "size": 255,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9b1876ab5188570e6238b5603b26ebccded585f2"
+ },
+ {
+ "path": "mavsim_matlab",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "acd520a8f667f985532297c2d82cb9f868b72aca",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/acd520a8f667f985532297c2d82cb9f868b72aca"
+ },
+ {
+ "path": "mavsim_matlab/chap10",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "02203b8c9aebd4aff4c6a1264ff2686738d077e6",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/02203b8c9aebd4aff4c6a1264ff2686738d077e6"
+ },
+ {
+ "path": "mavsim_matlab/chap10/mavsim_chap10.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d7ddbe259b3f3c7ea92b6bc83e4a05c5c39448a8",
+ "size": 2946,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d7ddbe259b3f3c7ea92b6bc83e4a05c5c39448a8"
+ },
+ {
+ "path": "mavsim_matlab/chap10/path_follower.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "67136d98715e03939cb798b2ff59b1e477380d7a",
+ "size": 1917,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/67136d98715e03939cb798b2ff59b1e477380d7a"
+ },
+ {
+ "path": "mavsim_matlab/chap10/path_viewer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c94ee3eb7df148488289ecf22c15604a4761c867",
+ "size": 7982,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c94ee3eb7df148488289ecf22c15604a4761c867"
+ },
+ {
+ "path": "mavsim_matlab/chap11",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "dfc2a93309c14843fd21dd89f5c5d8904c3659e6",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/dfc2a93309c14843fd21dd89f5c5d8904c3659e6"
+ },
+ {
+ "path": "mavsim_matlab/chap11/dubins_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d11b52d84122a33df458fd2cecac389fa7205de7",
+ "size": 2294,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d11b52d84122a33df458fd2cecac389fa7205de7"
+ },
+ {
+ "path": "mavsim_matlab/chap11/mavsim_chap11.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5c79ca5f15c3ccc6895850d485b5d515bfd6d77d",
+ "size": 3143,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5c79ca5f15c3ccc6895850d485b5d515bfd6d77d"
+ },
+ {
+ "path": "mavsim_matlab/chap11/path_manager.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b77904ba196f9ffd903e84196b910976f57a0cf1",
+ "size": 5192,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b77904ba196f9ffd903e84196b910976f57a0cf1"
+ },
+ {
+ "path": "mavsim_matlab/chap11/waypoint_viewer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "10dfc7cb6b98d7754db427c00681efd59a8eaff3",
+ "size": 12479,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/10dfc7cb6b98d7754db427c00681efd59a8eaff3"
+ },
+ {
+ "path": "mavsim_matlab/chap12",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "efd5c1cbe5e746572b1ad34cc5705ca8bd9c0da8",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/efd5c1cbe5e746572b1ad34cc5705ca8bd9c0da8"
+ },
+ {
+ "path": "mavsim_matlab/chap12/mavsim_chap12.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d0c39d9223df19ccfb35d1354c20898503544757",
+ "size": 2862,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d0c39d9223df19ccfb35d1354c20898503544757"
+ },
+ {
+ "path": "mavsim_matlab/chap12/path_planner.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4e02aa4685c8f1e6178100132816ce34f0c4a550",
+ "size": 3491,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4e02aa4685c8f1e6178100132816ce34f0c4a550"
+ },
+ {
+ "path": "mavsim_matlab/chap12/rrt_dubins.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f20e3892569e196c85cc534452342f278bc933be",
+ "size": 6816,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/f20e3892569e196c85cc534452342f278bc933be"
+ },
+ {
+ "path": "mavsim_matlab/chap12/rrt_straight_line.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8c09f23fedccb3771f90fd0e21b49ba3b48417d9",
+ "size": 3961,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8c09f23fedccb3771f90fd0e21b49ba3b48417d9"
+ },
+ {
+ "path": "mavsim_matlab/chap12/world_viewer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "cf444a7ace05a9016ea3d926727df116dcd78a4f",
+ "size": 17060,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/cf444a7ace05a9016ea3d926727df116dcd78a4f"
+ },
+ {
+ "path": "mavsim_matlab/chap2",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "42ccdc1835e72cd0cae98be3223fab2ad13c65b2",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/42ccdc1835e72cd0cae98be3223fab2ad13c65b2"
+ },
+ {
+ "path": "mavsim_matlab/chap2/mavsim_chap2.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "30dadb31088b1a87038951607d97af29c13834ab",
+ "size": 1638,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/30dadb31088b1a87038951607d97af29c13834ab"
+ },
+ {
+ "path": "mavsim_matlab/chap2/spacecraft_viewer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "007d201d8a093df74c65e79a866f41973bcfda4d",
+ "size": 4897,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/007d201d8a093df74c65e79a866f41973bcfda4d"
+ },
+ {
+ "path": "mavsim_matlab/chap2/video_writer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "aa1f693b600ceb3dcab0a0b0a1ec14ba28251fd7",
+ "size": 1030,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/aa1f693b600ceb3dcab0a0b0a1ec14ba28251fd7"
+ },
+ {
+ "path": "mavsim_matlab/chap3",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "25e08660d884946d63801276a1ad944a99f3d031",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/25e08660d884946d63801276a1ad944a99f3d031"
+ },
+ {
+ "path": "mavsim_matlab/chap3/data_viewer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "af1dcc57c9d7d094b292f6d112a3fa24630975a0",
+ "size": 8075,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/af1dcc57c9d7d094b292f6d112a3fa24630975a0"
+ },
+ {
+ "path": "mavsim_matlab/chap3/mav_dynamics.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bc44527717699f98e957dfbe5b43c8d19719f5c7",
+ "size": 3715,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/bc44527717699f98e957dfbe5b43c8d19719f5c7"
+ },
+ {
+ "path": "mavsim_matlab/chap3/mavsim_chap3.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "055e05381bc7f07a7a64e075f5cc99162a2bf59d",
+ "size": 1721,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/055e05381bc7f07a7a64e075f5cc99162a2bf59d"
+ },
+ {
+ "path": "mavsim_matlab/chap4",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "381ea4e2bba65d8cf4cff7219556ddae654eaad3",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/381ea4e2bba65d8cf4cff7219556ddae654eaad3"
+ },
+ {
+ "path": "mavsim_matlab/chap4/mav_dynamics.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "df5524f252c721a0b97992c97e9e0c2a3edca7e4",
+ "size": 3869,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/df5524f252c721a0b97992c97e9e0c2a3edca7e4"
+ },
+ {
+ "path": "mavsim_matlab/chap4/mavsim_chap4.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a2dccf23750d8fb7bd59357bb6c741e19e9233bc",
+ "size": 1799,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a2dccf23750d8fb7bd59357bb6c741e19e9233bc"
+ },
+ {
+ "path": "mavsim_matlab/chap4/wind_simulation.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "be726646e54094ce64dcaf93793cead087db7897",
+ "size": 1072,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/be726646e54094ce64dcaf93793cead087db7897"
+ },
+ {
+ "path": "mavsim_matlab/chap5",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "07e64c85100fd50d9466d5f3eb766e4b78dd1482",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/07e64c85100fd50d9466d5f3eb766e4b78dd1482"
+ },
+ {
+ "path": "mavsim_matlab/chap5/compute_ss_model.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "8ca22356513715fcf454423032d2966e2ca2e084",
+ "size": 748,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8ca22356513715fcf454423032d2966e2ca2e084"
+ },
+ {
+ "path": "mavsim_matlab/chap5/compute_tf_model.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "8e8480175e106f575631f22b7d240fd98fdb231c",
+ "size": 482,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8e8480175e106f575631f22b7d240fd98fdb231c"
+ },
+ {
+ "path": "mavsim_matlab/chap5/compute_trim.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8be65926909f67aed30d9b9bdee940d390e16b5d",
+ "size": 883,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8be65926909f67aed30d9b9bdee940d390e16b5d"
+ },
+ {
+ "path": "mavsim_matlab/chap5/mavsim_chap5.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ad4eb7e54a17108d48ba5c0512a7a51588f8458a",
+ "size": 1924,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ad4eb7e54a17108d48ba5c0512a7a51588f8458a"
+ },
+ {
+ "path": "mavsim_matlab/chap6",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "ab8ac0faa0d207dec3fc472b4d46e8e31c9059e7",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/ab8ac0faa0d207dec3fc472b4d46e8e31c9059e7"
+ },
+ {
+ "path": "mavsim_matlab/chap6/autopilot.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8f12173b448195e8515d9a71b4c23fcf6d6b8075",
+ "size": 3641,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8f12173b448195e8515d9a71b4c23fcf6d6b8075"
+ },
+ {
+ "path": "mavsim_matlab/chap6/mavsim_chap6.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "63081094f21b7ec7ef7dfa0c289150068a541f17",
+ "size": 2325,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/63081094f21b7ec7ef7dfa0c289150068a541f17"
+ },
+ {
+ "path": "mavsim_matlab/chap6/pd_control_with_rate.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b91262885b294c407eb2e6d375bc299616b51a70",
+ "size": 951,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b91262885b294c407eb2e6d375bc299616b51a70"
+ },
+ {
+ "path": "mavsim_matlab/chap6/pi_control.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0f89b0a06cb6b8fbdeeca932929888c736eb0bf9",
+ "size": 1066,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0f89b0a06cb6b8fbdeeca932929888c736eb0bf9"
+ },
+ {
+ "path": "mavsim_matlab/chap6/pid_control.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3a236fc0ed9ea7e80e553330b67f145cb4acbce1",
+ "size": 1429,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3a236fc0ed9ea7e80e553330b67f145cb4acbce1"
+ },
+ {
+ "path": "mavsim_matlab/chap7",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "e42fa1d88a2060ce488e88613633ec0ddec85b5a",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/e42fa1d88a2060ce488e88613633ec0ddec85b5a"
+ },
+ {
+ "path": "mavsim_matlab/chap7/mav_dynamics.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ea51ad05f7544990265e126d0559814b868c89ee",
+ "size": 2460,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ea51ad05f7544990265e126d0559814b868c89ee"
+ },
+ {
+ "path": "mavsim_matlab/chap7/mavsim_chap7.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c87ccce54fc631ff8ea684af0c77549f8a11a314",
+ "size": 2450,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c87ccce54fc631ff8ea684af0c77549f8a11a314"
+ },
+ {
+ "path": "mavsim_matlab/chap8",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "7e08c1c39976de8a0fe2e7842f30f1e4cbc249d6",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/7e08c1c39976de8a0fe2e7842f30f1e4cbc249d6"
+ },
+ {
+ "path": "mavsim_matlab/chap8/alpha_filter.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "98b21665eeb9fbbaa661966e438a9bcc6daf01bf",
+ "size": 572,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/98b21665eeb9fbbaa661966e438a9bcc6daf01bf"
+ },
+ {
+ "path": "mavsim_matlab/chap8/ekf_attitude.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f6622c66ee4fbcdfbfaeda7b6c51121d7e43d76a",
+ "size": 2905,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/f6622c66ee4fbcdfbfaeda7b6c51121d7e43d76a"
+ },
+ {
+ "path": "mavsim_matlab/chap8/ekf_position.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c2c7c1dfcd6b90e11d2cef1ffd2675b6f59d80fc",
+ "size": 4225,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c2c7c1dfcd6b90e11d2cef1ffd2675b6f59d80fc"
+ },
+ {
+ "path": "mavsim_matlab/chap8/mavsim_chap8.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a0139de582f32ed01c272bb4aa4de76bd0d5695e",
+ "size": 2651,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a0139de582f32ed01c272bb4aa4de76bd0d5695e"
+ },
+ {
+ "path": "mavsim_matlab/chap8/observer.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "887e67a0da98e2685490c30e823884d428d3a467",
+ "size": 2450,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/887e67a0da98e2685490c30e823884d428d3a467"
+ },
+ {
+ "path": "mavsim_matlab/message_types",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "7446c48920a3aa8f577cfa13a840cadb70506d32",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/7446c48920a3aa8f577cfa13a840cadb70506d32"
+ },
+ {
+ "path": "mavsim_matlab/message_types/msg_autopilot.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0b2bc1e0f03d928ab9ea094d8ee7c9893d1a4cdb",
+ "size": 659,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0b2bc1e0f03d928ab9ea094d8ee7c9893d1a4cdb"
+ },
+ {
+ "path": "mavsim_matlab/message_types/msg_map.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "43d2352b61104452da956d6da2d5c7f6bed29a68",
+ "size": 1708,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/43d2352b61104452da956d6da2d5c7f6bed29a68"
+ },
+ {
+ "path": "mavsim_matlab/message_types/msg_path.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8c05029c2b5ccec76a34f553971f47aa594aebf3",
+ "size": 1402,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8c05029c2b5ccec76a34f553971f47aa594aebf3"
+ },
+ {
+ "path": "mavsim_matlab/message_types/msg_sensors.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fab7d21396065c4f476c00a8732bfd8e89a40926",
+ "size": 1000,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fab7d21396065c4f476c00a8732bfd8e89a40926"
+ },
+ {
+ "path": "mavsim_matlab/message_types/msg_state.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3e0cbf0d8ff4cc038df2f7667481a9ec6650b8c7",
+ "size": 1876,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3e0cbf0d8ff4cc038df2f7667481a9ec6650b8c7"
+ },
+ {
+ "path": "mavsim_matlab/message_types/msg_waypoints.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5d88100f8fd5d5b3748b0ee18dd5421556ab9e41",
+ "size": 2519,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5d88100f8fd5d5b3748b0ee18dd5421556ab9e41"
+ },
+ {
+ "path": "mavsim_matlab/parameters",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "0afb855b0f38679dcacae5b1d5c5f0baaf6653be",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/0afb855b0f38679dcacae5b1d5c5f0baaf6653be"
+ },
+ {
+ "path": "mavsim_matlab/parameters/aerosonde_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e1b20f4d92e7c8e60f57eaaef3962fc51981a1c2",
+ "size": 3410,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e1b20f4d92e7c8e60f57eaaef3962fc51981a1c2"
+ },
+ {
+ "path": "mavsim_matlab/parameters/control_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d163de76605fd54661a2cd6347ad607143381955",
+ "size": 726,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d163de76605fd54661a2cd6347ad607143381955"
+ },
+ {
+ "path": "mavsim_matlab/parameters/planner_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "16ea484a9aaf2f302c536d4d8d2f325853f81de8",
+ "size": 799,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/16ea484a9aaf2f302c536d4d8d2f325853f81de8"
+ },
+ {
+ "path": "mavsim_matlab/parameters/sensor_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "98e68809c25d56a55d630263f962e4a4647ef2d1",
+ "size": 982,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/98e68809c25d56a55d630263f962e4a4647ef2d1"
+ },
+ {
+ "path": "mavsim_matlab/parameters/simulation_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "cd27ec996ce78d07e2e5cd62735ea3f889281d0a",
+ "size": 359,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/cd27ec996ce78d07e2e5cd62735ea3f889281d0a"
+ },
+ {
+ "path": "mavsim_matlab/tools",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "c6e05dc5bc56c4cc73bad08ac0e88fc82f76e100",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/c6e05dc5bc56c4cc73bad08ac0e88fc82f76e100"
+ },
+ {
+ "path": "mavsim_matlab/tools/signals.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a89502e1bb06f23cdf947f25c656b047d7f314de",
+ "size": 3536,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a89502e1bb06f23cdf947f25c656b047d7f314de"
+ },
+ {
+ "path": "mavsim_matlab/tools/transfer_function.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "dc9e7926274ebf5eb23af068e9234455451191bb",
+ "size": 1498,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/dc9e7926274ebf5eb23af068e9234455451191bb"
+ },
+ {
+ "path": "mavsim_matlab/tools/wrap.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "45db17125bdaa8cf71d382c1fc15dbfc67fa4ec3",
+ "size": 225,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/45db17125bdaa8cf71d382c1fc15dbfc67fa4ec3"
+ },
+ {
+ "path": "mavsim_python",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "8533b6dc3394cb3e069f5ea9d73fc1bc760bbc12",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/8533b6dc3394cb3e069f5ea9d73fc1bc760bbc12"
+ },
+ {
+ "path": "mavsim_python/README.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7218c35d77b6ee5bfbd0717fbaee495eef8346d6",
+ "size": 1098,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7218c35d77b6ee5bfbd0717fbaee495eef8346d6"
+ },
+ {
+ "path": "mavsim_python/controllers",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "5a33090f451ffcddf4793348ebcebedd71a6adaf",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/5a33090f451ffcddf4793348ebcebedd71a6adaf"
+ },
+ {
+ "path": "mavsim_python/controllers/autopilot.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0d08c423090ccb9cf2962156dabf1f6ade3a7f55",
+ "size": 2994,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0d08c423090ccb9cf2962156dabf1f6ade3a7f55"
+ },
+ {
+ "path": "mavsim_python/controllers/autopilot_lqr.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c971ef8c71037f1b1d620eaf202cf1c55bb22bb5",
+ "size": 2810,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c971ef8c71037f1b1d620eaf202cf1c55bb22bb5"
+ },
+ {
+ "path": "mavsim_python/controllers/autopilot_tecs.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b3afd15459cb0f842bc53cb43e2be11f5be3aed9",
+ "size": 2750,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b3afd15459cb0f842bc53cb43e2be11f5be3aed9"
+ },
+ {
+ "path": "mavsim_python/controllers/pd_control_with_rate.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1f6d9ecc28257808d26085e8788ed59f35b48e97",
+ "size": 743,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1f6d9ecc28257808d26085e8788ed59f35b48e97"
+ },
+ {
+ "path": "mavsim_python/controllers/pi_control.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9a8df1a1582d6596132cfb6b9c233636a5dfa26a",
+ "size": 1348,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9a8df1a1582d6596132cfb6b9c233636a5dfa26a"
+ },
+ {
+ "path": "mavsim_python/controllers/pid_control.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c4ea977b1c57ebe2efa2f14d0cbda5f18a541bfe",
+ "size": 2991,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c4ea977b1c57ebe2efa2f14d0cbda5f18a541bfe"
+ },
+ {
+ "path": "mavsim_python/controllers/tf_control.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "85dc9b223bae83008a5bae880bb040c30f8445c1",
+ "size": 1562,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/85dc9b223bae83008a5bae880bb040c30f8445c1"
+ },
+ {
+ "path": "mavsim_python/estimators",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "16aeb14a87e67bfb9e10ac91e612b2f71af623c3",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/16aeb14a87e67bfb9e10ac91e612b2f71af623c3"
+ },
+ {
+ "path": "mavsim_python/estimators/filters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1ca7f4644afaba42ab8e524872868c57caa82419",
+ "size": 12045,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1ca7f4644afaba42ab8e524872868c57caa82419"
+ },
+ {
+ "path": "mavsim_python/estimators/geolocation.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "870fef56eff73e2f22d978c8d8dc5942f9984934",
+ "size": 3857,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/870fef56eff73e2f22d978c8d8dc5942f9984934"
+ },
+ {
+ "path": "mavsim_python/estimators/geolocation_old.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "79ed01ee83e0c69f494d737850f24002e257bd79",
+ "size": 2996,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/79ed01ee83e0c69f494d737850f24002e257bd79"
+ },
+ {
+ "path": "mavsim_python/estimators/observer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fc001195ae620de43b725e62dd504c5dd8466f2f",
+ "size": 9337,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fc001195ae620de43b725e62dd504c5dd8466f2f"
+ },
+ {
+ "path": "mavsim_python/estimators/observer_full.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6003dc97f9b0f70c706fba92d9f9516226656bf2",
+ "size": 9372,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6003dc97f9b0f70c706fba92d9f9516226656bf2"
+ },
+ {
+ "path": "mavsim_python/estimators/observer_old.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e8a98d5c1b0f031c3ffa0301a1060a8105f24d3f",
+ "size": 9906,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e8a98d5c1b0f031c3ffa0301a1060a8105f24d3f"
+ },
+ {
+ "path": "mavsim_python/launch_files",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "ca61ac423c1f2bff005102f6ac9fdbeaf69ed68e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/ca61ac423c1f2bff005102f6ac9fdbeaf69ed68e"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap02",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "4ff4429452a11c918097db69dcb8ea5b9b71c77d",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/4ff4429452a11c918097db69dcb8ea5b9b71c77d"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap02/instructions_chap2.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0db886827d9c72a22d60cde839568a7d02a5f3ff",
+ "size": 927,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0db886827d9c72a22d60cde839568a7d02a5f3ff"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap02/mavsim_chap2.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8a3800dfb221e6caef3ee5a3eb7ad2d901db953d",
+ "size": 2019,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8a3800dfb221e6caef3ee5a3eb7ad2d901db953d"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap02/mavsim_spacecraft.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b8c8a16c3aaab349dd1f968a1512e561a3a01555",
+ "size": 2312,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b8c8a16c3aaab349dd1f968a1512e561a3a01555"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap03",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "5e751b3514bacaf5324f3bf1052bca2e19eb0356",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/5e751b3514bacaf5324f3bf1052bca2e19eb0356"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap03/chap3_check.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fad927406872a567c7b59f88efa5cac004d300fb",
+ "size": 3034,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fad927406872a567c7b59f88efa5cac004d300fb"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap03/instructions_chap3.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6af3d5930efacfa1d84db8219385210c049f14b4",
+ "size": 1124,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6af3d5930efacfa1d84db8219385210c049f14b4"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap03/mavsim_chap3.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2456dde16fa582342b80435094565769c043aa38",
+ "size": 1890,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/2456dde16fa582342b80435094565769c043aa38"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap04",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "f064da2463df9e11ae9d6bfbe4017ec23800992a",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/f064da2463df9e11ae9d6bfbe4017ec23800992a"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap04/chap4_check.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bdc2372da7a9c7116afc6a69e1ee4b866adc3a5c",
+ "size": 8205,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/bdc2372da7a9c7116afc6a69e1ee4b866adc3a5c"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap04/instructions_chap4.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "03cfa3dfb7c76d4c9ee68b03e8f30dab603e6c51",
+ "size": 521,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/03cfa3dfb7c76d4c9ee68b03e8f30dab603e6c51"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap04/mavsim_chap4.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "934efaab0d60c2486541e510c0b2b8757d0b14f5",
+ "size": 1983,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/934efaab0d60c2486541e510c0b2b8757d0b14f5"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap05",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "f773fb23aae2e4274cfd456b116a97c8834d5cd4",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/f773fb23aae2e4274cfd456b116a97c8834d5cd4"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap05/chap5_check.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c020a3bd21f5afa9784281561d74128a4cb41723",
+ "size": 16916,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c020a3bd21f5afa9784281561d74128a4cb41723"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap05/instructions_chap5.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a1a2c3bfc8621220962abb966a00b59bd7a60b8e",
+ "size": 2832,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a1a2c3bfc8621220962abb966a00b59bd7a60b8e"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap05/mavsim_chap5.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8b17a1c1ac540376bb4dee31769f0b6c77602aa9",
+ "size": 2994,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8b17a1c1ac540376bb4dee31769f0b6c77602aa9"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap06",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "f06ad68c60cd58c6b2a1d2a73d0ba7daf27d3ae2",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/f06ad68c60cd58c6b2a1d2a73d0ba7daf27d3ae2"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap06/instructions_chap6.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "aee29b49fa04db21a99522ad7a2ab5f733bc9b56",
+ "size": 1017,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/aee29b49fa04db21a99522ad7a2ab5f733bc9b56"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap06/mavsim_chap6.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "be7710d59c83f6d767895746c9a3068d2554e793",
+ "size": 3066,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/be7710d59c83f6d767895746c9a3068d2554e793"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap07",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "b3b1cfdaefdcc4a7d59847d5f9d94f05d0de94be",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/b3b1cfdaefdcc4a7d59847d5f9d94f05d0de94be"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap07/chap7_check.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4081ea0ff25d22922a219b5e3281cac5662a0bcf",
+ "size": 6030,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4081ea0ff25d22922a219b5e3281cac5662a0bcf"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap07/instructions_chap7.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "adc4d722a2b75b8e36f8ddc2102686697cf1ed38",
+ "size": 841,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/adc4d722a2b75b8e36f8ddc2102686697cf1ed38"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap07/mavsim_chap7.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1cae8f60e910d44780219c539db02c166a78f615",
+ "size": 3114,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1cae8f60e910d44780219c539db02c166a78f615"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap08",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "4fc7ad71ccb6294a040e3503340920e8cd54aba4",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/4fc7ad71ccb6294a040e3503340920e8cd54aba4"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap08/instructions_chap8.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a0b0e27c38337ecb595790610e6ae24c50b345fe",
+ "size": 1070,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a0b0e27c38337ecb595790610e6ae24c50b345fe"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap08/mavsim_chap8.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "be16213587fe2b36a988cd6fcbba85ed9b322931",
+ "size": 3419,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/be16213587fe2b36a988cd6fcbba85ed9b322931"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap10",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "bc705f18ed9d1cb21c2299e099d147cab71a2482",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/bc705f18ed9d1cb21c2299e099d147cab71a2482"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap10/instructions_chap10.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "01251f9d3537db13cfa0b7b32ad8aa378f4a7fb6",
+ "size": 1183,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/01251f9d3537db13cfa0b7b32ad8aa378f4a7fb6"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap10/mavsim_chap10.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6dd017e97709d5b98d22c4cff343faf682220433",
+ "size": 3397,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6dd017e97709d5b98d22c4cff343faf682220433"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap11",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "c9f7bad4517ad8ac15c0b566e83a5cfa94ce626d",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/c9f7bad4517ad8ac15c0b566e83a5cfa94ce626d"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap11/instructions_chap11.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c1589c8baafea01387fe59d931382dedab5c3bed",
+ "size": 1659,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c1589c8baafea01387fe59d931382dedab5c3bed"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap11/mavsim_chap11.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "36fb01f96b1271b649d6c25941d9da22430fb5c8",
+ "size": 3443,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/36fb01f96b1271b649d6c25941d9da22430fb5c8"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap12",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "7ba8b37d4002e2b16e5f68aca1dcbd316268e057",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/7ba8b37d4002e2b16e5f68aca1dcbd316268e057"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap12/instructions_chap12.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c1bd4413d744836e6767561d45997dea1c1d7099",
+ "size": 854,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c1bd4413d744836e6767561d45997dea1c1d7099"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap12/mavsim_chap12.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b11238e96ed7850ba09418645b080d88d430d7dc",
+ "size": 3871,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b11238e96ed7850ba09418645b080d88d430d7dc"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap13",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "6df8597b81c24646bbc96d5fd170ca0a497435ee",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/6df8597b81c24646bbc96d5fd170ca0a497435ee"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap13/instructions_chap13.txt",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4c12f666abc66116f602bb62eae7a07cc21bd3f4",
+ "size": 1595,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4c12f666abc66116f602bb62eae7a07cc21bd3f4"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap13/mavsim_chap13_orbit_target.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e2bd39f569565f408bfab119ccaf69dcb19687a5",
+ "size": 3869,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e2bd39f569565f408bfab119ccaf69dcb19687a5"
+ },
+ {
+ "path": "mavsim_python/launch_files/chap13/mavsim_chap13_point_camera.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "46826021b4b18cefe2b31b25c41ca1d2cf7a315b",
+ "size": 3848,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/46826021b4b18cefe2b31b25c41ca1d2cf7a315b"
+ },
+ {
+ "path": "mavsim_python/message_types",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "2c2674d9de181e985215ad2dc8fd46727ea1f2db",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/2c2674d9de181e985215ad2dc8fd46727ea1f2db"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_autopilot.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3c9cb3f370d85e65a0e4a9d86ddb4521235b1b46",
+ "size": 481,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3c9cb3f370d85e65a0e4a9d86ddb4521235b1b46"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_camera.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c0065b2cac8c18d75b441bc6dcfa14e8486a0b33",
+ "size": 403,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c0065b2cac8c18d75b441bc6dcfa14e8486a0b33"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_delta.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3c6a77ea9294c8e6141b30dbae12812783c7f2ff",
+ "size": 1591,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3c6a77ea9294c8e6141b30dbae12812783c7f2ff"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_path.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "777bb1e4cbdde0883c48a798bafb1d8a908aa448",
+ "size": 3584,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/777bb1e4cbdde0883c48a798bafb1d8a908aa448"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_sensors.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "32c138763629ec978d907db4b1a12a34ad04c636",
+ "size": 1062,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/32c138763629ec978d907db4b1a12a34ad04c636"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_state.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b0f77395a01e968f3a5fa2f308d004372ccf47fa",
+ "size": 1602,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b0f77395a01e968f3a5fa2f308d004372ccf47fa"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_waypoints.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "366e03cab3d6f30702ff1697d6a9ba71c6b494da",
+ "size": 1966,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/366e03cab3d6f30702ff1697d6a9ba71c6b494da"
+ },
+ {
+ "path": "mavsim_python/message_types/msg_world_map.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "720163bbfc55176015891fbb3f36020dca438365",
+ "size": 1380,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/720163bbfc55176015891fbb3f36020dca438365"
+ },
+ {
+ "path": "mavsim_python/models",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "02db8c0b1ee8d04f81261ea54831af80ed1ad862",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/02db8c0b1ee8d04f81261ea54831af80ed1ad862"
+ },
+ {
+ "path": "mavsim_python/models/camera.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fbed8e05b041ce653c60e9c95ebe0d7fd7aeea84",
+ "size": 3571,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fbed8e05b041ce653c60e9c95ebe0d7fd7aeea84"
+ },
+ {
+ "path": "mavsim_python/models/compute_models.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4a1605e4bd9ad24efdc2146c6c7e9dd3bafe92f7",
+ "size": 6735,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4a1605e4bd9ad24efdc2146c6c7e9dd3bafe92f7"
+ },
+ {
+ "path": "mavsim_python/models/gimbal.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "972afac4a75c7d4e90cf059f33be91eea1678223",
+ "size": 1544,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/972afac4a75c7d4e90cf059f33be91eea1678223"
+ },
+ {
+ "path": "mavsim_python/models/mav_dynamics.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fedf58e3c9c1159792ddb02c5d6144faefb92534",
+ "size": 5352,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fedf58e3c9c1159792ddb02c5d6144faefb92534"
+ },
+ {
+ "path": "mavsim_python/models/mav_dynamics_camera.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d36208359e2e8fc5a6d80b663fa4452030f70bb0",
+ "size": 1072,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d36208359e2e8fc5a6d80b663fa4452030f70bb0"
+ },
+ {
+ "path": "mavsim_python/models/mav_dynamics_camera_old.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "21cc2d48c22277ae5d4605410281589e7c939d2e",
+ "size": 10367,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/21cc2d48c22277ae5d4605410281589e7c939d2e"
+ },
+ {
+ "path": "mavsim_python/models/mav_dynamics_control.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e7c89a6118ffa965f4032be38e16b6c5c01128a6",
+ "size": 5284,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e7c89a6118ffa965f4032be38e16b6c5c01128a6"
+ },
+ {
+ "path": "mavsim_python/models/mav_dynamics_sensors.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a1a25cc0072efb0bfc5035ff26431ca429563a7c",
+ "size": 3796,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a1a25cc0072efb0bfc5035ff26431ca429563a7c"
+ },
+ {
+ "path": "mavsim_python/models/model_coef.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fc3bc6703d51bf6d872c7315f15c674918065df9",
+ "size": 1359,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fc3bc6703d51bf6d872c7315f15c674918065df9"
+ },
+ {
+ "path": "mavsim_python/models/target_dynamics.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ae7088bd68c08b6cdecf927697804f4c4ccceb41",
+ "size": 3561,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ae7088bd68c08b6cdecf927697804f4c4ccceb41"
+ },
+ {
+ "path": "mavsim_python/models/trim.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "31a2e4107970e457b98f8b564aa128c116a0e868",
+ "size": 3559,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/31a2e4107970e457b98f8b564aa128c116a0e868"
+ },
+ {
+ "path": "mavsim_python/models/wind_simulation.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a0416ca4a09a415671f989cb3b6a114c17e5430e",
+ "size": 1388,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a0416ca4a09a415671f989cb3b6a114c17e5430e"
+ },
+ {
+ "path": "mavsim_python/parameters",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "672a7d3cac231d773a61ede8b4cd82bec33a5cea",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/672a7d3cac231d773a61ede8b4cd82bec33a5cea"
+ },
+ {
+ "path": "mavsim_python/parameters/aerosonde_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4dca9e91adda141cc7d4351a4b662c1e48892f73",
+ "size": 4486,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4dca9e91adda141cc7d4351a4b662c1e48892f73"
+ },
+ {
+ "path": "mavsim_python/parameters/camera_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0f88721c8037afd0610bd97f3f883821f11bb90c",
+ "size": 761,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0f88721c8037afd0610bd97f3f883821f11bb90c"
+ },
+ {
+ "path": "mavsim_python/parameters/control_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "aea461744f2189736051bb93524fdbc7c7d29bba",
+ "size": 935,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/aea461744f2189736051bb93524fdbc7c7d29bba"
+ },
+ {
+ "path": "mavsim_python/parameters/planner_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "99d8a1f5286e86a295fe47b614455db02ad3071d",
+ "size": 679,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/99d8a1f5286e86a295fe47b614455db02ad3071d"
+ },
+ {
+ "path": "mavsim_python/parameters/sensor_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "eb88b62328fcb457d8cc6932bf9cfdc6039e2077",
+ "size": 1180,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/eb88b62328fcb457d8cc6932bf9cfdc6039e2077"
+ },
+ {
+ "path": "mavsim_python/parameters/simulation_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5d732f8784c568f6f7988e262a1a29a4edd2a742",
+ "size": 599,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5d732f8784c568f6f7988e262a1a29a4edd2a742"
+ },
+ {
+ "path": "mavsim_python/planners",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "74fb96266e97da83827a9d4878798266ca04994e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/74fb96266e97da83827a9d4878798266ca04994e"
+ },
+ {
+ "path": "mavsim_python/planners/dubins_parameters.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "50076ec39eefdcb7b63ede4bba98dfe9bc93e32a",
+ "size": 7898,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/50076ec39eefdcb7b63ede4bba98dfe9bc93e32a"
+ },
+ {
+ "path": "mavsim_python/planners/path_follower.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0e1604b8ff7940d2b8855066258fcc13f8f9c206",
+ "size": 1883,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0e1604b8ff7940d2b8855066258fcc13f8f9c206"
+ },
+ {
+ "path": "mavsim_python/planners/path_manager.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bcb6b851b95021e6e6e38593cf84406bfeb75ba9",
+ "size": 9423,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/bcb6b851b95021e6e6e38593cf84406bfeb75ba9"
+ },
+ {
+ "path": "mavsim_python/planners/path_manager_follow_target.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9966fb0bf9ec7b01f910349a6e7bbaff448d378b",
+ "size": 966,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9966fb0bf9ec7b01f910349a6e7bbaff448d378b"
+ },
+ {
+ "path": "mavsim_python/planners/path_planner.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e609125629fa94893029fb556549254832cf92dc",
+ "size": 4161,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e609125629fa94893029fb556549254832cf92dc"
+ },
+ {
+ "path": "mavsim_python/planners/rrt_dubins.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ebee2bf84465223b56b2325d47a1fd92ebb3c132",
+ "size": 4305,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/ebee2bf84465223b56b2325d47a1fd92ebb3c132"
+ },
+ {
+ "path": "mavsim_python/planners/rrt_straight_line.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e824e5dc5fbf78a1a280514ff7e96419d45a6bc2",
+ "size": 4409,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e824e5dc5fbf78a1a280514ff7e96419d45a6bc2"
+ },
+ {
+ "path": "mavsim_python/plotter",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "ba716243a5c30adbf7edfd1eff5d0d98c4404cfc",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/ba716243a5c30adbf7edfd1eff5d0d98c4404cfc"
+ },
+ {
+ "path": "mavsim_python/plotter/plotter.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5de0f4656966504528de63ffcfc86833ad75dffd",
+ "size": 5169,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5de0f4656966504528de63ffcfc86833ad75dffd"
+ },
+ {
+ "path": "mavsim_python/plotter/test_plotter.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d05850c80e1118dc91dd31f44ef1796064bf37bd",
+ "size": 1241,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d05850c80e1118dc91dd31f44ef1796064bf37bd"
+ },
+ {
+ "path": "mavsim_python/tools",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "60545ff901e8c413656f9a78d3135c33c6056fce",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/60545ff901e8c413656f9a78d3135c33c6056fce"
+ },
+ {
+ "path": "mavsim_python/tools/check_funcs.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "15948344884e70170d7757a8c7d9bdeafb50322f",
+ "size": 2254,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/15948344884e70170d7757a8c7d9bdeafb50322f"
+ },
+ {
+ "path": "mavsim_python/tools/color.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5854137dbbc56b03172f39a1403bd7221fc60a84",
+ "size": 894,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5854137dbbc56b03172f39a1403bd7221fc60a84"
+ },
+ {
+ "path": "mavsim_python/tools/drawing.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "df11b28b812e39e9eff14190aaaf41953f742cec",
+ "size": 854,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/df11b28b812e39e9eff14190aaaf41953f742cec"
+ },
+ {
+ "path": "mavsim_python/tools/jacobian.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a329af3f31b2d481da5b79ed9d76e0bf3ba4aec4",
+ "size": 430,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a329af3f31b2d481da5b79ed9d76e0bf3ba4aec4"
+ },
+ {
+ "path": "mavsim_python/tools/plotter.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8d6d810bc4ca152c9cfafae00d3ea489a7e23a4b",
+ "size": 5280,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8d6d810bc4ca152c9cfafae00d3ea489a7e23a4b"
+ },
+ {
+ "path": "mavsim_python/tools/quit_listener.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "20d6c40130d6914513f9b41e044aa3fa20e92bc7",
+ "size": 523,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/20d6c40130d6914513f9b41e044aa3fa20e92bc7"
+ },
+ {
+ "path": "mavsim_python/tools/rotations.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2af395732cbb213f410955b7927861396623aed1",
+ "size": 6901,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/2af395732cbb213f410955b7927861396623aed1"
+ },
+ {
+ "path": "mavsim_python/tools/saturate.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e42a867dfc4b9ee4595f5cdf43d7cd9d74898397",
+ "size": 356,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/e42a867dfc4b9ee4595f5cdf43d7cd9d74898397"
+ },
+ {
+ "path": "mavsim_python/tools/signals.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c65c245e4fee06e06968b37d20c162cafb8a41c3",
+ "size": 6197,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c65c245e4fee06e06968b37d20c162cafb8a41c3"
+ },
+ {
+ "path": "mavsim_python/tools/transfer_function.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4a96681c8050b46284c5398e8efde9bb28d1e7bf",
+ "size": 2987,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4a96681c8050b46284c5398e8efde9bb28d1e7bf"
+ },
+ {
+ "path": "mavsim_python/tools/wrap.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9b1876ab5188570e6238b5603b26ebccded585f2",
+ "size": 255,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9b1876ab5188570e6238b5603b26ebccded585f2"
+ },
+ {
+ "path": "mavsim_python/viewers",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "d5a24392371f82bb1cda3cbd89c9fde68ba1a17e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/d5a24392371f82bb1cda3cbd89c9fde68ba1a17e"
+ },
+ {
+ "path": "mavsim_python/viewers/aircraft1.stl",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "18ca14b9c0040f46dd038ebc18903f898663f931",
+ "size": 350884,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/18ca14b9c0040f46dd038ebc18903f898663f931"
+ },
+ {
+ "path": "mavsim_python/viewers/camera_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b3b384138ea62bf5ba8f0d635e216c9a811c3a27",
+ "size": 2700,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b3b384138ea62bf5ba8f0d635e216c9a811c3a27"
+ },
+ {
+ "path": "mavsim_python/viewers/data_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "cc31daab73ea900811e049c40cb5fcf4ab710c2d",
+ "size": 16708,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/cc31daab73ea900811e049c40cb5fcf4ab710c2d"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_camera_fov.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4b8392d126d2feaae14e3b90c887f84391a8acc0",
+ "size": 6054,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4b8392d126d2feaae14e3b90c887f84391a8acc0"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_map.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d7b2006addea37cf25ad976158a7fbcbd4201e9b",
+ "size": 4975,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d7b2006addea37cf25ad976158a7fbcbd4201e9b"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_mav.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b9bac7904e52233bba6930fcc3bc2995203c8fd1",
+ "size": 95,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b9bac7904e52233bba6930fcc3bc2995203c8fd1"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_mav_stl.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1dd8bd7e7c12bc9c79a8a34db0a3d790099e53b8",
+ "size": 3466,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1dd8bd7e7c12bc9c79a8a34db0a3d790099e53b8"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_path.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a9744c47dc00941be5f5962b4776acd7e907e60a",
+ "size": 3687,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a9744c47dc00941be5f5962b4776acd7e907e60a"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_spacecraft.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "79c6fc0f659f1218f17d65b0851849bb37ccb5b8",
+ "size": 5544,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/79c6fc0f659f1218f17d65b0851849bb37ccb5b8"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_target.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "287359bbf52dfa80f1eb664e3625c963fab4cece",
+ "size": 5112,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/287359bbf52dfa80f1eb664e3625c963fab4cece"
+ },
+ {
+ "path": "mavsim_python/viewers/draw_waypoints.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "84c2066a2430504fd55a7349684000b3f94bdd94",
+ "size": 3192,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/84c2066a2430504fd55a7349684000b3f94bdd94"
+ },
+ {
+ "path": "mavsim_python/viewers/geolocation_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "13e203aa5b1c4f762c9110961f420708e0bc518a",
+ "size": 3765,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/13e203aa5b1c4f762c9110961f420708e0bc518a"
+ },
+ {
+ "path": "mavsim_python/viewers/manage_viewers.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8b3766a25486b7047c914deee7a0f52b3fd8147f",
+ "size": 3180,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8b3766a25486b7047c914deee7a0f52b3fd8147f"
+ },
+ {
+ "path": "mavsim_python/viewers/mav_path_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a3e54145b0c9fdf473ee50cedb21a3068b500791",
+ "size": 2847,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a3e54145b0c9fdf473ee50cedb21a3068b500791"
+ },
+ {
+ "path": "mavsim_python/viewers/mav_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "12f2854b05e3ad0b9ff27ebc804df17c5f793522",
+ "size": 2822,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/12f2854b05e3ad0b9ff27ebc804df17c5f793522"
+ },
+ {
+ "path": "mavsim_python/viewers/mav_viewer_camera.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "08dc8a97f19f05c7d220c40f5c6bace176ba71de",
+ "size": 3704,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/08dc8a97f19f05c7d220c40f5c6bace176ba71de"
+ },
+ {
+ "path": "mavsim_python/viewers/mav_waypoint_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "229b549eedfb78c8ffbfebff2b014a051ebc0a74",
+ "size": 2915,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/229b549eedfb78c8ffbfebff2b014a051ebc0a74"
+ },
+ {
+ "path": "mavsim_python/viewers/mav_world_camera_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d5bf9ba93aae9317b924a049c881fab5ac2b2678",
+ "size": 3374,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d5bf9ba93aae9317b924a049c881fab5ac2b2678"
+ },
+ {
+ "path": "mavsim_python/viewers/mav_world_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "62ac294c5cedcd4c6210c3abf487e667725670a8",
+ "size": 2747,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/62ac294c5cedcd4c6210c3abf487e667725670a8"
+ },
+ {
+ "path": "mavsim_python/viewers/planner_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fe20303bc7f1af437386cf18f7e59f9660f0a770",
+ "size": 3815,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fe20303bc7f1af437386cf18f7e59f9660f0a770"
+ },
+ {
+ "path": "mavsim_python/viewers/sensor_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6f3141a1ced212404bc0448c0b539f0182efd4d1",
+ "size": 7435,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6f3141a1ced212404bc0448c0b539f0182efd4d1"
+ },
+ {
+ "path": "mavsim_python/viewers/spacecraft_viewer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "10b3fd81823f3508defd8adcebff5da0827a45a4",
+ "size": 2277,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/10b3fd81823f3508defd8adcebff5da0827a45a4"
+ },
+ {
+ "path": "mavsim_python/viewers/video_writer.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "41e81f741bce6c47cf1d7a106cb16f2c27cb7019",
+ "size": 1319,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/41e81f741bce6c47cf1d7a106cb16f2c27cb7019"
+ },
+ {
+ "path": "mavsim_python/viewers/view_manager.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3ad14a844184e4a3a5ef000ff1c6744a8f350ce7",
+ "size": 6147,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3ad14a844184e4a3a5ef000ff1c6744a8f350ce7"
+ },
+ {
+ "path": "mavsim_simulink",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "90603d0ac0ea4b9d96fd8f0469b50739b2e7c7f8",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/90603d0ac0ea4b9d96fd8f0469b50739b2e7c7f8"
+ },
+ {
+ "path": "mavsim_simulink/chap10",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "9eb93df01d077ebce02081d963384e64150b10ff",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/9eb93df01d077ebce02081d963384e64150b10ff"
+ },
+ {
+ "path": "mavsim_simulink/chap10/drawPathError.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "db3674fd5c03e9487a5f09934b75f9098362c4e8",
+ "size": 6407,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/db3674fd5c03e9487a5f09934b75f9098362c4e8"
+ },
+ {
+ "path": "mavsim_simulink/chap10/mavsim_chap10.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b80476925fa242360ca0f59df3993bc225d76328",
+ "size": 34356,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b80476925fa242360ca0f59df3993bc225d76328"
+ },
+ {
+ "path": "mavsim_simulink/chap10/path_follow.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "157060c914a45bf096b9749c5db51f0cd25e94d3",
+ "size": 2937,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/157060c914a45bf096b9749c5db51f0cd25e94d3"
+ },
+ {
+ "path": "mavsim_simulink/chap10/path_manager_chap10.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "46461cbad13f67d4addaefb13e1635ef46f6c6c5",
+ "size": 1776,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/46461cbad13f67d4addaefb13e1635ef46f6c6c5"
+ },
+ {
+ "path": "mavsim_simulink/chap11",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "7e85a44453e4197f6a262409a302b9f489b05e1e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/7e85a44453e4197f6a262409a302b9f489b05e1e"
+ },
+ {
+ "path": "mavsim_simulink/chap11/drawEnvironment_chap11.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "3e175f81b9d432184033b987c2cc5790cc1863e2",
+ "size": 9796,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3e175f81b9d432184033b987c2cc5790cc1863e2"
+ },
+ {
+ "path": "mavsim_simulink/chap11/dubinsParameters.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "fcc1bf3927c3787be0f26e36737787f6f6a9ea67",
+ "size": 2252,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fcc1bf3927c3787be0f26e36737787f6f6a9ea67"
+ },
+ {
+ "path": "mavsim_simulink/chap11/mavsim_chap11.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b3a15944eb7a81f6a1bdcb80708c7e6d05cfc7b3",
+ "size": 36538,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b3a15944eb7a81f6a1bdcb80708c7e6d05cfc7b3"
+ },
+ {
+ "path": "mavsim_simulink/chap11/path_manager.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "c1b0bd848224f77c5524ce629ed7fcde1e5155ec",
+ "size": 2615,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c1b0bd848224f77c5524ce629ed7fcde1e5155ec"
+ },
+ {
+ "path": "mavsim_simulink/chap11/path_manager_dubins.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "74c65526c87d7d09cd278ad72d780d2cfb0a8113",
+ "size": 1848,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/74c65526c87d7d09cd278ad72d780d2cfb0a8113"
+ },
+ {
+ "path": "mavsim_simulink/chap11/path_manager_fillet.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "9a1ace8bbd04e8d25f4884582c0bd2e3a6d34660",
+ "size": 1818,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9a1ace8bbd04e8d25f4884582c0bd2e3a6d34660"
+ },
+ {
+ "path": "mavsim_simulink/chap11/path_manager_line.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "dd5f32eee3878ef9fa5d924fa52636d56d944529",
+ "size": 1781,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/dd5f32eee3878ef9fa5d924fa52636d56d944529"
+ },
+ {
+ "path": "mavsim_simulink/chap11/path_planner_chap11.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "335a5752013c39d8be54955a5a6d2579e85264be",
+ "size": 1739,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/335a5752013c39d8be54955a5a6d2579e85264be"
+ },
+ {
+ "path": "mavsim_simulink/chap12",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "3f9fa07d8599f171b6fbe2414adf5f8d621dfe99",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/3f9fa07d8599f171b6fbe2414adf5f8d621dfe99"
+ },
+ {
+ "path": "mavsim_simulink/chap12/createWorld.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "efb4859c5660fbbe9c8a296177c569f955a62316",
+ "size": 1151,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/efb4859c5660fbbe9c8a296177c569f955a62316"
+ },
+ {
+ "path": "mavsim_simulink/chap12/drawEnvironment.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "4f6d0647e019382f04b86fda79f74c236f4b8f88",
+ "size": 11821,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4f6d0647e019382f04b86fda79f74c236f4b8f88"
+ },
+ {
+ "path": "mavsim_simulink/chap12/mavsim_chap12.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d10ba70c7a7d109c781d22d9c8461ea9440e4742",
+ "size": 32469,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d10ba70c7a7d109c781d22d9c8461ea9440e4742"
+ },
+ {
+ "path": "mavsim_simulink/chap12/path_planner.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "0bf31220774afc2eac559ebe5f7c6e21e255e827",
+ "size": 3756,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/0bf31220774afc2eac559ebe5f7c6e21e255e827"
+ },
+ {
+ "path": "mavsim_simulink/chap12/planRRT.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "b8cfe75b87fe8a2cb336357ec128908e6ef4515d",
+ "size": 5363,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/b8cfe75b87fe8a2cb336357ec128908e6ef4515d"
+ },
+ {
+ "path": "mavsim_simulink/chap12/planRRTDubins.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "c662d8eab9e227aa71c064c825ac3070f87f404e",
+ "size": 7814,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c662d8eab9e227aa71c064c825ac3070f87f404e"
+ },
+ {
+ "path": "mavsim_simulink/chap2",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "9f59e09816c32644edc1ed8bc58f04fadbade59e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/9f59e09816c32644edc1ed8bc58f04fadbade59e"
+ },
+ {
+ "path": "mavsim_simulink/chap2/drawSpacecraft.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "1c31a3c2fbe5a31e0a42b162fa914727ae7c69b0",
+ "size": 4533,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/1c31a3c2fbe5a31e0a42b162fa914727ae7c69b0"
+ },
+ {
+ "path": "mavsim_simulink/chap2/mavsim_chap2.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c43a6ac44df302dcd507d61fba72fb447408bf22",
+ "size": 27913,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c43a6ac44df302dcd507d61fba72fb447408bf22"
+ },
+ {
+ "path": "mavsim_simulink/chap2/tv.jpg",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "51ef2185ae30a8e2c5672254ee6b61ab6a2a5ae0",
+ "size": 2380,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/51ef2185ae30a8e2c5672254ee6b61ab6a2a5ae0"
+ },
+ {
+ "path": "mavsim_simulink/chap3",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "324f3a5dd4f00f470923fe5830d0e01e825b978f",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/324f3a5dd4f00f470923fe5830d0e01e825b978f"
+ },
+ {
+ "path": "mavsim_simulink/chap3/mav_dynamics.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "8809323f05c650fa23dbcee6842d88e6374dbb39",
+ "size": 4907,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8809323f05c650fa23dbcee6842d88e6374dbb39"
+ },
+ {
+ "path": "mavsim_simulink/chap3/mavsim_chap3.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "76cf2b51170eeb604662997546c6c60764490b28",
+ "size": 26675,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/76cf2b51170eeb604662997546c6c60764490b28"
+ },
+ {
+ "path": "mavsim_simulink/chap3/plotmavstatevariables.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "a1f81962a68be0296ea1fdfe502944ede0f50d7b",
+ "size": 9600,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a1f81962a68be0296ea1fdfe502944ede0f50d7b"
+ },
+ {
+ "path": "mavsim_simulink/chap4",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "067b7088c307e5eb87ed2444cfa2dceab73e2968",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/067b7088c307e5eb87ed2444cfa2dceab73e2968"
+ },
+ {
+ "path": "mavsim_simulink/chap4/forces_moments.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "80693069e8493caebeb84199ca2e0e9c2b1ba5b0",
+ "size": 1376,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/80693069e8493caebeb84199ca2e0e9c2b1ba5b0"
+ },
+ {
+ "path": "mavsim_simulink/chap4/mavsim_chap4.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "de4c5dacfdb10ec4c04917aa535ef6bd9f97d6e9",
+ "size": 27970,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/de4c5dacfdb10ec4c04917aa535ef6bd9f97d6e9"
+ },
+ {
+ "path": "mavsim_simulink/chap5",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "e808b438eb42e7ba7e85cbde48d3bbbe549070f4",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/e808b438eb42e7ba7e85cbde48d3bbbe549070f4"
+ },
+ {
+ "path": "mavsim_simulink/chap5/compute_ss_model.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "225652b14ddfc15326f7898bb94b933d592cd071",
+ "size": 154,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/225652b14ddfc15326f7898bb94b933d592cd071"
+ },
+ {
+ "path": "mavsim_simulink/chap5/compute_tf_model.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "6c5eea63590506a74f26d5096d592ed168faabc9",
+ "size": 456,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/6c5eea63590506a74f26d5096d592ed168faabc9"
+ },
+ {
+ "path": "mavsim_simulink/chap5/compute_trim.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a458455b25f2bddc88381b4e917d39c5dd48b6ad",
+ "size": 2019,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a458455b25f2bddc88381b4e917d39c5dd48b6ad"
+ },
+ {
+ "path": "mavsim_simulink/chap5/mavsim_chap5.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fb04442aee98b84b48cf7bf25821e94681485485",
+ "size": 27287,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fb04442aee98b84b48cf7bf25821e94681485485"
+ },
+ {
+ "path": "mavsim_simulink/chap5/mavsim_trim.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "992f2ec430e2dd9f75a9ffe1e5e39042010a1b89",
+ "size": 24839,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/992f2ec430e2dd9f75a9ffe1e5e39042010a1b89"
+ },
+ {
+ "path": "mavsim_simulink/chap6",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "2957fbbf863cafc1c02c7617a61aa8c176f5f655",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/2957fbbf863cafc1c02c7617a61aa8c176f5f655"
+ },
+ {
+ "path": "mavsim_simulink/chap6/autopilot.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "30e2a458dd1b8e9718f33fce8d2651e7521ed364",
+ "size": 5492,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/30e2a458dd1b8e9718f33fce8d2651e7521ed364"
+ },
+ {
+ "path": "mavsim_simulink/chap6/batcam.png",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "5d4169f83df49c95c482b7759c9b3a286e28d403",
+ "size": 104324,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5d4169f83df49c95c482b7759c9b3a286e28d403"
+ },
+ {
+ "path": "mavsim_simulink/chap6/compute_autopilot_gains.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d51aa36e036b53afcbca9db5de40c24ce6981ac5",
+ "size": 737,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d51aa36e036b53afcbca9db5de40c24ce6981ac5"
+ },
+ {
+ "path": "mavsim_simulink/chap6/kestrel.jpg",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "52cf50ac92a052ef25ba0e9270e443ad15ac3f34",
+ "size": 101996,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/52cf50ac92a052ef25ba0e9270e443ad15ac3f34"
+ },
+ {
+ "path": "mavsim_simulink/chap6/mavsim_chap6.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "602e50784005f3c39ed163c772b10db0eef8b23d",
+ "size": 31308,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/602e50784005f3c39ed163c772b10db0eef8b23d"
+ },
+ {
+ "path": "mavsim_simulink/chap6/mavsim_chap6.slx.r2016b",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "44c7d1eeb1e2ad020d9c341dc991232c789e32cc",
+ "size": 26291,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/44c7d1eeb1e2ad020d9c341dc991232c789e32cc"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "bd6f5d0ff2c3ac89af88af49fae3538ebb210858",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/bd6f5d0ff2c3ac89af88af49fae3538ebb210858"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/modeladvisor",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "b29b8a11d06e340bedd54f007cd0112a13549397",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/b29b8a11d06e340bedd54f007cd0112a13549397"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/modeladvisor/UpgradeAdv_",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "18dc37432bd995301784e617d37b39fa8a881a1f",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/18dc37432bd995301784e617d37b39fa8a881a1f"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/modeladvisor/UpgradeAdv_/mavsim_chap6",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "7dbecea857444ee1d58e99dbb95cee4c5a7979d9",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/7dbecea857444ee1d58e99dbb95cee4c5a7979d9"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/modeladvisor/UpgradeAdv_/mavsim_chap6/ModelAdvisorData",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2eb2ea3ebb60719155b43da9c0f284cceb3a2152",
+ "size": 108544,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/2eb2ea3ebb60719155b43da9c0f284cceb3a2152"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "864d020effd3f5a834ea5df57901dbea77873697",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/864d020effd3f5a834ea5df57901dbea77873697"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim/varcache",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "5bd4880ea65ffaea19aeaf4bb4e4e7759a582ac3",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/5bd4880ea65ffaea19aeaf4bb4e4e7759a582ac3"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim/varcache/mavsim_chap6",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "9c046090aa8327a42cb80d5893a6d06ffee40a97",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/9c046090aa8327a42cb80d5893a6d06ffee40a97"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim/varcache/mavsim_chap6/checksumOfCache.mat",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3af1fe03ff8e6c7b3d076cc1273f83aa09ee7908",
+ "size": 392,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/3af1fe03ff8e6c7b3d076cc1273f83aa09ee7908"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim/varcache/mavsim_chap6/tmwinternal",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "b3c14f073096ec11117ba251a23eb9ab979b61e3",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/b3c14f073096ec11117ba251a23eb9ab979b61e3"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim/varcache/mavsim_chap6/tmwinternal/simulink_cache.xml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "386abf9fd7eb4c311f4cf9cfa8c086204bf4de61",
+ "size": 307,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/386abf9fd7eb4c311f4cf9cfa8c086204bf4de61"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sim/varcache/mavsim_chap6/varInfo.mat",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "406aa1b64abd13855ac5f54041ba12bf0553ac66",
+ "size": 1352,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/406aa1b64abd13855ac5f54041ba12bf0553ac66"
+ },
+ {
+ "path": "mavsim_simulink/chap6/slprj/sl_proj.tmw",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "44ff5545dd08bfc60015c14447547ce82caeb74e",
+ "size": 82,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/44ff5545dd08bfc60015c14447547ce82caeb74e"
+ },
+ {
+ "path": "mavsim_simulink/chap6/true_states.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "a99ac3de8a3e027f33e5911e110d011c0580a331",
+ "size": 2899,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/a99ac3de8a3e027f33e5911e110d011c0580a331"
+ },
+ {
+ "path": "mavsim_simulink/chap7",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "bfe3858b207838a5d0f866877e33b9f45cbb5f6f",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/bfe3858b207838a5d0f866877e33b9f45cbb5f6f"
+ },
+ {
+ "path": "mavsim_simulink/chap7/gps.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "277c9a10458a4e5b936d46c4e1fa443a898c95cd",
+ "size": 860,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/277c9a10458a4e5b936d46c4e1fa443a898c95cd"
+ },
+ {
+ "path": "mavsim_simulink/chap7/mavsim_chap7.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5f0e3b3112d9ef714dc6fa28b55d8331c2e25f3d",
+ "size": 30759,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/5f0e3b3112d9ef714dc6fa28b55d8331c2e25f3d"
+ },
+ {
+ "path": "mavsim_simulink/chap7/mavsim_chap7_r2016b.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "20c07b1bf18d2852e79913253dc875cb01cae6dd",
+ "size": 25532,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/20c07b1bf18d2852e79913253dc875cb01cae6dd"
+ },
+ {
+ "path": "mavsim_simulink/chap7/sensors.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "4dec286ca24710999dbde273914bd34f3ee3f227",
+ "size": 1098,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4dec286ca24710999dbde273914bd34f3ee3f227"
+ },
+ {
+ "path": "mavsim_simulink/chap8",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "0756610c35c061a9ac330eca10e1882995d87605",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/0756610c35c061a9ac330eca10e1882995d87605"
+ },
+ {
+ "path": "mavsim_simulink/chap8/estimate_states_simple.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2ab6773b810f000cab262f8c0bd2897cbd446d9b",
+ "size": 7192,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/2ab6773b810f000cab262f8c0bd2897cbd446d9b"
+ },
+ {
+ "path": "mavsim_simulink/chap8/mavsim_chap8.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7df3f439f4c70972004ea12a8244226048bdb291",
+ "size": 32274,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7df3f439f4c70972004ea12a8244226048bdb291"
+ },
+ {
+ "path": "mavsim_simulink/chap8/plotextramavstatevariables.m",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "8ce0722cb429bbfd0f7a5b99d6b5352dc70d73e5",
+ "size": 8012,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/8ce0722cb429bbfd0f7a5b99d6b5352dc70d73e5"
+ },
+ {
+ "path": "mavsim_simulink/parameters",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "e78ec9eb5121f41eeb240031dcb614ba0d0f735e",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/e78ec9eb5121f41eeb240031dcb614ba0d0f735e"
+ },
+ {
+ "path": "mavsim_simulink/parameters/aerosonde_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4fc54638733bac977a9307e0d3d031f8e4535984",
+ "size": 3181,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/4fc54638733bac977a9307e0d3d031f8e4535984"
+ },
+ {
+ "path": "mavsim_simulink/parameters/mavsim_chap2.slx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c43a6ac44df302dcd507d61fba72fb447408bf22",
+ "size": 27913,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c43a6ac44df302dcd507d61fba72fb447408bf22"
+ },
+ {
+ "path": "mavsim_simulink/parameters/sensor_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "98e68809c25d56a55d630263f962e4a4647ef2d1",
+ "size": 982,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/98e68809c25d56a55d630263f962e4a4647ef2d1"
+ },
+ {
+ "path": "mavsim_simulink/parameters/simulation_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d111f57b03f37c03ffe0421911e3387726027712",
+ "size": 360,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/d111f57b03f37c03ffe0421911e3387726027712"
+ },
+ {
+ "path": "mavsim_simulink/parameters/wind_parameters.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c6d8cf623d8035d9f6fd565651b130f2c890b2bc",
+ "size": 196,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c6d8cf623d8035d9f6fd565651b130f2c890b2bc"
+ },
+ {
+ "path": "mavsim_simulink/tools",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "8d6a8ea3caf8d1d94a6366e3b40c36ab3cf2d4b0",
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/trees/8d6a8ea3caf8d1d94a6366e3b40c36ab3cf2d4b0"
+ },
+ {
+ "path": "mavsim_simulink/tools/Euler2Quaternion.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7679ee3c59b6d11ab5ab24b0189d49220de9e77c",
+ "size": 180,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/7679ee3c59b6d11ab5ab24b0189d49220de9e77c"
+ },
+ {
+ "path": "mavsim_simulink/tools/Euler2Rotation.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fc5f97ea8d7c047d7611e8bb2b9b8b303356e1ff",
+ "size": 98,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/fc5f97ea8d7c047d7611e8bb2b9b8b303356e1ff"
+ },
+ {
+ "path": "mavsim_simulink/tools/Quaternion2Euler.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c8805eef47ac470825cf90626c6cca107043c95d",
+ "size": 258,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/c8805eef47ac470825cf90626c6cca107043c95d"
+ },
+ {
+ "path": "mavsim_simulink/tools/Quaternion2Rotation.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "761416ed91e24ce17f6a7e6f36de5858387c7d60",
+ "size": 212,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/761416ed91e24ce17f6a7e6f36de5858387c7d60"
+ },
+ {
+ "path": "mavsim_simulink/tools/hat.m",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9482fc1ba3496e8b32e551fb6d94a71e24e6c9eb",
+ "size": 238,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/9482fc1ba3496e8b32e551fb6d94a71e24e6c9eb"
+ },
+ {
+ "path": "merge_corrections_todo.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "799a319ff4ef3a649cabb44df9f648fdf108387a",
+ "size": 8170,
+ "url": "https://api.github.com/repos/byu-magicc/mavsim_public/git/blobs/799a319ff4ef3a649cabb44df9f648fdf108387a"
+ }
+ ],
+ "truncated": false
+}

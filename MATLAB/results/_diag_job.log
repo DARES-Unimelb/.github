@@ -1,0 +1,45 @@
+START 16:00:52
+rev 10 mass 17.000
+p      Kp     +0.19151035 Ki            +7.2 Kd              +0 Tf  0.00750 pol +1 stable 1 score 0.1134
+       bw    11.9711 target 12.0000 pm   180.01 gm      Inf rise    0.1885 os    0.00 settle    0.4459 dc  1.00000
+       worst  -1.6529e-03 art  0.000e+00 tried   3990 stable   2670 [186.5 s]
+       integral zero at 37.5959 rad/s from the search, which is 3.133 of the 12.000 rad/s target
+q      FAILED design_pid:noStableTuning | no stable proportional-integral-derivative set found for a loop with target 8.0000 rad/s [175.6 s]
+        at local_search_rate line 291
+        at local_rate_loop line 194
+        at design_pid line 97
+        at diag_pid_job line 30
+        at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+        at mcpEval line 48
+        at fevalMatlab line 0
+        at fevalJSON line 0
+r      Kp      -1.8261962 Ki           -0.25 Kd    -0.018569666 Tf  0.00002 pol -1 stable 1 score 6.0259
+       bw    53.5584 target  5.0000 pm   180.03 gm      Inf rise    3.6196 os   98.56 settle   34.4715 dc  1.00000
+       worst  -1.2762e-01 art  0.000e+00 tried   3990 stable   1298 [118.2 s]
+       integral zero at 0.1369 rad/s from the search, which is 0.027 of the 5.000 rad/s target
+phi    FAILED MATLAB:nonExistentField | Unrecognized field name "p". [0.1 s]
+        at design_pid line 110
+        at diag_pid_job line 30
+        at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+        at mcpEval line 48
+        at fevalMatlab line 0
+        at fevalJSON line 0
+theta  FAILED MATLAB:nonExistentField | Unrecognized field name "q". [0.1 s]
+        at design_pid line 115
+        at diag_pid_job line 30
+        at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+        at mcpEval line 48
+        at fevalMatlab line 0
+        at fevalJSON line 0
+V      Kp       +6.373958 Ki      +6.4653072 Kd              +0 Tf  0.01000 pol +1 stable 1 score 0.2037
+       bw     1.0879 target  0.8000 pm   180.00 gm      Inf rise    2.0778 os    2.74 settle   49.2570 dc  1.00000
+       worst  -5.6759e-02 art  0.000e+00 tried    516 stable    294 [8.8 s]
+       integral zero at 1.0143 rad/s from the search, which is 1.268 of the 0.800 rad/s target
+h      FAILED MATLAB:nonExistentField | Unrecognized field name "theta". [0.0 s]
+        at design_pid line 130
+        at diag_pid_job line 30
+        at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+        at mcpEval line 48
+        at fevalMatlab line 0
+        at fevalJSON line 0
+TOTAL 489.4 s

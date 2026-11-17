@@ -3,19 +3,13 @@ function out = v_sim_v9_wind(varargin)
 %
 %   out = v_sim_v9_wind()
 %
-% Reads results/sim_wind_crosswind.mat, which run_scenarios produced by running
-% model/uacs_manual_pid.slx twice: once with a 5 m/s crosswind and once without.
-%
-% Criteria, architecture.md V9 as "bounded track deviation and roll convergence"
-%   bank angle converges: the tail mean is within 1 deg and the largest bank
-%   after the first 30 percent of the run stays under the 45 deg limit
-%   the crosswind run holds its ground track: its own east displacement from its
-%   initial position stays under 20 m over 30 s. Both runs start in the trim of
-%   their own wind, so each is already balanced and holding a track; the judged
-%   quantity is whether the crabbed aircraft holds the track it was trimmed for.
-%   the crosswind run's own east drift stays near zero while the still air run
-%   drifts with the wind, which is what shows the wind is present and balanced
-%   altitude is not disturbed: residual against the no-wind run under 5 m
+% Reads results/sim_wind_crosswind.mat. Asserts
+%   the tail mean bank is within phi_tail_max_deg and the largest bank after the first
+%   30 percent of the run stays under the 45 deg limit
+%   the crosswind run's own east displacement from its initial position stays under
+%   residual_max_m: both runs start in the trim of their own wind, so what is judged is
+%   whether the crabbed aircraft holds the track it was trimmed for
+%   the altitude residual against the no-wind run stays under alt_residual_max_m
 %   the state does not diverge and the pitch angle stays below 90 deg
 
 ip = inputParser;

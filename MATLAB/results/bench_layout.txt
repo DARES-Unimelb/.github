@@ -1,0 +1,214 @@
+[模型]
+  顶层块 70 个，总块 271 个
+  PreLoadFcn   run('C:\Ash\Projects\DARES_UACS\MATLAB\uacs_go.m')
+  PostLoadFcn  uacs_bench_seed('uacs_flight_bench')
+  InitFcn      uacs_ensure
+  StartFcn     <空>
+  StopFcn      uacs_bench_record('uacs_flight_bench')
+
+[画布内示波器]
+  -- uacs_flight_bench/三个舵面  Position [-790 111 -376 370]
+     Binding 类 cell，元素 1 个
+       第 1 路 -> uacs_flight_bench/surf_mux 端口 1
+    LabelPosition              = Hide
+    Binding                    = <cell [1 1]>
+    ShowInitialText            = on
+    ShowPropertyInspector      = 
+    TimeSpan                   = auto
+    LegendPosition             = Top
+    ScaleAtStop                = on
+    UpdateMode                 = Wrap
+    NormalizeYAxis             = off
+    TicksPosition              = Outside
+    TickLabels                 = All
+    Grid                       = All
+    Border                     = on
+    Markers                    = off
+    FontColor                  = <double [1 3]>
+    YLimits                    = <double [1 2]>
+    Colors                     = <struct [0 1]>
+  -- uacs_flight_bench/姿态跟踪  Position [-400 117 15 652]
+     Binding 类 cell，元素 1 个
+       第 1 路 -> uacs_flight_bench/att_mux 端口 1
+    LabelPosition              = Hide
+    Binding                    = <cell [1 1]>
+    ShowInitialText            = on
+    ShowPropertyInspector      = 
+    TimeSpan                   = auto
+    LegendPosition             = Top
+    ScaleAtStop                = on
+    UpdateMode                 = Wrap
+    NormalizeYAxis             = off
+    TicksPosition              = Outside
+    TickLabels                 = All
+    Grid                       = All
+    Border                     = on
+    Markers                    = off
+    FontColor                  = <double [1 3]>
+    YLimits                    = <double [1 2]>
+    Colors                     = <struct [0 1]>
+  -- uacs_flight_bench/左右油门  Position [-790 385 -376 640]
+     Binding 类 cell，元素 1 个
+       第 1 路 -> uacs_flight_bench/thr_mux 端口 1
+    LabelPosition              = Hide
+    Binding                    = <cell [1 1]>
+    ShowInitialText            = on
+    ShowPropertyInspector      = 
+    TimeSpan                   = auto
+    LegendPosition             = Top
+    ScaleAtStop                = on
+    UpdateMode                 = Wrap
+    NormalizeYAxis             = off
+    TicksPosition              = Outside
+    TickLabels                 = All
+    Grid                       = All
+    Border                     = on
+    Markers                    = off
+    FontColor                  = <double [1 3]>
+    YLimits                    = <double [1 2]>
+    Colors                     = <struct [0 1]>
+  -- uacs_flight_bench/速率跟踪 pq  Position [-1200 111 -775 370]
+     Binding 类 cell，元素 1 个
+       第 1 路 -> uacs_flight_bench/rate_mux_pq 端口 1
+    LabelPosition              = Hide
+    Binding                    = <cell [1 1]>
+    ShowInitialText            = on
+    ShowPropertyInspector      = 
+    TimeSpan                   = auto
+    LegendPosition             = Top
+    ScaleAtStop                = on
+    UpdateMode                 = Wrap
+    NormalizeYAxis             = off
+    TicksPosition              = Outside
+    TickLabels                 = All
+    Grid                       = All
+    Border                     = on
+    Markers                    = off
+    FontColor                  = <double [1 3]>
+    YLimits                    = <double [1 2]>
+    Colors                     = <struct [0 1]>
+  -- uacs_flight_bench/速率跟踪 r 方向舵  Position [-1200 385 -775 640]
+     Binding 类 cell，元素 1 个
+       第 1 路 -> uacs_flight_bench/rate_mux_r 端口 1
+    LabelPosition              = Hide
+    Binding                    = <cell [1 1]>
+    ShowInitialText            = on
+    ShowPropertyInspector      = 
+    TimeSpan                   = auto
+    LegendPosition             = Top
+    ScaleAtStop                = on
+    UpdateMode                 = Wrap
+    NormalizeYAxis             = off
+    TicksPosition              = Outside
+    TickLabels                 = All
+    Grid                       = All
+    Border                     = on
+    Markers                    = off
+    FontColor                  = <double [1 3]>
+    YLimits                    = <double [1 2]>
+    Colors                     = <struct [0 1]>
+
+[兜底示波器]
+  Position [235 1305 565 1555]，NumInputPorts 3，LayoutDimensionsString [3 1]，OpenAtSimulationStart off
+  接上信号的输入口 3 个
+
+[操纵台与仪表清点]
+  KnobBlock            俯仰杆                        [20 120 210 310]
+  KnobBlock            方向舵                        [460 120 650 310]
+  KnobBlock            滚转杆                        [240 120 430 310]
+  SliderBlock          侧风 东向 mps                  [240 360 430 640]
+  SliderBlock          速度指令                       [20 360 210 640]
+  ToggleSwitchBlock    操纵源                        [540 570 690 640]
+  ToggleSwitchBlock    模式                         [540 350 690 420]
+  RotarySwitchBlock    控制器                        [540 460 690 530]
+  CircularGaugeBlock   俯仰指令表                      [-730 -75 -580 75]
+  CircularGaugeBlock   俯仰表                        [-730 -260 -580 -110]
+  CircularGaugeBlock   偏航率表                       [-400 -260 -250 -110]
+  CircularGaugeBlock   副翼表 原始偏度                   [-400 -75 -250 75]
+  CircularGaugeBlock   升降舵表 原始偏度                  [-235 -75 -85 75]
+  CircularGaugeBlock   方向舵表 右舵正                   [-235 -260 -85 -110]
+  CircularGaugeBlock   滚转指令表                      [-565 -75 -415 75]
+  CircularGaugeBlock   滚转表                        [-565 -260 -415 -110]
+  CircularGaugeBlock   空速指令表                      [-1060 -75 -910 75]
+  CircularGaugeBlock   空速表                        [-1060 -260 -910 -110]
+  CircularGaugeBlock   迎角表                        [-895 -75 -745 75]
+  CircularGaugeBlock   高度表                        [-895 -260 -745 -110]
+  LampBlock            失速灯                        [-1170 -220 -1100 -150]
+  Display              控制器读数                      [700 460 800 520]
+  Display              操纵源读数                      [700 570 800 630]
+  Display              模式读数                       [700 350 800 410]
+
+[顶层其它块]
+  LQR控制器                     SubSystem              [1280 250 1450 450]
+  PID控制器                     SubSystem              [1280 42 1450 213]
+  act_mux                    Mux                    [290 915 315 1045]
+  act_split2                 Demux                  [190 905 230 1055]
+  att_mux                    Mux                    [-30 1107 -5 1218]
+  fb_split                   Demux                  [-170 1025 -130 1305]
+  inst_split                 Demux                  [760 700 800 960]
+  rate_mux                   Mux                    [-30 1307 -5 1468]
+  rate_mux_pq                Mux                    [-30 1506 -5 1599]
+  rate_mux_r                 Mux                    [-30 1690 -5 1750]
+  rc_split                   Demux                  [-170 1545 -130 1655]
+  ref_split                  Demux                  [-170 1365 -130 1475]
+  surf_mux                   Mux                    [420 917 445 1003]
+  thr_mux                    Mux                    [420 1032 445 1083]
+  三个舵面                       DashboardScope         [-790 111 -376 370]
+  侧风 东向 mps                  SliderBlock            [240 360 430 640]
+  俯仰指令表                      CircularGaugeBlock     [-730 -75 -580 75]
+  俯仰杆                        KnobBlock              [20 120 210 310]
+  俯仰表                        CircularGaugeBlock     [-730 -260 -580 -110]
+  偏航率表                       CircularGaugeBlock     [-400 -260 -250 -110]
+  兜底示波器 三段                   Scope                  [235 1305 565 1555]
+  六自由度对象                     SubSystem              [1960 40 2130 240]
+  制导与模式                      SubSystem              [1060 62 1220 213]
+  副翼表 原始偏度                   CircularGaugeBlock     [-400 -75 -250 75]
+  升降舵表 原始偏度                  CircularGaugeBlock     [-235 -75 -85 75]
+  大气与风扰动                     SubSystem              [1520 300 1680 460]
+  失速灯                        LampBlock              [-1170 -220 -1100 -150]
+  姿态跟踪                       DashboardScope         [-400 117 15 652]
+  导航与测量                      SubSystem              [1960 300 2120 500]
+  左右油门                       DashboardScope         [-790 385 -376 640]
+  控制器                        RotarySwitchBlock      [540 460 690 530]
+  控制器读数                      Display                [700 460 800 520]
+  控制器选择                      SubSystem              [1520 60 1670 180]
+  操纵源                        ToggleSwitchBlock      [540 570 690 640]
+  操纵源读数                      Display                [700 570 800 630]
+  方向舵                        KnobBlock              [460 120 650 310]
+  方向舵表 右舵正                   CircularGaugeBlock     [-235 -260 -85 -110]
+  模式                         ToggleSwitchBlock      [540 350 690 420]
+  模式读数                       Display                [700 350 800 410]
+  混合与分配                      SubSystem              [1720 44 1890 226]
+  滚转指令表                      CircularGaugeBlock     [-565 -75 -415 75]
+  滚转杆                        KnobBlock              [240 120 430 310]
+  滚转表                        CircularGaugeBlock     [-565 -260 -415 -110]
+  空速指令表                      CircularGaugeBlock     [-1060 -75 -910 75]
+  空速表                        CircularGaugeBlock     [-1060 -260 -910 -110]
+  迎角表                        CircularGaugeBlock     [-895 -75 -745 75]
+  速度指令                       SliderBlock            [20 360 210 640]
+  速率跟踪 pq                    DashboardScope         [-1200 111 -775 370]
+  速率跟踪 r 方向舵                 DashboardScope         [-1200 385 -775 640]
+  驾驶员                        SubSystem              [860 80 1010 220]
+  高度表                        CircularGaugeBlock     [-895 -260 -745 -110]
+  x                          Outport                [2200 118 2230 132]
+  cmd                        Outport                [860 238 890 252]
+  V                          Outport                [880 738 910 752]
+  h                          Outport                [880 788 910 802]
+  alpha_deg                  Outport                [880 838 910 852]
+  phi_deg                    Outport                [880 888 910 902]
+  theta_deg                  Outport                [880 938 910 952]
+  stall                      Outport                [880 988 910 1002]
+  r_deg                      Outport                [880 1038 910 1052]
+  att_track                  Outport                [30 1123 60 1137]
+  rate_track                 Outport                [30 1323 60 1337]
+  act_track                  Outport                [350 953 380 967]
+  dr_deg                     Outport                [2280 878 2310 892]
+  da_deg                     Outport                [2340 878 2370 892]
+  de_deg                     Outport                [2400 878 2430 892]
+  rate_pq_track              Outport                [-30 1628 -5 1642]
+  rate_r_track               Outport                [-30 1778 -5 1792]
+  surf_track                 Outport                [470 948 500 962]
+  thr_track                  Outport                [470 1048 500 1062]
+
+[布局导出]
+  块 271 个，注释 9 条，写入 C:\Ash\Projects\DARES_UACS\MATLAB\sim\uacs_bench_layout_list.m

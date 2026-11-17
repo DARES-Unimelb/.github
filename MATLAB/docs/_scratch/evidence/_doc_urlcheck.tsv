@@ -1,0 +1,13 @@
+200	-	22942	findop - Find steady-state operating point from specifications (trimming) or simulation - 	https://www.mathworks.com/help/slcontrol/ug/findop.html
+200	-	19173	operspec - Operating point specifications - MATLAB	https://www.mathworks.com/help/slcontrol/ug/operspec.html
+200	-	8975	linio - Create linear analysis point for Simulink model, Linear Analysis Plots block, or M	https://www.mathworks.com/help/slcontrol/ug/linio.html
+200	-	7880	Fixed-Step Solvers in Simulink - MATLAB &amp; Simulink	https://www.mathworks.com/help/simulink/ug/fixed-step-solvers-in-simulink.html
+200	-	11631	Compare Solvers - MATLAB &amp; Simulink	https://www.mathworks.com/help/simulink/ug/compare-solvers.html
+200	-	9652	Simulink.SimulationInput - Create Simulink.SimulationInput objects to make changes to mode	https://www.mathworks.com/help/simulink/slref/simulink.simulationinput.html
+200	-	49049	sim - Run and script programmatic simulations of Simulink models - MATLAB	https://www.mathworks.com/help/simulink/slref/sim.html
+200	-	13894	save_system - Save Simulink model - MATLAB	https://www.mathworks.com/help/simulink/slref/save_system.html
+200	-	8515	new_system - Create Simulink model or library in memory - MATLAB	https://www.mathworks.com/help/simulink/slref/new_system.html
+200	-	14250	add_block - Add block to model - MATLAB	https://www.mathworks.com/help/simulink/slref/add_block.html
+200	-	13320	add_line - (Not recommended) Add line to Simulink model - MATLAB	https://www.mathworks.com/help/simulink/slref/add_line.html
+200	-	88924	fmincon - Solve constrained nonlinear multivariable minimization problem - MATLAB	https://www.mathworks.com/help/optim/ug/fmincon.html
+200	-	3072	lqry - Form linear-quadratic (LQ) state-feedback regulator with output weighting - MATLAB	https://www.mathworks.com/help/control/ref/ss.lqry.html

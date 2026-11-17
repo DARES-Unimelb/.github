@@ -1,0 +1,827 @@
+URL: https://www.mathworks.com/help/aeroblks/6dofquaternion.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/aeroblks/6dofquaternion.html
+
+ 
+
+ 6DOF (Quaternion) - Implement quaternion representation of six-degrees-of-freedom equations of motion with respect to body axes - Simulink
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Aerospace and Defense
+
+ Aerospace Blockset
+
+ Standard Workflow Procedures
+
+ Coordinate Systems
+
+ Equations of Motion
+
+ 6DOF
+
+ Aerospace Blockset
+
+ Atmospheric Flight
+
+ Equations of Motion
+
+ 6DOF
+
+ 6DOF (Quaternion)
+
+On this page
+Description
+Limitations
+PortsInputFxyz
+Mxyz
+
+OutputVe
+Xe
+φ θ ψ (rad)
+q
+DCMbe
+Vb
+ωb (rad/s)
+m
+I
+
+ParametersMainUnits
+Mass type
+Initial position in inertial axes [Xe,Ye,Ze]
+Initial velocity in body axes [U,v,w]
+Initial Euler orientation [roll, pitch, yaw]
+Initial body rotation rates [p,q,r]
+Initial mass
+Inertia
+Enable zero-crossing detection
+
+State AttributesPosition: e.g., {'Xe','Ye','Ze'}
+Velocity: e.g., {'U','v','w'}
+Quaternion: e.g., {'qr','qi','qj','qk'}
+Body rotation rates: e.g., {'p','q','r'}
+Output mass properties for acceleration computation
+
+Alternative ConfigurationsSimple Variable Mass 6DOF (Quaternion)
+Custom Variable Mass 6DOF (Quaternion)
+
+Algorithms
+Extended Capabilities
+Version History6DOF equations of motion block acceleration ports removed
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Scenes
+
+ Videos
+
+ Answers
+
+ Main Content
+
+6DOF (Quaternion)
+R2026b
+Implement quaternion representation of six-degrees-of-freedom equations of motion with respect to body axes
+expand all in page
+
+6DOF (Quaternion) block
+
+To add a block to a model, double-click the canvas and start typing the block name. Then, select the block from the list.
+
+Libraries:
+
+ Aerospace Blockset / 
+ Equations of Motion / 
+ 6DOF
+
+Alternative Configurations of 6DOF (Quaternion) Block: 
+
+Simple Variable Mass 6DOF (Quaternion) | Custom Variable Mass 6DOF (Quaternion)
+
+Description
+The 6DOF (Quaternion) block implements quaternion representation of
+ six-degrees-of-freedom equations of motion with respect to body axes. For a description
+ of the coordinate system and the translational dynamics, see the block description for
+ the 6DOF (Euler Angles) block.
+For more information on the integration of the rate of change of the quaternion
+ vector, see Algorithms.
+
+The 6DOF (Quaternion), Simple Variable Mass 6DOF (Quaternion), and Custom Variable Mass 6DOF (Quaternion) blocks are alternative
+ configurations of the same block.
+6DOF (Quaternion) — Implement quaternion representation of six-degrees-of-freedom
+ equations of motion with respect to body axes
+
+Simple Variable Mass 6DOF (Quaternion) — Implement quaternion
+ representation of six-degrees-of-freedom equations of motion of simple variable
+ mass with respect to body axes
+
+Custom Variable Mass 6DOF (Quaternion) — Implement quaternion
+ representation of six-degrees-of-freedom equations of motion of custom variable
+ mass with respect to body axes
+
+Limitations
+The block assumes that the applied forces act at the center of gravity of the body, and that
+ the mass and inertia are constant.
+
+Ports
+
+Input
+expand all
+Fxyz — Force applied to center of mass in body frame
+
+three-element vector
+
+Force applied to the center of mass in the body frame, specified as a
+ three-element vector, in the units specified in
+ Units. For more information on the frame, see Body Coordinates.
+
+Data Types: double
+
+Mxyz — Moment applied to body with respect to mass in body frame
+ 
+three-element vector
+
+Moment applied to the body with respect to mass in body frame, specified
+ as a three-element vector, in the units specified in
+ Units. For more information on the frame, see
+ Body Coordinates.
+
+Data Types: double
+
+Output
+expand all
+Ve
+ — Velocity in flat Earth reference frame
+
+three-element vector
+
+Velocity in the flat Earth reference frame, returned as a three-element
+ vector.
+
+Data Types: double
+
+Xe — Position in flat Earth reference frame
+ 
+three-element vector
+
+Position in the flat Earth reference frame, returned as a three-element
+ vector.
+
+Data Types: double
+
+φ θ ψ (rad) — Euler rotation angles
+ 
+three-element vector
+
+Euler rotation angles for the x, y, z axes [roll, pitch, yaw], as a three-element vector, in radians. Yaw, pitch, and roll angles are applied using the z-y-x right-hand intrinsic passive transformation from frame A to frame B, such as angle2dcm(yaw,pitch,roll,&#34;ZYX&#34;). 
+
+Data Types: double
+
+q — Quaternion
+
+4-by-1 vector
+
+Quaternion that represents a transformation from flat Earth axes to
+ body-fixed axes, returned as a 4-by-1 vector.
+
+Data Types: double
+
+DCMbe — Coordinate transformation
+ 
+3-by-3 matrix
+
+Coordinate transformation from flat Earth axes to body-fixed axes,
+ returned as a 3-by-3 matrix.
+
+Data Types: double
+
+Vb — Velocity in the body-fixed frame
+ 
+three-element vector
+
+Velocity in the body-fixed frame, returned as a three-element
+ vector.
+
+Data Types: double
+
+ωb (rad/s) — Angular rates in body-fixed axes
+ 
+three-element vector
+
+Angular rates in body-fixed axes, returned as a three-element vector, in
+ radians per second.
+
+Data Types: double
+
+m — Mass
+ 
+scalar
+
+Mass, returned as a scalar.
+
+ Dependencies
+
+ To enable this port, select the Output mass properties for
+ acceleration computation parameter.
+
+Data Types: double
+
+I — Inertia tensor matrix
+ 
+3-by-3 matrix
+
+Inertia tensor matrix, returned as a 3-by-3 matrix.
+
+ Dependencies
+
+ To enable this port, select the Output mass properties for
+ acceleration computation parameter.
+
+Data Types: double
+
+Parameters
+expand all
+Main
+Units — Input and output units
+
+Metric (MKS) (default) | English (Velocity in ft/s) | English (Velocity in kts)
+
+Input and output units, specified as Metric (MKS), English (Velocity in ft/s), or English (Velocity in kts).
+Units | Forces | Moment | Acceleration | Velocity | Position | Mass | Inertia | 
+ Metric (MKS) | Newton | Newton-meter | Meters per second squared | Meters per second | Meters | Kilogram | Kilogram meter squared | 
+ English (Velocity in ft/s) | Pound | Foot-pound | Feet per second squared | Feet per second | Feet | Slug | Slug foot squared | 
+ English (Velocity in kts) | Pound | Foot-pound | Feet per second squared | Knots | Feet | Slug | Slug foot squared | 
+
+Programmatic Use
+Block Parameter:
+ units | 
+Type: character vector | 
+Values: Metric (MKS) | English (Velocity in ft/s) | English (Velocity in kts) | 
+Default: Metric (MKS) | 
+
+Mass type — Mass type
+ 
+Fixed (default) | Simple Variable | Custom Variable
+
+Mass type, specified according to the following table.
+Mass Type | Description | Default for | 
+Fixed | Mass is constant throughout the simulation.
+ | 
+ 6DOF (Euler
+ Angles)
+
+6DOF
+ (Quaternion)
+
+6DOF Wind (Wind
+ Angles)
+
+6DOF Wind
+ (Quaternion)
+
+6DOF ECEF
+ (Quaternion)
+
+ | 
+Simple Variable | Mass and inertia vary linearly as a function of mass
+ rate.
+ | 
+ Simple Variable Mass
+ 6DOF (Euler Angles)
+
+Simple Variable Mass
+ 6DOF (Quaternion)
+
+Simple Variable Mass
+ 6DOF Wind (Wind Angles)
+
+Simple Variable Mass
+ 6DOF Wind (Quaternion)
+
+Simple Variable Mass
+ 6DOF ECEF (Quaternion)
+
+ | 
+Custom Variable | Mass and inertia variations are customizable.
+ | 
+ Custom Variable Mass
+ 6DOF (Euler Angles)
+
+Custom Variable Mass
+ 6DOF (Quaternion)
+
+Custom Variable Mass
+ 6DOF Wind (Wind Angles)
+
+Custom Variable Mass
+ 6DOF Wind (Quaternion)
+
+Custom Variable Mass
+ 6DOF ECEF (Quaternion)
+
+ | 
+
+The Simple Variable selection conforms to the previously described
+ equations of motion.
+
+ Programmatic Use
+
+ Block Parameter:
+ mtype | 
+Type: character vector | 
+Values:
+ Fixed | Simple Variable | Custom
+ Variable | 
+Default:
+ 'Fixed' | 
+
+Initial position in inertial axes [Xe,Ye,Ze] — Position in flat Earth axes
+ 
+[0 0 0] (default) | three-element vector
+
+Initial location of the body in the flat Earth
+ reference frame, specified as a three-element
+ vector.
+
+ Programmatic Use
+
+ Block
+ Parameter:
+ xme_0 | 
+Type:
+ character vector | 
+Values:
+ '[0 0 0]' | three-element
+ vector | 
+Default:
+ '[0 0 0]' | 
+
+Initial velocity in body axes [U,v,w] — Velocity in body axes
+ 
+[0 0 0] (default) | three-element vector
+
+Initial velocity in body axes, specified as a three-element vector, in the body-fixed
+ coordinate frame.
+Programmatic Use
+Block Parameter: Vm_0 | 
+Type: character vector | 
+Values:
+ '[0 0 0]' | three-element
+ vector | 
+Default:
+ '[0 0 0]' | 
+
+Initial Euler orientation [roll, pitch, yaw] — Initial Euler orientation
+ 
+[0 0 0] (default) | three-element vector
+
+Initial Euler orientation angles [roll, pitch, yaw], specified as a three-element vector, in
+ radians. Specify roll, pitch, and yaw angles in the
+ z-y-x
+ rotation sequence.
+Programmatic Use
+Block Parameter: eul_0 | 
+Type: character vector | 
+Values:
+ '[0 0 0]' | three-element vector | 
+Default:
+ '[0 0 0]' | 
+
+Initial body rotation rates [p,q,r] — Initial body rotation
+ 
+[0 0 0] (default) | three-element vector
+
+Initial body-fixed angular rates with respect to the NED frame, specified as a three-element
+ vector, in radians per second.
+Programmatic Use
+Block Parameter: pm_0 | 
+Type: character vector | 
+Values:
+ '[0 0 0]' | three-element
+ vector | 
+Default:
+ '[0 0 0]' | 
+
+Initial mass — Initial mass
+ 
+1.0 (default) | scalar
+
+Initial mass of the rigid body, specified as a double scalar.
+Programmatic Use
+Block Parameter: mass_0 | 
+Type: character vector | 
+Values:
+ '1.0' | double scalar | 
+Default:
+ '1.0' | 
+
+Inertia — Inertia
+ 
+eye(3) (default) | scalar
+
+Inertia of the body, specified as a double scalar.
+
+ Dependencies
+
+ To enable this parameter, set Mass type to
+ Fixed.
+
+Programmatic Use
+Block Parameter: inertia | 
+Type: character vector | 
+Values:
+ eye(3) | double scalar | 
+Default: eye(3) | 
+
+Enable zero-crossing detection — Enable zero-crossing detection
+
+ on
+ (default) | 
+ off
+
+Select to enable zero-crossing detection, allowing 6DOF (Quaternion) to identify zero
+ crossings when the mass enters or leaves saturation. For more information, see Zero-Crossing Detection.
+
+ Dependencies
+
+ To enable this parameter, set Mass type to Simple
+ Variable.
+
+ Programmatic Use
+
+ Parameter:
+ zeroCrossing
+ | 
+
+ Type: character vector, string | 
+
+ Values:
+ 'on' | 'off'
+ | 
+
+ Default:
+ 'on'
+ | 
+
+State Attributes
+Assign a unique name to each state. You can use state names instead of block paths during
+ linearization.
+To assign a name to a single state, enter a unique name between quotes,
+ for example, 'velocity'.
+
+To assign names to multiple states, enter a comma-separated list
+ surrounded by braces, for example, {'a', 'b', 'c'}. Each
+ name must be unique.
+
+If a parameter is empty (' '), no name is
+ assigned.
+
+The state names apply only to the selected block with the name
+ parameter.
+
+The number of states must divide evenly among the number of state
+ names.
+
+You can specify fewer names than states, but you cannot specify more names
+ than states.
+ For example, you can specify two names in a system with four states. The
+ first name applies to the first two states and the second name to the last
+ two states.
+
+To assign state names with a variable in the MATLAB® workspace, enter the variable without quotes. A variable can
+ be a character vector, cell array, or structure.
+
+Position: e.g., {'Xe','Ye','Ze'} — Position state name
+ 
+'' (default) | comma-separated list surrounded by braces
+
+Position state names, specified as a comma-separated list surrounded by braces.
+
+ Programmatic Use
+
+ Block Parameter:
+ xme_statename | 
+Type: character vector | 
+Values:
+ '' | comma-separated list surrounded by braces | 
+Default:
+ '' | 
+
+Velocity: e.g., {'U','v','w'} — Velocity state name
+ 
+'' (default) | comma-separated list surrounded by braces
+
+Velocity state names, specified as comma-separated list surrounded by braces.
+
+ Programmatic Use
+
+ Block Parameter:
+ Vm_statename | 
+Type: character vector | 
+Values:
+ '' | comma-separated list surrounded by braces | 
+Default:
+ '' | 
+
+Quaternion: e.g., {'qr','qi','qj','qk'} — Quaternion vector state name
+ 
+'' (default) | comma-separated list surrounded by braces
+
+Quaternion vector state names, specified as a comma-separated list surrounded by
+ braces. 
+
+ Programmatic Use
+
+ Block Parameter:
+ quat_statename | 
+Type: character vector | 
+Values:
+ '' | comma-separated list surrounded by braces | 
+Default:
+ '' | 
+
+Body rotation rates: e.g., {'p','q','r'} — Body rotation state names
+ 
+'' (default) | comma-separated list surrounded by braces
+
+Body rotation rate state names, specified comma-separated list surrounded by
+ braces.
+
+ Programmatic Use
+
+ Block Parameter:
+ pm_statename | 
+Type: character vector | 
+Values:
+ '' | comma-separated list surrounded by braces | 
+Default:
+ '' | 
+
+Output mass properties for acceleration computation — Include mass properties for acceleration port
+ 
+off (default) | on
+
+Select this check box to enable ports for mass properties for acceleration. You can
+ then use these ports as inputs for these blocks:
+6DOF Acceleration — m output port
+
+6DOF Angular Acceleration — I and dI/dt
+ coeff ports.
+
+ Programmatic Use
+
+ Block Parameter:
+ mass_flag | 
+Type: character vector | 
+Values:
+ 'off' | 'on' | 
+Default:
+ off | 
+
+Alternative Configurations
+expand all
+
+Simple Variable Mass 6DOF (Quaternion) — Implement quaternion representation of six-degrees-of-freedom equations of 
+ motion of simple variable mass with respect to body axes
+
+The 6DOF (Quaternion) block
+ implements quaternion representation of six-degrees-of-freedom equations of
+ motion of simple variable mass with respect to body axes. To enable this
+ block, set Mass type to Simple
+ Variable.
+
+Libraries:
+
+ Aerospace Blockset / 
+ Equations of Motion / 
+ 6DOF
+
+Custom Variable Mass 6DOF (Quaternion) — Implement quaternion representation of six-degrees-of-freedom equations of 
+ motion of custom variable mass with respect to body axes
+
+The Custom Variable Mass 6DOF
+ (Quaternion) block implements quaternion representation of
+ six-degrees-of-freedom equations of motion of custom variable mass with
+ respect to body axes. To enable this block, set Mass
+ type to Custom Variable.
+
+Libraries:
+
+ Aerospace Blockset / 
+ Equations of Motion / 
+ 6DOF
+
+Algorithms
+The integration of the rate of change of the quaternion vector is given below. The
+ gain K drives the norm of the quaternion state vector to 1.0 should εbecome nonzero. You must choose the value of this gain with care,
+ because a large value improves the decay rate of the error in the norm, but also slows
+ the simulation because fast dynamics are introduced. An error in the magnitude in one
+ element of the quaternion vector is spread equally among all the elements, potentially
+ increasing the error in the state vector.
+[q˙0q˙1q˙2q˙3]=12[0−p−q−rp0r−qq−r0prq−p0][q0q1q2q3]+Kε[q0q1q2q3]ε=1−(q02+q12+q22+q32)
+
+Aerospace Blockset™ uses quaternions that are defined using the scalar-first
+ convention.
+
+Extended Capabilities
+expand all
+C/C++ Code Generation
+ 
+Generate C and C++ code using Simulink® Coder™.
+
+Version History
+Introduced in R2006aexpand all
+R2025a: 6DOF equations of motion block acceleration ports removed
+
+As a result of the removal of the acceleration ports, the Include
+ inertial acceleration parameter has been replaced with
+ Output mass properties for acceleration computation for
+ 6DOF (Quaternion).
+Related to this change, the block parameters and output ports have changed:
+Block | Ports | Parameters | 
+6DOF (Quaternion) | 
+ dωb/dt removed
+
+Abb removed
+
+Abe removed
+
+ | 
+ Representation removed
+
+Gain for quaternion
+ normalization removed
+
+ | 
+
+As a result of the changes, the block output dimension has changed from a 2D row
+ vector, such as a 2-by-N vector, to a 1D vector,
+ N. N is the number of elements.
+
+See Also
+6DOF (Euler Angles) | 6DOF ECEF (Quaternion) | 6DOF Wind (Quaternion) | 6DOF Wind (Wind Angles) | Custom Variable Mass 6DOF (Euler Angles) | Custom Variable Mass 6DOF (Quaternion) | Custom Variable Mass 6DOF ECEF
+ (Quaternion) | Custom Variable Mass 6DOF Wind
+ (Quaternion) | Custom Variable Mass 6DOF Wind (Wind
+ Angles) | Simple Variable Mass 6DOF (Euler Angles) | Simple Variable Mass 6DOF (Quaternion) | Simple Variable Mass 6DOF ECEF
+ (Quaternion) | Simple Variable Mass 6DOF Wind
+ (Quaternion) | Simple Variable Mass 6DOF Wind (Wind
+ Angles)
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

@@ -1,0 +1,54 @@
+UACS Simulink build report
+generated      2026-10-11 03:22:42
+root           C:\Ash\Projects\DARES_UACS\MATLAB
+block kind     sfun (Level-2 MATLAB S-Function; the MATLAB Function block path was withdrawn)
+MATLAB         24.1.0.2653294 (R2024a) Update 5
+
+[parameters]
+version        0.5.0 (2026-10-11)
+self check     init_uacs_twin
+mass           17.000 kg
+span           3.400 m (limit 3.500 m)
+area           2.3120 m^2, cbar 0.6800 m
+V_min          15.466 m/s
+
+[design source]
+branch         deliverable_mats
+trim source    deliverable
+lin source     deliverable
+pid gains      deliverable
+lqr gains      deliverable
+detail         plant_baseline.mat 0.022 days, gains_baseline.mat 0.015 days
+fingerprint    26 source files
+reference map linearity residual 6.481e-17
+
+[plant probe]
+plant source   eom_6dof
+trim derivative norm 2.500000e+01
+trim residual norm 2.888031e-14 (trim_source deliverable)
+
+[dependencies]
+plant          eom_6dof
+air data       flow_state
+allocation     allocate
+pilot command  pilot_to_command
+placeholder    0
+smoke test     ok
+
+[library blocks]
+checked        14 paths, 0 missing
+
+[models]
+uacs_plant         top   4  total   4  lines   3  in 2  out 1
+  file   C:\Ash\Projects\DARES_UACS\MATLAB\model\uacs_plant.slx
+  blocks plant_eom u_act wind_ned x_state
+uacs_manual_pid    top  49  total 102  lines 141  in 0  out 6
+  file   C:\Ash\Projects\DARES_UACS\MATLAB\model\uacs_manual_pid.slx
+  blocks G_gain M_cmd T_cmd T_sum V_err act_split alloc cmd cmd_pilot cmd_split const_Ttrim const_mode const_utrim const_zero da_sum de_sum dr_sum h_err h_gain meas meas_split p_c_lim p_err phi_err pid_V pid_h pid_p pid_phi pid_q pid_r pid_theta plant q_c_lim q_err r_c_lim r_err rate_cmd rate_mux stick_src surf_mux theta_err theta_lim theta_switch u_act u_mux utrim_split wind_src x_split x_state
+uacs_lqr           top  56  total  60  lines 105  in 0  out 7
+  file   C:\Ash\Projects\DARES_UACS\MATLAB\model\uacs_lqr.slx
+  blocks C_lat C_long G_gain K_lat K_long M_cmd T_cmd T_sum Tref_lat Tref_long Uff_lat Uff_long act_split alloc const_Ttrim const_utrim const_xop_lat const_xop_long const_zero lat_abs lat_aug_dev lat_aug_ref lat_dev lat_err lat_int lat_int_err lat_uff_sum long_abs long_aug_dev long_aug_ref long_dev long_err long_int long_int_err long_uff_sum meas meas_split plant ref ref_lat ref_long ref_split ref_src surf_inc surf_sum u_act u_dev u_dev_lat_split u_dev_long_split u_dev_mux u_mux wind_src x_split x_state xi xi_mux
+
+[base workspace design variables]
+0 sim_ variables pushed by sim_push_design_vars and sim_push_scenario
+

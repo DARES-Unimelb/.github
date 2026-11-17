@@ -8,18 +8,17 @@ function [ref, info] = lqr_reference(P, lin, gains, cmd)
 %   cmd.dphi    rad   bank angle deviation, default 0
 %   cmd.dbeta   rad   sideslip deviation, default 0
 %
-% A reference state is only usable if it is an equilibrium of the model the
-% gains were designed on, that is if A*x_ref + B*u_ff = 0. This solves that
-% equation for the free states and the feedforward, given the commanded states,
-% and returns both the deviation-coordinate set and the absolute set. The
-% design point itself comes out as x_ref = 0 with u_ff = 0, which is the other
-% of the two feedforward values: the Jacobian is taken about the trim point, so
-% in deviation coordinates the feedforward is zero by construction and the only
-% nonzero feedforward is u_star in absolute actuator units.
+% A reference state is only usable if it is an equilibrium of the model the gains
+% were designed on, that is if A*x_ref + B*u_ff = 0; this solves that equation for
+% the free states and the feedforward, given the commanded states, and returns
+% both the deviation-coordinate set and the absolute set. The Jacobian is taken
+% about the trim point, so in deviation coordinates the design point comes out as
+% x_ref = 0 with u_ff = 0 and the only nonzero feedforward is u_star in absolute
+% actuator units.
 %
-% info.residual_long / .lat are the norms of A*x_ref + B*u_ff, which V5 needs
-% to be at machine level; anything larger means the commanded pair cannot be
-% trimmed and the reference is not reachable.
+% info.residual_long / .lat are the norms of A*x_ref + B*u_ff, which V5 needs to
+% be at machine level; anything larger means the commanded pair cannot be trimmed
+% and the reference is not reachable.
 
 if nargin < 4
    cmd = struct();
@@ -30,7 +29,7 @@ A = gains.long.A;
 B = gains.long.B;
 dV = cmd.dV;
 dth = cmd.dtheta;
-% Unknowns [dalpha; dq; dde; dT]; rows 1..4 are the four state derivatives.
+% Unknowns [dalpha; dq; dde; dT]; rows 1..4 are the four state derivatives
 Ml = [A(:, 2), A(:, 3), B(:, 1), B(:, 2)];
 rl = -(A(:, 1) * dV + A(:, 4) * dth);
 yl = Ml \ rl;
@@ -70,7 +69,7 @@ ref.lat.u_abs(gains.lat.u_idx_full) = ...
 ref.lat.r_int = gains.lat.C_int * x_ref_t;
 ref.lat.x_ref_aug = [x_ref_t; 0];
 
-% The design point, for the report: both feedforward values side by side.
+% The design point, for the report: both feedforward values side by side
 ref.design_point = struct();
 ref.design_point.x_ref_long = zeros(4, 1);
 ref.design_point.u_ff_long = zeros(2, 1);
@@ -89,7 +88,7 @@ info.cond_long = cond(Ml);
 info.cond_lat = cond(Mt);
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function c = local_defaults(c)
 f = {'dV', 'dtheta', 'dphi', 'dbeta'};
 for k = 1:numel(f)

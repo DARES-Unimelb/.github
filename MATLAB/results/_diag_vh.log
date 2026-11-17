@@ -1,0 +1,72 @@
+GV poles [-0.095322-0.42087i -0.095322+0.42087i -16.667 -24.363 -53.49] zeros [-53.389 -24.472 -0.084828]
+GV dcgain 0.0268644
+Gh poles [0 0 -0.11201-0.79008i -0.11201+0.79008i 1.1834-9.0166i 1.1834+9.0166i -100 -102.41]
+Gh zeros [-100 -6.3931 -0.21043 -3.2596e-16]
+
+=== V: wc 0.800, Kp_nom 10.102, dcgain 0.026864 ===
+  Kp_scale   0.01 f 0.00 worst  -0.000e+00
+  Kp_scale   0.01 f 0.10 worst  -2.160e-04 | bw   0.0002 rise 10171.0916 os    0.00 dc 1.0000
+  Kp_scale   0.01 f 0.30 worst  -6.451e-04 | bw   0.0006 rise 3406.2572 os    0.00 dc 1.0000
+  Kp_scale   0.01 f 1.00 worst  -2.116e-03 | bw   0.0021 rise 1038.6634 os    0.00 dc 1.0000
+  Kp_scale   0.03 f 0.00 worst  -0.000e+00
+  Kp_scale   0.03 f 0.10 worst  -6.417e-04 | bw   0.0006 rise 3424.5946 os    0.00 dc 1.0000
+  Kp_scale   0.03 f 0.30 worst  -1.899e-03 | bw   0.0019 rise 1157.0681 os    0.00 dc 1.0000
+  Kp_scale   0.03 f 1.00 worst  -6.042e-03 | bw   0.0061 rise 363.4987 os    0.00 dc 1.0000
+  Kp_scale   0.10 f 0.00 worst  -0.000e+00
+  Kp_scale   0.10 f 0.10 worst  -2.068e-03 | bw   0.0021 rise 1088.0381 os    0.00 dc 1.0000
+  Kp_scale   0.10 f 0.30 worst  -5.944e-03 | bw   0.0060 rise 370.3693 os    0.00 dc 1.0000
+  Kp_scale   0.10 f 1.00 worst  -1.722e-02 | bw   0.0180 rise 118.8959 os    0.00 dc 1.0000
+  Kp_scale   0.30 f 0.00 worst  -0.000e+00
+  Kp_scale   0.30 f 0.10 worst  -5.680e-03 | bw   0.0057 rise 381.3133 os    0.00 dc 1.0000
+  Kp_scale   0.30 f 0.30 worst  -1.524e-02 | bw   0.0158 rise 134.6080 os    0.00 dc 1.0000
+  Kp_scale   0.30 f 1.00 worst  -3.655e-02 | bw   0.0468 rise  46.6806 os    0.00 dc 1.0000
+  Kp_scale   1.00 f 0.00 worst  -0.000e+00
+  Kp_scale   1.00 f 0.10 worst  -1.482e-02 | bw   0.0159 rise 131.2389 os    0.00 dc 1.0000
+  Kp_scale   1.00 f 0.30 worst  -3.430e-02 | bw   0.0435 rise  49.4291 os    0.00 dc 1.0000
+  Kp_scale   1.00 f 1.00 worst  -6.045e-02 | bw   1.2761 rise   1.6685 os    3.79 dc 1.0000
+  Kp_scale   3.00 f 0.00 worst  -0.000e+00
+  Kp_scale   3.00 f 0.10 worst  -2.855e-02 | bw   0.0402 rise  55.5835 os    0.00 dc 1.0000
+  Kp_scale   3.00 f 0.30 worst  -5.511e-02 | bw   2.2219 rise   1.0311 os    0.00 dc 1.0000
+  Kp_scale   3.00 f 1.00 worst  -7.465e-02 | bw   2.7585 rise   0.6762 os   11.24 dc 1.0000
+  Kp_scale  10.00 f 0.00 worst  -0.000e+00
+  Kp_scale  10.00 f 0.10 worst  -4.539e-02 | bw   8.1944 rise   0.2069 os   12.56 dc 1.0000
+  Kp_scale  10.00 f 0.30 worst  -7.208e-02 | bw   8.3454 rise   0.2536 os    2.13 dc 1.0000
+  Kp_scale  10.00 f 1.00 worst  -8.147e-02 | bw   8.8415 rise   0.2250 os   10.09 dc 1.0000
+  Kp_scale  30.00 f 0.00 worst  -0.000e+00
+  Kp_scale  30.00 f 0.10 worst  -5.822e-02 | bw  22.2525 rise   0.0936 os   17.41 dc 1.0000
+  Kp_scale  30.00 f 0.30 worst  -7.990e-02 | bw  22.3056 rise   0.0924 os   18.67 dc 1.0000
+  Kp_scale  30.00 f 1.00 worst  -8.368e-02 | bw  22.4901 rise   0.0897 os   22.94 dc 1.0000
+
+=== h: wc 0.400, Kp_nom 0.0071064, dcgain Inf ===
+  Kp_scale   0.01 f 0.00 worst   1.183e+00
+  Kp_scale   0.01 f 0.10 worst   1.183e+00
+  Kp_scale   0.01 f 0.30 worst   1.183e+00
+  Kp_scale   0.01 f 1.00 worst   1.183e+00
+  Kp_scale   0.03 f 0.00 worst   1.182e+00
+  Kp_scale   0.03 f 0.10 worst   1.182e+00
+  Kp_scale   0.03 f 0.30 worst   1.182e+00
+  Kp_scale   0.03 f 1.00 worst   1.182e+00
+  Kp_scale   0.10 f 0.00 worst   1.180e+00
+  Kp_scale   0.10 f 0.10 worst   1.180e+00
+  Kp_scale   0.10 f 0.30 worst   1.180e+00
+  Kp_scale   0.10 f 1.00 worst   1.180e+00
+  Kp_scale   0.30 f 0.00 worst   1.172e+00
+  Kp_scale   0.30 f 0.10 worst   1.172e+00
+  Kp_scale   0.30 f 0.30 worst   1.172e+00
+  Kp_scale   0.30 f 1.00 worst   1.172e+00
+  Kp_scale   1.00 f 0.00 worst   1.146e+00
+  Kp_scale   1.00 f 0.10 worst   1.146e+00
+  Kp_scale   1.00 f 0.30 worst   1.146e+00
+  Kp_scale   1.00 f 1.00 worst   1.147e+00
+  Kp_scale   3.00 f 0.00 worst   1.074e+00
+  Kp_scale   3.00 f 0.10 worst   1.074e+00
+  Kp_scale   3.00 f 0.30 worst   1.075e+00
+  Kp_scale   3.00 f 1.00 worst   1.218e+00
+  Kp_scale  10.00 f 0.00 worst   2.251e+00
+  Kp_scale  10.00 f 0.10 worst   2.275e+00
+  Kp_scale  10.00 f 0.30 worst   2.322e+00
+  Kp_scale  10.00 f 1.00 worst   2.468e+00
+  Kp_scale  30.00 f 0.00 worst   4.247e+00
+  Kp_scale  30.00 f 0.10 worst   4.268e+00
+  Kp_scale  30.00 f 0.30 worst   4.310e+00
+  Kp_scale  30.00 f 1.00 worst   4.447e+00

@@ -1,14 +1,11 @@
 function info = sim_build_plant(P, opts)
-% SIM_BUILD_PLANT Build and save model/uacs_plant.slx.
-%
-% The plant model is the bare object: the 6 actuator channels and a steady wind
-% in, the 12 states out. Throttle, elevator, aileron and rudder go to the
-% S-Function unchanged, the sixth channel dT is left to the caller (the
-% allocation path realises thrust through the two throttles).
+% SIM_BUILD_PLANT Build and save model/uacs_plant.slx
 %
 %   in  1  u_act     6x1  [da de dr dth_l dth_r dT]
 %   in  2  wind_ned  3x1  steady wind, NED, m/s
 %   out 1  x_state   12x1 [u v w p q r phi theta psi pn pe pd]
+%
+% Channel 6 dT is the plant's direct thrust increment and is left to the caller
 
 if nargin < 2
    opts = struct();

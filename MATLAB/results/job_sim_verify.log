@@ -1,0 +1,11 @@
+=== JOB START   sim_verify
+owner lead  pid 17576  at 2026-10-11 03:29:19  stale_s 900
+!! JOB FAILED   sim_verify  (12.8 s)
+   v_sim_all:Failed | 1 Simulink acceptance cases failed
+   at v_sim_all line 64
+   at uacs_job_sim_verify line 20
+   at run_job line 95
+   at LiveEditorEvaluationHelperEmatlab_mcp_server line 8
+   at mcpEval line 48
+   at fevalMatlab line 0
+   at fevalJSON line 0

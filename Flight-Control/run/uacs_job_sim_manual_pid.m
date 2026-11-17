@@ -1,6 +1,5 @@
-% UACS_JOB_SIM_MANUAL_PID Job entry: PID cascade scenarios from the built model.
-% Owner: ash-sim (task-3). One thing only: simulate the PID scenarios and save
-% their trajectories. Build the models in a separate job first.
+% UACS_JOB_SIM_MANUAL_PID Job entry: simulate the PID cascade scenarios and save their
+% trajectories. Build the models in a separate job first.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_manual_pid');

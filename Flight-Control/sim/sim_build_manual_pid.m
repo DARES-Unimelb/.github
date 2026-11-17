@@ -1,9 +1,19 @@
 function info = sim_build_manual_pid(P, opts)
-% SIM_BUILD_MANUAL_PID Build and save model/uacs_manual_pid.slx.
+% SIM_BUILD_MANUAL_PID Build and save model/uacs_manual_pid.slx
 %
-% Manual-flight main line: stick in, actuator commands out, the aircraft closed
-% through the plant. Structure, from the outside in
-%   pilot_to_command      stick -> [phi_c theta_c r_c V_c h_c]   (S-Function block)
+%   info = sim_build_manual_pid(P, opts)
+%   opts.name          model name and file stem, default 'uacs_manual_pid'
+%   opts.stick_source  'workspace' reads sim_stick_ts, 'slider' puts four Slider Gain
+%                      blocks on the diagram; the rest of the diagram is the same
+%   opts.instrument    add Displays and Scopes for interactive use
+%   opts.mode_switch   replace the flight-mode Constant with a Manual Switch, so the
+%                      mode can be flipped while the model runs
+%   opts.stop_time     model StopTime as a string; empty leaves 'sim_t_end'
+%   opts.reload_fcn    PreLoadFcn
+%   opts.ensure_fcn    InitFcn, re-initialises only when something is missing
+%
+% Main line, from the outside in
+%   pilot_to_command      stick -> [phi_c theta_c r_c V_c h_c]
 %   pid_phi, pid_theta    attitude outer loops -> p_c, q_c
 %   pid_p, pid_q, pid_r   rate loops -> surface increments
 %   pid_V                 airspeed loop -> total thrust increment
@@ -12,31 +22,9 @@ function info = sim_build_manual_pid(P, opts)
 %   G_surf                surfaces -> desired aerodynamic moment
 %   allocate              moment and thrust -> [da de dr dth_l dth_r]
 %
-% Inputs come from the base workspace through From Workspace blocks, so a
-% scenario is a matrix the run script builds: sim_stick_ts for the sticks and
-% sim_wind_ts for the wind. Outputs: state, actuator commands, the pilot command
-% vector, the three rate commands, the moment command and the thrust command.
-%
-% opts.name          model name and file stem, default 'uacs_manual_pid'
-% opts.stick_source  'workspace' reads sim_stick_ts; 'slider' puts four Slider Gain
-%                    blocks on the diagram so a person can fly it with the mouse.
-%                    The rest of the diagram is IDENTICAL in both modes: the
-%                    interactive bench is this same cascade, not a copy of it, so
-%                    the two cannot drift apart.
-% opts.instrument    add Displays and a Scope for interactive use
-% opts.mode_switch   replace the flight-mode Constant with a Manual Switch, so a
-%                    person can flip between attitude mode and altitude mode while
-%                    the model runs. Double-click the switch to toggle it.
-% opts.stop_time     what the model's StopTime parameter should be, as a string. Left
-%                    alone it stays 'sim_t_end', the scenario default; the interactive
-%                    bench passes its own shorter workspace variable so that a person
-%                    flying it does not wait out the scripted 60 s every time.
-% opts.reload_fcn    model callback run on open and before every simulation, so the
-%                    model initialises its own base workspace and a person can just
-%                    double-click the .slx
-% opts.ensure_fcn    a lightweight callback for InitFcn that only re-initialises when
-%                    the base workspace is actually missing something, so pressing Run
-%                    repeatedly does not re-run the whole parameter chain each time
+% Sticks and wind come from the base workspace as sim_stick_ts and sim_wind_ned
+% Outports are state, actuator commands, the pilot command vector, the three rate
+% commands, the moment command and the thrust command
 
 if nargin < 2
    opts = struct();
@@ -70,13 +58,10 @@ if ~isempty(opts.stop_time)
    set_param(mdl, 'StopTime', opts.stop_time);
 end
 
-% ---------------- sources ----------------
+%% Sources
 if slider_stick
-   % Four Slider Gains as the virtual stick. A Slider Gain multiplies its input by the
-   % slider value, so each is fed a Constant 1 and the slider itself becomes the stick
-   % fraction: -1..1 for roll, pitch and yaw, 0..1 for throttle. The slider is live
-   % while the simulation runs, which is what makes this a joystick rather than a
-   % parameter form.
+   % a Slider Gain multiplies its input, so each is fed a Constant 1 and the slider
+   % itself is the stick fraction: -1..1 for roll, pitch and yaw, 0..1 for throttle
    sim_add_block(mdl, 'stick_one', 'simulink/Sources/Constant', sim_pos(0, 0, 60, 30), ...
       'Value', 'sim_c_one');
    slider_spec = {'stick_roll', 0, 0, -1, 1, '滚转杆 (−1 左, +1 右)'; ...
@@ -89,9 +74,7 @@ if slider_stick
          'Low', num2str(slider_spec{ks, 4}), 'High', num2str(slider_spec{ks, 5}), ...
          'Gain', num2str(0.5 * (slider_spec{ks, 4} + slider_spec{ks, 5})));
    end
-   % The throttle starts at the cruise trim throttle rather than mid-scale, so the
-   % aircraft begins in equilibrium instead of accelerating away. uacs_go pushes
-   % sim_thr_trim from the solved trim.
+   % the throttle starts at the solved cruise trim, so the aircraft begins in equilibrium
    set_param([mdl '/stick_thr'], 'Gain', 'sim_thr_trim');
    sim_add_block(mdl, 'stick_mux', 'simulink/Signal Routing/Mux', sim_pos(1, 3, 20, 110), ...
       'Inputs', '4');
@@ -100,13 +83,10 @@ else
       'VariableName', 'sim_stick_ts', 'Interpolate', 'on', ...
       'OutputAfterFinalValue', 'Holding final value');
 end
-% The wind source feeds a 3 element NED port. It reads a timeseries rather than a
-% matrix because a matrix is ambiguous: From Workspace treats column 1 as time only
-% when SampleTime is unset, and as a signal when it is set. A timeseries carries its
-% own time vector, so the port width is exactly the 3 wind components.
+% the wind port is 3 wide, so it reads a timeseries: From Workspace treats column 1 as
+% time only when SampleTime is unset, and as a signal when it is set
 if slider_stick
-   % Interactive crosswind: an east-component slider with the north and down components
-   % held at zero, packed into the 3 element NED port.
+   % interactive crosswind: the east component only, north and down held at zero
    sim_add_block(mdl, 'wind_e', 'simulink/Math Operations/Slider Gain', sim_pos(0, 12, 70, 40), ...
       'Low', '-10', 'High', '10', 'Gain', '0');
    sim_add_block(mdl, 'wind_zero', 'simulink/Sources/Constant', sim_pos(0, 14, 60, 30), ...
@@ -130,10 +110,7 @@ sim_add_block(mdl, 'const_Ttrim', 'simulink/Sources/Constant', sim_pos(6, 11, 80
 sim_add_block(mdl, 'const_zero', 'simulink/Sources/Constant', sim_pos(9, 11, 60, 30), ...
    'Value', 'sim_c_zero');
 if opts.mode_switch
-   % Flight mode as a switch a person can flip WHILE the simulation runs: the Switch
-   % block's criterion is u2 ~= 0, so port 1 (the 0) is attitude mode and port 2 (the
-   % 1) is altitude mode. The two input lines are named so the diagram says which is
-   % which without opening the switch.
+   % attitude mode is the 0 input and altitude mode the 1, since the criterion is u2 ~= 0
    sim_add_block(mdl, 'mode_att', 'simulink/Sources/Constant', sim_pos(1, 0, 90, 26), ...
       'Value', 'sim_c_zero');
    sim_add_block(mdl, 'mode_alt', 'simulink/Sources/Constant', sim_pos(2, 0, 90, 26), ...
@@ -150,7 +127,7 @@ else
    mode_out = 'const_mode/1';
 end
 
-% ---------------- pilot, air data, state split ----------------
+%% Pilot, air data, state split
 sim_add_block(mdl, 'cmd_pilot', 'simulink/User-Defined Functions/Level-2 MATLAB S-Function', ...
    sim_pos(1, 0, 110, 50), 'FunctionName', 'sim_pilot_sfun');
 sim_add_block(mdl, 'cmd_split', 'simulink/Signal Routing/Demux', sim_pos(2, 0, 40, 90), ...
@@ -164,7 +141,7 @@ sim_add_block(mdl, 'x_split', 'simulink/Signal Routing/Demux', sim_pos(1, 5, 40,
 sim_add_block(mdl, 'h_gain', 'simulink/Math Operations/Gain', sim_pos(2, 5, 40, 30), ...
    'Gain', 'sim_c_neg1');
 
-% ---------------- PID cascade ----------------
+%% PID cascade
 sim_add_block(mdl, 'phi_err', 'simulink/Math Operations/Sum', sim_pos(3, 2, 40, 30), ...
    'Inputs', '+-', 'IconShape', 'rectangular');
 sim_add_block(mdl, 'theta_switch', 'simulink/Signal Routing/Switch', sim_pos(3, 1, 60, 40), ...
@@ -191,12 +168,7 @@ sim_add_pid(mdl, 'pid_p', sim_pos(6, 2, 120, 60), 'p');
 sim_add_pid(mdl, 'pid_q', sim_pos(6, 3, 120, 60), 'q');
 sim_add_pid(mdl, 'pid_r', sim_pos(6, 4, 120, 60), 'r');
 
-% Rate command clamps between the attitude loops and the rate loops. Without them the
-% outer proportional law turns any attitude error into an arbitrarily large rate demand:
-% the roll stick at its stop asked for 17.73 rad/s against an airframe that sustains
-% 1.23, the aileron saturated, sideslip reached 9 degrees and the aircraft rolled
-% inverted. The limits are derived in params from the full-surface steady rate at cruise
-% taken at 70 percent, so they move with the geometry instead of being tuned by hand.
+% the clamps keep an attitude error from demanding a rate the airframe cannot hold
 sim_add_block(mdl, 'p_c_lim', 'simulink/Discontinuities/Saturation', sim_pos(5, 1, 60, 30), ...
    'UpperLimit', 'sim_rate_cmd_lim_p', 'LowerLimit', '-sim_rate_cmd_lim_p');
 sim_add_block(mdl, 'q_c_lim', 'simulink/Discontinuities/Saturation', sim_pos(5, 2, 60, 30), ...
@@ -206,7 +178,7 @@ sim_add_block(mdl, 'r_c_lim', 'simulink/Discontinuities/Saturation', sim_pos(5, 
 sim_add_block(mdl, 'rate_mux', 'simulink/Signal Routing/Mux', sim_pos(7, 2, 30, 100), ...
    'Inputs', '3');
 
-% ---------------- mixing: surfaces to moment, thrust, allocation ----------------
+%% Mixing: surfaces to moment, thrust, allocation
 sim_add_block(mdl, 'utrim_split', 'simulink/Signal Routing/Demux', sim_pos(4, 8, 40, 90), ...
    'Outputs', '3');
 sim_add_block(mdl, 'da_sum', 'simulink/Math Operations/Sum', sim_pos(5, 8, 40, 30), ...
@@ -229,7 +201,7 @@ sim_add_block(mdl, 'u_mux', 'simulink/Signal Routing/Mux', sim_pos(10, 8, 30, 15
    'Inputs', '6');
 sim_add_plant_subsystem(mdl, 'plant', sim_pos(11, 8, 150, 150));
 
-% ---------------- outputs ----------------
+%% Outputs
 sim_add_block(mdl, 'x_state', 'simulink/Sinks/Out1', sim_pos(12, 8, 30, 14), 'Port', '1');
 sim_add_block(mdl, 'u_act', 'simulink/Sinks/Out1', sim_pos(12, 9, 30, 14), 'Port', '2');
 sim_add_block(mdl, 'cmd', 'simulink/Sinks/Out1', sim_pos(12, 10, 30, 14), 'Port', '3');
@@ -237,7 +209,7 @@ sim_add_block(mdl, 'rate_cmd', 'simulink/Sinks/Out1', sim_pos(12, 11, 30, 14), '
 sim_add_block(mdl, 'M_cmd', 'simulink/Sinks/Out1', sim_pos(12, 12, 30, 14), 'Port', '5');
 sim_add_block(mdl, 'T_cmd', 'simulink/Sinks/Out1', sim_pos(12, 13, 30, 14), 'Port', '6');
 
-% ---------------- wiring ----------------
+%% Wiring
 if slider_stick
    stick_out = 'stick_mux/1';
    sim_connect(mdl, 'stick_one/1', 'stick_roll/1', 'stick_one/1', 'stick_pitch/1', ...
@@ -254,9 +226,6 @@ sim_connect(mdl, 'cmd_split/1', 'phi_err/1', 'cmd_split/2', 'theta_switch/3', ..
    'cmd_split/4', 'V_err/1', 'cmd_split/5', 'h_err/1');
 sim_connect(mdl, mode_out, 'theta_switch/2', 'theta_lim/1', 'theta_switch/1', ...
    'theta_switch/1', 'theta_err/1');
-% The attitude loops feed the rate loops THROUGH the clamps, so a large attitude error
-% can only ask for a rate the airframe can actually deliver, and the reported rate
-% command is the clamped one.
 sim_connect(mdl, 'phi_err/1', 'pid_phi/1', 'pid_phi/1', 'p_c_lim/1', ...
    'p_c_lim/1', 'p_err/1', 'p_c_lim/1', 'rate_mux/1', 'p_err/1', 'pid_p/1', ...
    'pid_p/1', 'da_sum/1');
@@ -284,18 +253,9 @@ sim_connect(mdl, 'x_split/4', 'p_err/2', 'x_split/5', 'q_err/2', ...
    'x_split/6', 'r_err/2', 'x_split/7', 'phi_err/2', ...
    'x_split/8', 'theta_err/2', 'x_split/12', 'h_gain/1', 'h_gain/1', 'h_err/2');
 
-% ---------------- interactive instrumentation ----------------
-% Everything here is an output tap: nothing changes the controller, the allocator or the
-% plant, and the same signals already reach the Outports for the scripted scenarios.
-% The validated models are built with instrument off.
-%
-% Two choices come straight from watching somebody use the first version and not being
-% able to tell what it was showing:
-%   - every angle and every rate is converted to degrees. A raw radian reading is
-%     unreadable while a slider is being dragged, and "0.0873" tells nobody anything.
-%   - each scope is a COMMAND AGAINST RESPONSE bus, not a bus of raw states. The whole
-%     point of this bench is to watch a loop track its command, and a scope of unaided
-%     states cannot show that.
+%% Interactive instrumentation
+% output taps only: angles and rates are converted to degrees, and each scope carries a
+% command against its response
 if opts.instrument
    deg_taps = {'phi_deg', 'x_split/7', 'phi 实际滚转角 [deg]'; ...
                'theta_deg', 'x_split/8', 'theta 实际俯仰角 [deg]'; ...
@@ -314,12 +274,8 @@ if opts.instrument
       sim_connect(mdl, deg_taps{kt, 2}, [deg_taps{kt, 1} '/1']);
    end
 
-   % Displays, in engineering units, named so the number under the block says what it is
-   % without opening anything. A block NAME cannot contain a slash, because the slash is
-   % the path separator: "p 滚转率 deg/s" makes Simulink try to add a block called
-   % "deg" inside a block called "p 滚转率 deg", and it fails with "cannot be added".
-   % So the units are spelled dps and mps here. The SIGNAL LINE names, which are labels
-   % rather than paths, keep the readable deg/s and m/s.
+   % a block name cannot contain a slash, so units are spelled dps and mps here; signal
+   % line names are labels rather than paths and keep the readable deg/s and m/s
    disp_taps = {'phi 滚转角 deg', 'phi_deg/1'; ...
                 'theta 俯仰角 deg', 'theta_deg/1'; ...
                 'p 滚转率 dps', 'p_deg/1'; ...
@@ -341,8 +297,7 @@ if opts.instrument
       sim_connect(mdl, disp_taps{kt, 2}, [disp_taps{kt, 1} '/1']);
    end
 
-   % Three scopes. The line names are what the Scope legend shows, so each trace is
-   % labelled with the command or the response it is, and its unit.
+   % the line names are what the Scope legend shows
    sim_add_block(mdl, 'track_mux', 'simulink/Signal Routing/Mux', sim_pos(2, 20, 20, 170), ...
       'Inputs', '8');
    track = {'cmd_split/1', 'phi_c 滚转指令 [rad]'; ...
@@ -389,9 +344,7 @@ if opts.instrument
    sim_add_block(mdl, 'act_scope', 'simulink/Sinks/Scope', sim_pos(21, 21, 70, 60));
    sim_connect(mdl, 'act_scope_mux/1', 'act_scope/1');
 
-   % Notes on the canvas. A bench nobody can interpret is a bench nobody uses, so the
-   % purpose, the flying instructions and the pass criteria live on the diagram rather
-   % than only in a document.
+   % notes on the canvas: what the bench is, how to fly it, and what to watch
    local_note(mdl, 'note_purpose', [30 30 470 180], sprintf([ ...
       '虚拟操作杆台架\n\n' ...
       '这里面跑的就是受验的那套 PID 级联，接线与 model/uacs_manual_pid.slx 出自同一个生成' ...
@@ -419,10 +372,8 @@ if opts.instrument
       '切到高度模式后再拉杆，可以看到 h 缓慢跟上一个新高度，而 theta 被 pid_h 当作' ...
       '中间指令使用。']));
 
-   % Name each outport's input line after its block. sim_run_model does this at run time
-   % for the scripted jobs, but a person pressing Run gets out1..out6 and cannot look a
-   % signal up by name. Exported labels follow the SIGNAL LINE name, not the Outport
-   % block name, which is why the line is renamed and not just the block.
+   % exported labels follow the signal line name, not the Outport block name, so the
+   % lines are renamed rather than the blocks
    ops = find_system(mdl, 'SearchDepth', 1, 'BlockType', 'Outport');
    for ko = 1:numel(ops)
       ph = get_param(ops{ko}, 'PortHandles');
@@ -435,10 +386,8 @@ if opts.instrument
    end
 end
 
-% PreLoadFcn initialises the base workspace when the model is opened, which is what makes
-% a double-click on the .slx work. InitFcn is deliberately the LIGHT callback: pressing
-% Run repeatedly must not re-run the whole parameter chain and its几分钟 of prints, so it
-% only initialises when the base workspace is actually missing something.
+% PreLoadFcn initialises the base workspace on open, so a double click on the .slx works
+% InitFcn is the light callback, so pressing Run repeatedly does not rerun the chain
 if ~isempty(opts.reload_fcn)
    set_param(mdl, 'PreLoadFcn', opts.reload_fcn);
 end
@@ -454,11 +403,9 @@ info.census = sim_census(mdl);
 info.opts = opts;
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function local_note(mdl, name, pos, txt)
-% Put a text note on the diagram. Simulink.Annotation is the documented object; a
-% 'built-in/Note' block would put a block-shaped element in the block census, which V11
-% compares against a fixed count.
+% put a text note on the diagram; Simulink.Annotation is a document object, not a block
 a = Simulink.Annotation([mdl '/' name]);
 a.Text = txt;
 a.Position = pos;

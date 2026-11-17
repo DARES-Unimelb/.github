@@ -1,26 +1,23 @@
 function info = sim_bench_pid(mdl)
-% SIM_BENCH_PID 台架的 PID 控制器子系统：整套串级 PID 装进一个块。
+% SIM_BENCH_PID PID controller subsystem: the whole cascade inside one block
 %
-%   PID控制器/   入 ref 5x1 / fb 9x1      出 du 4x1 / rate_cmd 3x1
+%   in ref 5x1 / fb 9x1    out du 4x1 / rate_cmd 3x1
 %
-%   du       = [dda dde ddr dT]，三个舵面增量与推力增量，单位与混合与分配一致
-%   rate_cmd = [p_c q_c r_c]，限幅后的速率指令，供示波器与仪表看
+%   du       = [dda dde ddr dT]
+%   rate_cmd = [p_c q_c r_c], the limited rate commands, for scopes and gauges
 %
-% 七个回路，全部用 sim_add_pid 生成，增益从基础工作区读
-%   pid_phi   姿态环，误差 ref(1)-fb(1)，输出滚转速率指令，经 p_c_lim 限幅
-%   pid_theta 姿态环，误差 ref(2)-fb(2)，输出俯仰速率指令，经 q_c_lim 限幅
-%   pid_p     p 速率环，误差 p_c-fb(3)，输出副翼增量
-%   pid_q     q 速率环，误差 q_c-fb(4)，输出升降舵增量
-%   pid_r     r 速率环，误差 r_c-fb(5)，输出方向舵增量
-%   pid_V     空速环，误差 ref(4)-fb(6)，输出推力增量
+% Six loops, all built by sim_add_pid, gains read from base
+%   pid_phi    attitude, error ref(1)-fb(1), outputs the roll rate command, limited by p_c_lim
+%   pid_theta  attitude, error ref(2)-fb(2), outputs the pitch rate command, limited by q_c_lim
+%   pid_p      rate, error p_c-fb(3), outputs the aileron increment
+%   pid_q      rate, error q_c-fb(4), outputs the elevator increment
+%   pid_r      rate, error r_c-fb(5), outputs the rudder increment
+%   pid_V      airspeed, error ref(4)-fb(6), outputs the thrust increment
 %
-% 速率指令限幅器把姿态环的输出卡在机体真能给出的角速率上。没有它，一个大的姿态
-% 误差会变成任意大的速率要求：滚转杆到底曾要求 17.73 rad/s，而机体只能维持 1.23，
-% 副翼饱和、侧滑到 9 度、飞机翻了。
-%
-% 接线与受验模型 model/uacs_manual_pid.slx 逐根一致，包括偏航这一路的做法：限幅器
-% 串在 r 的误差之后而不是指令之后，rate_cmd 的第 3 路取的是未限幅的 r_c。这是既有
-% 行为，改它会让 V6 与 V13 的对照失去意义，所以原样保留。
+% The rate limiters keep an attitude error from demanding a rate the airframe
+% cannot hold
+% The yaw limiter sits after the r error rather than after the command, so
+% rate_cmd(3) is the unlimited r_c
 
 sub = [mdl '/PID控制器'];
 sim_add_block(mdl, 'PID控制器', 'simulink/Ports & Subsystems/Subsystem', [1280 40 1450 210]);
@@ -68,7 +65,7 @@ sim_add_block(sub, 'du_mux', 'simulink/Signal Routing/Mux', sim_pos(9, 3, 20, 90
    'Inputs', '4');
 sim_add_block(sub, 'du', 'simulink/Sinks/Out1', sim_pos(10, 3, 30, 14), 'Port', '1');
 
-% 姿态环到速率环：误差 → PID → 限幅 → 速率环误差
+%% Attitude to rate loop
 sim_connect(sub, 'ref/1', 'ref_split/1', 'fb/1', 'fb_split/1');
 sim_connect(sub, 'ref_split/1', 'phi_err/1', 'fb_split/1', 'phi_err/2', ...
    'phi_err/1', 'pid_phi/1', 'pid_phi/1', 'p_c_lim/1');
@@ -78,7 +75,7 @@ sim_connect(sub, 'ref_split/3', 'r_err/1', 'fb_split/5', 'r_err/2', ...
    'r_err/1', 'r_c_lim/1', 'r_c_lim/1', 'pid_r/1');
 sim_connect(sub, 'ref_split/4', 'V_err/1', 'fb_split/6', 'V_err/2', 'V_err/1', 'pid_V/1');
 
-% 速率环
+%% Rate loops
 sim_connect(sub, 'p_c_lim/1', 'p_err/1', 'fb_split/3', 'p_err/2', ...
    'p_err/1', 'pid_p/1');
 sim_connect(sub, 'q_c_lim/1', 'q_err/1', 'fb_split/4', 'q_err/2', ...

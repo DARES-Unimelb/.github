@@ -1,0 +1,59 @@
+== 1. rev 10 geometry, mass, derived aerodynamics ==
+mass 17.0000 kg   x_cg -0.157647  z_cg +0.019118 m   span 3.4 (limit 3.50)
+S 2.312000 m2  cbar 0.680000 m  Sh 0.369920 m2 (16.00% S)  Vh 0.458824
+Sv 0.600 m2 (25.95% S)  Vv 0.148840  CY_dr 0.512868
+Cm_alpha -2.113529  CL_de 0.483600  Cm_de -0.636294  Cm_de_standard_form -1.386794
+ratio Cm_de/Cm_de_std 0.458824  (= Vh if the file double counts)
+alpha_trim_design -0.389820 deg  alpha_tail_zerolift 0.063907 deg
+implied downwash 1.4361 deg   Cm0 -0.014380
+Cn_beta +0.111630  Cn_r -0.223260  Cn_dr -0.038168  ratio 0.341912
+
+== 2. my own trim solver ==
+cruise V=25: alpha -0.303254 deg  de -0.811542 deg  throttle 0.430065
+             CL 0.188539  CD 0.033219  L/D 5.6756  q 382.8125 Pa  residual 1.688e-14
+             T_total 29.4017 N  P_shaft 735.043 W  P_elec 1221.164 W
+             elevator demand 3.25 % of travel
+  V= 16.0: alpha  +4.7701 deg  de  -17.9588 deg  ( 71.8 % travel)  throttle 0.1186
+  V= 20.0: alpha  +1.6808 deg  de   -7.4918 deg  ( 30.0 % travel)  throttle 0.2030
+  V= 25.0: alpha  -0.3033 deg  de   -0.8115 deg  (  3.2 % travel)  throttle 0.4301
+  V= 30.0: alpha  -1.3787 deg  de   +2.7805 deg  ( 11.1 % travel)  throttle 0.9187
+
+== 3. V_min: stall limit vs trim limit ==
+V_stall 9.4083 m/s   V_min_stall (1.2x) 11.2900 m/s
+V_min_trim (my solver, |de| = 80% travel) 15.466467447 m/s
+V_min = max(both) = 15.4665 m/s  -> trim binds: True
+closed-form de at 15.41 m/s: -12.5811 deg ; true trim de: -20.2285 deg
+
+== 4. cruise authority ==
+rudder  50.1146 Nm   aileron 54.0963 Nm
+elevator with the file's Cm_de 167.0929 Nm ; with the standard form 364.1768 Nm
+engine out yaw 47.9443 Nm = 0.9567 x rudder   V_mc 24.452667 m/s
+d_headroom 0.4301  d_eff 0.4301
+diff thrust: nonlinear map 20.3554 Nm (40.6177% of rudder); linear law 41.2384 Nm (82.2881%)
+static margin 0.686356 (68.64% cbar)
+
+== 5. design search: AR x tail area ratio ==
+criteria: static margin <= 0.30 AND trim at 16 m/s within half travel (12.5 deg)
+grid 34 x 25 = 850 points
+cells with margin <= 30%: 0
+cells satisfying both:    0
+minimum static margin anywhere on the grid: 0.334969 (33.50% cbar)
+margin <= 0.30 requires ratio <= 0.0455 at AR 4.2 (grid starts at 0.06)
+current design (AR 5.0, ratio 0.16): margin 0.6864, de at 16 m/s -17.9588 deg (71.8 % travel)
+
+RECOMPUTE3_DONE
+
+== 6. my solver against the MATLAB plant baseline (results/atmo_regress_report.txt) ==
+V= 25.0  alpha mine -0.303253629813 vs matlab -0.303253629813  diff 4.81e-13
+        de    mine -0.811542051406 vs matlab -0.811542051406  diff 3.22e-13
+        thrott mine 0.430065225287 vs matlab 0.430065225287  diff 3.35e-13
+        CL    mine 0.188538849981 vs matlab 0.188538849981  CD mine 0.033219464752 vs matlab 0.033219464752
+V= 18.0  alpha mine +2.971291074235 vs matlab +2.971291074235  diff 8.53e-14
+        de    mine -11.854496125419 vs matlab -11.854496125419  diff 6.93e-14
+        thrott mine 0.152463984128 vs matlab 0.152463984128  diff 4.87e-13
+        CL    mine 0.361086642640 vs matlab 0.361086642640  CD mine 0.043694116668 vs matlab 0.043694116668
+climb V=23 gamma=6  alpha mine +0.369364117762 vs matlab +0.369364117762  diff 1.59e-13
+                    de    mine -3.438764899248 vs matlab -3.438764899248  diff 8.13e-14
+                    thrott mine 0.729613896065 vs matlab 0.729613896065  diff 4.64e-13
+                    CL mine 0.220952189547 vs matlab 0.220952189547  CD mine 0.034873750996 vs matlab 0.034873750996
+MATCH_DONE

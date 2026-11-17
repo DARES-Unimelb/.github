@@ -1,0 +1,69 @@
+V11 uacs_plant         disk top   4 / expected   4, total   4 /   4, names 1 -> PASS
+V11 uacs_manual_pid    disk top  46 / expected  46, total  92 /  92, names 1 -> PASS
+V11 uacs_lqr           disk top  56 / expected  56, total  60 /  60, names 1 -> PASS
+V11 uacs_plant_ref     disk top  13 / expected  13, total  13 /  13, names 1 -> PASS
+v_sim_v11_models     PASS  
+V10 tol 0.01, denominator peak-to-peak of the ode4 run
+      <strong>state</strong>       <strong>max_diff</strong>       <strong>ptp</strong>       <strong>rel_ptp</strong>      <strong>rel_ptp_linear</strong>    <strong>rel_scale</strong> 
+    <strong>_________</strong>    <strong>__________</strong>    <strong>_______</strong>    <strong>__________</strong>    <strong>______________</strong>    <strong>__________</strong>
+
+    {'u'    }    1.1637e-09     10.772    1.0804e-10      1.0804e-10       4.655e-11
+    {'v'    }             0          0             0               0               0
+    {'w'    }    2.4864e-08      1.317     1.888e-08       1.888e-08      9.9457e-10
+    {'p'    }             0          0             0               0               0
+    {'q'    }     8.762e-09    0.59748    1.4665e-08      1.4665e-08       8.762e-09
+    {'r'    }             0          0             0               0               0
+    {'phi'  }             0          0             0               0               0
+    {'theta'}    7.0105e-10    0.50785    1.3804e-09      1.3804e-09      7.0105e-10
+    {'psi'  }             0          0             0               0               0
+    {'pn'   }    1.3921e-09     140.22    9.9275e-12      9.9275e-12      9.2804e-12
+    {'pe'   }             0          0             0               0               0
+    {'pd'   }    2.2518e-09     31.696    7.1043e-11      7.1043e-11      1.5012e-11
+
+V10 max rel 1.888008e-08 at state w (linear interpolation would give 1.888008e-08)
+V10 max rel to the reference scale 8.762009e-09
+V10 -> PASS
+v_sim_v10_stepsize   PASS  
+v_sim_v6_pid         SKIP  v_sim_v6:NoData | C:\Ash\Projects\DARES_UACS\MATLAB\results\sim_manual_pid_traj.mat is missing; run run_manual_pid first
+V9 wind 5.0 m/s, 30 s, level flight
+V9 bank tail 0.0000 deg, max after 30% 0.0000 deg (limit 1.0) -> PASS
+V9 crab 0.0000 deg, east drift 0.0000 m/s (wind 5.0 m/s)
+V9 drift residual after removing wind*t 235.8132 m (limit 20.0) -> FAIL
+V9 altitude residual vs no wind 1455.1068 m (limit 5.0) -> FAIL
+V9 bounded 1 -> PASS
+V9 -> FAIL
+v_sim_v9_wind        FAIL  v_sim_v9:Failed | crosswind case failed: phi tail 0.0000 deg, drift residual 235.8132 m, altitude residual 1455.1068 m, diverged 0
+V12 Aerospace Blockset 24.1, reference model C:\Ash\Projects\DARES_UACS\MATLAB\model\uacs_plant_ref.slx
+V12 ode4 at trim_cruise at 25.0 m/s, alpha -0.3033 deg, de -0.8115 deg, throttle 0.4301, 3601 samples, 9.0 s
+V12 criterion configuration const_density: pitch, throttle, roll and yaw doublets
+V12 density both models fly in 1.225000000000 kg/m^3 (ISA block at h = 0 m)
+V12 denominator: peak to peak of the uacs_plant trajectory, reference scale for 0
+      <strong>state</strong>       <strong>max_diff</strong>       <strong>ptp</strong>          <strong>rel</strong>         <strong>denom</strong>  
+    <strong>_________</strong>    <strong>__________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>________</strong>
+
+    {'u'    }             0     0.19681             0     0.19681
+    {'v'    }    6.9389e-18     0.17569    3.9495e-17     0.17569
+    {'w'    }             0    0.069279             0    0.069279
+    {'p'    }    5.2042e-18    0.057034    9.1247e-17    0.057034
+    {'q'    }    1.7347e-18    0.043394    3.9976e-17    0.043394
+    {'r'    }    3.4694e-18    0.046023    7.5385e-17    0.046023
+    {'phi'  }    8.6736e-19    0.031537    2.7503e-17    0.031537
+    {'theta'}             0      0.0127             0      0.0127
+    {'psi'  }    4.3368e-19    0.011752    3.6902e-17    0.011752
+    {'pn'   }    1.4211e-14      225.18     6.311e-17      225.18
+    {'pe'   }    6.9389e-18     0.60757    1.1421e-17     0.60757
+    {'pd'   }             0     0.53039             0     0.53039
+
+V12 const_density  max rel against the excursion 9.124738e-17, against the state scale 9.473903e-17, 9.0 s
+V12 const_cmd      max rel against the excursion 2.535896e-16, against the state scale 1.040834e-17, 5.0 s
+V12 crosswind      max rel against the excursion 5.366716e-16, against the state scale 1.110223e-16, 5.0 s
+V12 isa_frozen     max rel against the excursion 1.253182e-16, against the state scale 1.894781e-16, 9.0 s
+V12 isa_state      max rel against the excursion 2.218083e-14, against the state scale 2.842171e-16, 9.0 s
+V12 wind frame: sim_plant_rhs dx - ground frame equation = [-2.22e-16 0 0 0 0 0 0 0 0 0 0 0],
+    worst 2.220e-16 over all twelve; the term that used to be missing is [-0.15 0 0.3]
+V12 max rel 9.124738e-17 at state p, limit 1.000e-04, calibration PASS
+V12 -> PASS
+v_sim_v12_crosscheck PASS  
+V-sim summary: 3 pass, 1 fail, 1 skip
+v_sim_all raised v_sim_all:Failed | 1 Simulink acceptance cases failed
+

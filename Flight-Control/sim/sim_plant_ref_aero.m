@@ -1,15 +1,6 @@
 function sim_plant_ref_aero(block)
-% SIM_PLANT_REF_AERO Level-2 MATLAB S-Function: total body force and moment of the twin.
+% SIM_PLANT_REF_AERO Level-2 MATLAB S-Function: total body force and moment
 %
-% The aerodynamics, the propulsion map, the thrust moment and gravity are the
-% same functions plant/eom_6dof.m calls, so the only difference between this and
-% the hand written plant is that the air density arrives on an input port instead
-% of being read as the constant P.env.rho_sl. That lets the Aerospace Blockset
-% Atmosphere (ISA) block drive it, and it keeps the aerodynamic model identical
-% between the two 6DOF models under test. At rho = P.env.rho_sl the outputs equal
-% eom_6dof's F_body and M_body to the last bit; sim_ref_calibrate measures it.
-%
-% Ports
 %   in  1  Vb       3x1  body velocity over ground, m/s
 %   in  2  om       3x1  body rates [p q r], rad/s
 %   in  3  eul      3x1  [phi theta psi], rad
@@ -20,13 +11,13 @@ function sim_plant_ref_aero(block)
 %   out 2  M_body   3x1  total body moment: aero + thrust moment, N*m
 %   out 3  aux      11x1 [rho; V; alpha; beta; qbar; F_body; M_body]
 %
-% Wind enters as the air-relative velocity shift sim_plant_rhs applies, so the
-% two models treat wind the same way.
+% Same physics as sim_plant_rhs except that rho arrives on a port instead of
+% being read as the constant P.env.rho_sl
 
 setup(block);
 end
 
-%% ---------------- block interface ----------------
+%% Block interface
 function setup(block)
 block.NumInputPorts = 6;
 dims = [3, 3, 3, 3, 6, 1];
@@ -35,10 +26,7 @@ for k = 1:6
    block.InputPort(k).DatatypeID = 0;
    block.InputPort(k).Complexity = 'Real';
    block.InputPort(k).SamplingMode = 'Sample';
-   % The force depends algebraically on the states the 6DOF block publishes, and
-   % the 6DOF block's own outputs are integrator states, so this feedthrough does
-   % not close a loop. Declaring it false would let Simulink silently hold the
-   % previous sample instead, which is a wrong answer that still runs.
+   % must stay true: false silently holds the previous sample
    block.InputPort(k).DirectFeedthrough = true;
 end
 
@@ -60,7 +48,7 @@ block.RegBlockMethod('Outputs', @outputs);
 block.RegBlockMethod('Terminate', @terminate);
 end
 
-%% ---------------- methods ----------------
+%% Methods
 function outputs(block)
 Vb = block.InputPort(1).Data(:);
 om = block.InputPort(2).Data(:);
@@ -71,7 +59,7 @@ rho = block.InputPort(6).Data(1);
 
 P = evalin('base', 'P');
 
-% Air-relative body velocity, exactly as sim_plant_rhs derives it.
+% air-relative body velocity, as sim_plant_rhs derives it
 R = sim_dcm(eul);
 x = [Vb - R * wind_ned; om; eul; zeros(3, 1)];
 [V, alpha, beta, ~] = flow_state(P, x);
@@ -84,7 +72,7 @@ T_l = max(throttle_to_thrust(P, u(4), V) + 0.5 * u(6), 0);
 T_r = max(throttle_to_thrust(P, u(5), V) + 0.5 * u(6), 0);
 [Tm, Tf] = thrust_moment(P, T_l, T_r);
 
-% Gravity resolved into body axes, as in eom_6dof.
+% gravity resolved into body axes
 g_body = P.mass.m * P.env.g * [-sin(theta); sin(phi) * cos(theta); cos(phi) * cos(theta)];
 
 F_body = aero.F_body + Tf + g_body;

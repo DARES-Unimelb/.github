@@ -4,26 +4,14 @@ function rep = build_uacs_models(varargin)
 %   rep = build_uacs_models()
 %   rep = build_uacs_models('blk_kind', 'mbfcn')
 %
-% Deliverables, all written to MATLAB/model/
+% Writes to MATLAB/model/
 %   uacs_plant.slx        bare 12-state object, actuators plus wind in
 %   uacs_manual_pid.slx   PID cascade with stick input
 %   uacs_lqr.slx          LQR full-state feedback with integral augmentation
 %
-% Every model is built with new_system, add_block, add_line and set_param, and
-% each builder ends with save_system. A model that only exists in memory is not
-% a deliverable: a later load_system would read a stale or truncated file and
-% the simulation would still run while returning zeros.
-%
-% The run is repeatable. sim_new_model discards a loaded copy and deletes the
-% file first, so no run can add a block on top of the previous run's block of
-% the same name.
-%
-% What this function writes
-%   results/simulink_build_report.txt   the human readable record
-%   results/sim_build_census.mat        the block census V11 compares against
-%
-% It does not simulate anything: verify/v_sim_*.m opens the files from disk and
-% checks them, and the run scripts do the simulating.
+% Also writes results/simulink_build_report.txt and results/sim_build_census.mat.
+% It does not simulate anything: verify/v_sim_*.m checks the files from disk and the
+% run scripts do the simulating.
 
 ip = inputParser;
 ip.addParameter('blk_kind', 'sfun', @(x) ischar(x) || isstring(x));
@@ -93,15 +81,8 @@ for k = 1:numel(builders)
    end
 end
 
-% Keep the models on disk only: close_system with save flag 0 discards nothing
-% because every builder already saved.
-%
-% The census file is merged rather than overwritten. This builder owns the three
-% controller models; model/uacs_plant_ref.slx is built by sim_build_plant_ref,
-% which registers its own entry in the same file. Either generator running alone
-% must leave the other's record intact. The census is written HERE and by
-% sim_build_plant_ref, and verify/v_sim_v11_models.m only ever reads it back: a
-% check that produces the data it checks is checking itself.
+% The census file is merged, not overwritten: either generator running alone must
+% leave the other's entries intact.
 census_file = fullfile(root, 'results', 'sim_build_census.mat');
 Cs = struct();
 if exist(census_file, 'file')
@@ -121,9 +102,7 @@ Cs.census.blk_kind = blk_kind;
 Cs.rep = rep;
 save(census_file, '-struct', 'Cs');
 
-% Unload the models so the rest of the chain reads them from disk, which is the
-% state V11 checks. Every builder already saved, so discarding changes loses
-% nothing.
+% Unload the models so the rest of the chain reads them from disk.
 for k = 1:numel(rep.models)
    if bdIsLoaded(rep.models(k).name)
       close_system(rep.models(k).name, 0);
@@ -136,7 +115,7 @@ if ~quiet
 end
 end
 
-%% ---------------- local ----------------
+%% Local helpers
 function s = local_str(st, f)
 if isfield(st, f)
    s = st.(f);

@@ -1,10 +1,10 @@
 function T = sim_thrust(P, dth, V)
-% SIM_THRUST Per-motor thrust, from the authoritative momentum-theory map.
+% SIM_THRUST Per-motor thrust in N from throttle and airspeed
 %
-% architecture.md 5.0 makes params/prop_thrust_from_throttle.m the single thrust
-% entry point and retires P.prop.k_ram. plant/throttle_to_thrust.m is only a
-% fallback for the window where it has not been re-pointed yet, and it is used
-% with a warning so a stale duplicate model cannot pass unnoticed.
+%   P     parameter struct
+%   dth   throttle per motor, scalar or vector, 0 to 1
+%   V     airspeed in m/s
+%   T     thrust per motor in N
 
 if sim_have('prop_thrust_from_throttle')
    T = prop_thrust_from_throttle(P, dth, V);

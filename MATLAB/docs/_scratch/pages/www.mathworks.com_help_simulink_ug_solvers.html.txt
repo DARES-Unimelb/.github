@@ -1,0 +1,330 @@
+URL: https://www.mathworks.com/help/simulink/ug/solvers.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/ug/compare-solvers.html
+
+ 
+
+ Compare Solvers - MATLAB & Simulink
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulation
+
+ Configure Simulation Conditions
+
+ Compare Solvers
+
+On this page
+Fixed-Step Versus Variable-Step Solvers
+Continuous Versus Discrete Solvers
+Explicit Versus Implicit Continuous Solvers
+One-Step Versus Multistep Continuous Solvers
+Single-Order Versus Variable-Order Continuous Solvers
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+Compare Solvers
+R2026b
+A dynamic system is simulated by computing its states at successive time steps over a
+ specified time span, using information provided by the model. The process of computing the
+ successive states of a system from its model is known as solving the model. No single method
+ of solving a model suffices for all systems. Accordingly, Simulink® provides a set of programs, known as solvers, each of
+ which embodies a particular approach to solving a model. The Configuration Parameters dialog
+ box allows you to choose the solver best suited to your model.
+Fixed-Step Versus Variable-Step Solvers
+You can choose the solvers provided by Simulink based on the way they calculate step size: fixed-step and
+ variable-step.
+Fixed-step solvers solve the model at regular time intervals from the
+ beginning to the end of the simulation. The size of the interval is known as the step size.
+ You can specify the step size or let the solver choose the step size. Generally, decreasing
+ the step size increases the accuracy of the results while increasing the time required to
+ simulate the system.
+Variable-step solvers vary the step size during the simulation. They
+ reduce the step size to increase accuracy when a model's states are changing rapidly and
+ increase the step size to avoid taking unnecessary steps when the model's states are
+ changing slowly. Computing the step size adds to the computational overhead at each step but
+ can reduce the total number of steps, and hence the simulation time required to maintain a
+ specified level of accuracy for models with rapidly changing or piecewise continuous
+ states.
+Fixed-step and variable-step solvers compute the next simulation time as the sum of the current simulation time and the step size. The Type control on the Solver configuration pane allows you to select the type of solver. With a fixed-step solver, the step size remains constant throughout the simulation. With a variable-step solver, the step size can vary from step to step, depending on the model dynamics. In particular, a variable-step solver increases or reduces the step size to meet the error tolerances that you specify. 
+The choice between these types depends on how you plan to deploy your model and the model dynamics. If you plan to generate code from your model and run the code on a real-time computer system, choose a fixed-step solver to simulate the model. You cannot map the variable-step size to the real-time clock.
+If you do not plan to deploy your model as generated code, the choice between a variable-step and a fixed-step solver depends on the dynamics of your model. A variable-step solver might shorten the simulation time of your model significantly. A variable-step solver allows this saving because, for a given level of accuracy, the solver can dynamically adjust the step size as necessary. This approach reduces the number of steps required. The fixed-step solver must use a single step size throughout the simulation, based on the accuracy requirements. To satisfy these requirements throughout the simulation, the fixed-step solver typically requires a small step.
+For example, consider a model that has two sample times, 0.5 and
+ 0.75. To cover execution of both rates, a fixed-step solver must use
+ a step size of 0.25, the least common denominator for the two sample
+ times. The time steps for a fixed-step simulation include:
+[0.0 0.25 0.5 0.75 1.0 1.25 1.5 ...]
+
+A variable-step solver can take a different step size for each time step. For this model,
+ the variable-step solver takes a step only when blocks with each sample time execute. The
+ time steps for the variable-step simulation include:
+[0.0 0.5 0.75 1.0 1.5 ...]
+
+To get to a simulation time of 1.5, the fixed-step simulation required
+ seven steps, while the variable-step simulation used only five. As model complexity and
+ simulation durations increase, a variable-step solver can significantly reduce the number of
+ time steps required to simulate a model.
+
+Continuous Versus Discrete Solvers
+Simulink provides both continuous and discrete solvers.
+When you select a solver type, you can also select a specific solver. Both sets of
+ solvers include discrete and continuous solvers. Discrete and continuous solvers rely on
+ the model blocks to compute the values of any discrete states. Blocks that define
+ discrete states are responsible for computing the values of those states at each time
+ step. However, unlike discrete solvers, continuous solvers use numerical integration to
+ compute the continuous states that the blocks define. When choosing a solver, determine
+ first whether to use a discrete solver or a continuous solver.
+If your model has no continuous states, then Simulink switches to either the fixed-step discrete solver or the variable-step
+ discrete solver. If your model has only continuous states or a mix of continuous and
+ discrete states, choose a continuous solver from the remaining solver choices based on
+ the dynamics of your model. Otherwise, an error occurs.
+Continuous solvers use numerical
+ integration to compute a model's continuous states at the current time step based on the
+ states at previous time steps and the state derivatives. Continuous solvers rely on the
+ individual blocks to compute the values of the model's discrete states at each time
+ step.
+Discrete solvers exist primarily to solve purely discrete models.
+ They compute the next simulation time step for a model and nothing else. In performing
+ these computations, they rely on each block in the model to update its individual
+ discrete states. They do not compute continuous states. 
+The solver library contains two discrete solvers: a fixed-step discrete solver and a
+ variable-step discrete solver. The fixed-step solver by default chooses the step size
+ and simulation rate fast enough to track state changes in the fastest block in your
+ model. The variable-step solver adjusts the simulation step size to keep pace with the
+ actual rate of discrete state changes in your model. This adjustment can avoid
+ unnecessary steps and shorten simulation time for multirate models. See Sample Time in Systems and Subsystems for more information.
+Note
+You must use a continuous solver to solve a model that contains both continuous
+ and discrete states because discrete solvers cannot handle continuous states. If, on
+ the other hand, you select a continuous solver for a model with no states or
+ discrete states only, Simulink software uses a discrete solver.
+
+Explicit Versus Implicit Continuous Solvers
+You represent an explicit system by an equation
+
+x˙=f(x)
+
+For any given value of x, you can compute x˙ by substituting x in f(x) and
+ evaluating the equation.
+Equations of the form 
+
+F(x˙,x)=0
+
+are considered to be implicit. For any given value of x, you must solve this equation to calculate x˙.
+A linearly implicit system can be represented by the equation
+
+M(x).x˙=f(x)
+
+M(x) is called the mass matrix and f(x) is the forcing function. A system becomes linearly implicit when you
+ use physical modeling blocks in the model.
+While you can apply an implicit or explicit continuous solver to solve all these
+ systems, implicit solvers are generally better for solving stiff systems. Explicit
+ solvers solve nonstiff systems. An ordinary differential equation problem is said to be
+ stiff if the desired solution varies slowly, but there are closer solutions that vary
+ rapidly. The numerical method must then take small time steps to solve the system.
+ Stiffness is an efficiency issue. The more stiff a system, the longer it takes for
+ the explicit solver to perform a computation. A stiff system has both slowly and quickly
+ varying continuous dynamics. 
+When compared to explicit solvers, implicit solvers provide greater stability for
+ oscillatory behavior. However, implicit solvers are also computationally more expensive.
+ They generate the Jacobian matrix and solve the set of algebraic equations at every time
+ step using a Newton-like method. To reduce this extra cost, the implicit solvers offer a
+ Solver Jacobian method parameter that allows you to improve the
+ simulation performance of implicit solvers. See Choose Jacobian Method for Implicit Solvers for more information.
+ Implicit solvers are more efficient than explicit solvers for solving a linearly
+ implicit system.
+
+One-Step Versus Multistep Continuous Solvers
+The Simulink solver library provides both one-step and multistep solvers. The one-step
+ solvers estimate y(tn) using the solution of
+ the previous time step y(tn-1) and derivative
+ values at multiple points, called minor time steps, between
+ tn and
+ tn-1.
+Multistep solvers use the results at several preceding time steps to compute the
+ solution for the current time step. Simulink provides one explicit multistep solver, ode113, and one
+ implicit multistep solver, ode15s. Both are variable-step
+ solvers.
+
+Single-Order Versus Variable-Order Continuous Solvers
+This distinction is based on the number of orders that the solver uses to solve the
+ system of equation. Two variable-order solvers, ode15s and
+ ode113, are part of the solver library. They use multiple orders
+ to solve the system of equations. Specifically, the implicit, variable-step
+ ode15s solver uses first-order through fifth-order equations,
+ while the explicit, variable-step ode113 solver uses first-order
+ through thirteenth-order equations. For ode15s, you can limit the
+ highest order applied via the Maximum Order parameter. For more
+ information, see Maximum Order.
+
+ See Also
+Topics
+Zero-Crossing Detection
+Simulink Models
+Simulation Phases in Dynamic Systems
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

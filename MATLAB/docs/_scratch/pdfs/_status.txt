@@ -1,0 +1,2 @@
+200	327576	lewisgroup.uta.edu_ee5321_2013_20notes_3_20OP_20feedback_20and_20OPFB_20design_20for_20F16_20lateral_20regulat.html	https://lewisgroup.uta.edu/ee5321/2013%20notes/3%20OP%20feedback%20and%20OPFB%20design%20for%20F16%20lateral%20regulator.pdf
+200	868418	lewisgroup.uta.edu_ee5321_2013_20notes_6_20LQR_20opfb_20modified_20PI.pdf.html	https://lewisgroup.uta.edu/ee5321/2013%20notes/6%20LQR%20opfb%20modified%20PI.pdf

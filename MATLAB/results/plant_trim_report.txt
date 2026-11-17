@@ -1,0 +1,157 @@
+UACS twin-engine plant baseline: trim report
+generated 2026-10-11 02:50:10, MATLAB 2024a
+params 0.5.0 rev 11 (2026-10-11), uacs_twin_params.m 39651 bytes dated 11-10月-2026 02:31:49
+
+Residual definition
+  r_raw  = [Fx Fy Fz Mx My Mz]' at the trim state, taken from eom_6dof, N and N*m
+  r_norm = [r_raw(1:3)/(m*g); r_raw(4:6)/(qbar*S*cbar)]
+  m*g = 166.713050 N, qbar*S*cbar is per operating point, N*m
+  criterion V2 uses max(abs(r_norm)) < 1e-6
+  unknowns alpha, de, one throttle for both motors; equations Fx = Fz = My = 0
+  convention beta = da = dr = 0, phi = 0, theta = alpha + gamma,
+  so theta equals alpha in level flight and theta = alpha + gamma when climbing
+  solver fsolve/levenberg-marquardt
+
+=== cruise operating point ===
+  V_mps                        25.000000
+  gamma_deg                     0.000000
+  bank_deg                      0.000000
+  h_m                         150.000000
+  rho_kg_m3                     1.225000
+  qbar_Pa                     382.812500
+  alpha_deg                    -0.303254
+  theta_deg                    -0.303254
+  de_deg                       -0.811542
+  throttle_per_motor            0.430065
+  CL                            0.188539
+  CD                            0.033219
+  L_over_D                      5.675554
+  drag_N                       29.401303
+  thrust_total_N               29.401714
+  T_static_max_N_per_motor     53.271461
+  throttle_exponent             0.666667 (throttle is a shaft-power share)
+  x_star                    [24.99965;0;-0.13231874;0;0;0;0;-0.0052927743;0;0;0;-150]
+  u_star                    [0;-0.014164081;0;0.43006523;0.43006523;0]
+  r_raw  [Fx Fy Fz Mx My Mz] [5.10703e-15;0;2.84217e-14;0;-4.44089e-16;0]
+  r_norm                     [3.06336e-17;0;1.70483e-16;0;-7.37883e-19;0]
+  max|r_norm|                   1.705e-16
+  normalisers m*g, qbar*S*cbar  166.713050 N, 601.842500 N*m
+  fsolve exitflag 4, iterations 6, funcCount 28, first-order optimality 4.265e-15
+  V2 residual < 1e-6        PASS (1.705e-16)
+  V2 alpha in 2..10 deg (frozen in architecture.md 7)  FAIL (-0.3033 deg)
+  V2 alpha in 0..8 deg (revised window, see design notes)  FAIL (-0.3033 deg)
+  V2 |de| <= 15 deg         PASS (-0.8115 deg)
+  V2 de as percent of travel            3.25 percent of 25.0 deg
+  V2 overall, frozen window     FAIL
+  V2 overall, revised window    FAIL
+
+=== climb operating point ===
+  V_mps                        23.000000
+  gamma_deg                     6.000000
+  bank_deg                      0.000000
+  h_m                         150.000000
+  rho_kg_m3                     1.225000
+  qbar_Pa                     324.012500
+  alpha_deg                     0.369364
+  theta_deg                     6.369364
+  de_deg                       -3.438765
+  throttle_per_motor            0.729614
+  CL                            0.220952
+  CD                            0.034874
+  L_over_D                      6.335774
+  drag_N                       26.124516
+  thrust_total_N               43.551680
+  T_static_max_N_per_motor     53.271461
+  throttle_exponent             0.666667 (throttle is a shaft-power share)
+  x_star                    [22.999522;0;0.14827123;0;0;0;0;0.11116638;0;0;0;-150]
+  u_star                    [0;-0.06001777;0;0.7296139;0.7296139;0]
+  r_raw  [Fx Fy Fz Mx My Mz] [-7.10543e-15;0;0;0;0;0]
+  r_norm                     [-4.26207e-17;0;0;0;0;0]
+  max|r_norm|                   4.262e-17
+  normalisers m*g, qbar*S*cbar  166.713050 N, 509.399492 N*m
+  fsolve exitflag 4, iterations 6, funcCount 28, first-order optimality 2.844e-17
+  V2 residual < 1e-6        PASS (4.262e-17)
+  V2 alpha in 2..10 deg (frozen in architecture.md 7)  FAIL (0.3694 deg)
+  V2 alpha in 0..8 deg (revised window, see design notes)  PASS (0.3694 deg)
+  V2 |de| <= 15 deg         PASS (-3.4388 deg)
+  V2 de as percent of travel            13.76 percent of 25.0 deg
+  V2 overall, frozen window     FAIL
+  V2 overall, revised window    PASS
+
+=== slow operating point ===
+  V_mps                        18.000000
+  gamma_deg                     0.000000
+  bank_deg                      0.000000
+  h_m                         150.000000
+  rho_kg_m3                     1.225000
+  qbar_Pa                     198.450000
+  alpha_deg                     2.971291
+  theta_deg                     2.971291
+  de_deg                      -11.854496
+  throttle_per_motor            0.152464
+  CL                            0.361087
+  CD                            0.043694
+  L_over_D                      8.263965
+  drag_N                       20.047577
+  thrust_total_N               20.074565
+  T_static_max_N_per_motor     53.271461
+  throttle_exponent             0.666667 (throttle is a shaft-power share)
+  x_star                    [17.975801;0;0.93304028;0;0;0;0;0.051858812;0;0;0;-150]
+  u_star                    [0;-0.20689999;0;0.15246398;0.15246398;0]
+  r_raw  [Fx Fy Fz Mx My Mz] [0;0;2.84217e-14;0;-3.9968e-15;0]
+  r_norm                     [0;0;1.70483e-16;0;-1.28105e-17;0]
+  max|r_norm|                   1.705e-16
+  normalisers m*g, qbar*S*cbar  166.713050 N, 311.995152 N*m
+  fsolve exitflag 4, iterations 6, funcCount 25, first-order optimality 2.179e-15
+  V2 residual < 1e-6        PASS (1.705e-16)
+  V2 alpha in 2..10 deg (frozen in architecture.md 7)  PASS (2.9713 deg)
+  V2 alpha in 0..8 deg (revised window, see design notes)  PASS (2.9713 deg)
+  V2 |de| <= 15 deg         PASS (-11.8545 deg)
+  V2 de as percent of travel            47.42 percent of 25.0 deg
+  V2 overall, frozen window     PASS
+  V2 overall, revised window    PASS
+
+=== summary ===
+  point           V    gamma  alpha_deg  theta_deg     de_deg   throttle max|r_norm|
+  cruise      25.00     0.00    -0.3033    -0.3033    -0.8115     0.4301   1.70e-16
+  climb       23.00     6.00     0.3694     6.3694    -3.4388     0.7296   4.26e-17
+  slow        18.00     0.00     2.9713     2.9713   -11.8545     0.1525   1.70e-16
+
+  V2 (cruise): residual PASS, alpha frozen window FAIL, alpha revised window FAIL, de PASS
+  overall: frozen window FAIL, revised window FAIL
+
+  Required CL at cruise 0.188539
+  frozen window 2..10 deg spans CL 0.3823..1.0316, revised window 0..8 deg spans CL 0.2200..0.8693
+  the frozen lower edge needs V <= 17.55 m/s at this mass and area, or S <= 1.1391 m^2,
+  or m >= 34.50 kg at 25 m/s. The revised lower edge (alpha = 0) needs CL 0.2200,
+  which the cruise point clears without changing the geometry.
+
+=== trim envelope, level flight, elevator limit 20.0 deg (80 percent of travel) ===
+   V_mps       de_deg   throttle     ok
+    16.0     -17.9588     0.1186      1
+    17.0     -14.6374     0.1336      1
+    18.0     -11.8545     0.1525      1
+    19.0      -9.5004     0.1754      1
+    20.0      -7.4918     0.2030      1
+    21.0      -5.7645     0.2356      1
+    22.0      -4.2684     0.2740      1
+    23.0      -2.9641     0.3187      1
+    24.0      -1.8202     0.3705      1
+    25.0      -0.8115     0.4301      1
+    26.0       0.0817     0.4989      1
+    27.0       0.8708     0.5845      1
+    28.0       1.5764     0.6823      1
+    29.0       2.2098     0.7932      1
+    30.0       2.7805     0.9187      1
+    31.0       3.0905     1.9327      0
+    32.0       2.9943     2.0591      0
+    33.0       2.7666     2.1701      0
+    34.0       2.4112     2.2644      0
+    35.0       1.9314     2.3414      0
+    36.0       1.3306     2.4013      0
+    37.0       0.6117     2.4446      0
+    38.0       0.0000     2.4724      0
+    39.0       0.0000     2.4860      0
+    40.0       0.0000     2.4871      0
+  lowest trimable speed inside the limit: 16.0000 m/s
+  P.limits.V_min_mps 15.4665 m/s, P.limits.V_stall_mps 9.4083 m/s

@@ -5,16 +5,16 @@ function R = run_lqr(varargin)
 %   R = run_lqr('scenarios', {'bank_step'}, 'solver', 'ode4')
 %
 % Scenarios drive the commanded deviations of control/lqr_reference.m
-%   speed_step   dV_c step of +3 m/s, the regulated output of the long loop
-%   bank_step    dphi_c step of 10 deg, the regulated output of the lat loop
+%   speed_step     dV_c step of +3 m/s, the regulated output of the long loop
+%   bank_step      dphi_c step of 10 deg, the regulated output of the lat loop
 %   speed_doublet  dV_c doublet, no steady state to reach
 %   bank_doublet   dphi_c doublet
-%   level_trim   no command at all: the aircraft must hold trim
+%   level_trim     no command at all: the aircraft must hold trim
 %
-% The reference is a deviation from the design point, so the absolute target of
-% a metric is the operating point value plus the commanded deviation. The
-% integral state z is logged too, because a step that closes with z != 0 would
-% mean the augmented loop is holding the output with the wrong equilibrium.
+% Options: scenarios, solver ('ode4'), plots (true), save (true), design ([]).
+%
+% The reference is a deviation from the design point, so the absolute target of a metric is
+% the operating point value plus the commanded deviation.
 
 ip = inputParser;
 ip.addParameter('scenarios', {'speed_step', 'bank_step', 'speed_doublet', ...
@@ -94,7 +94,7 @@ if opt.plots
 end
 end
 
-%% ---------------- scenarios ----------------
+%% Scenarios
 function specs = local_specs(P, D)
 dt = 0.02;
 t_short = 8;
@@ -134,7 +134,7 @@ s = struct('name', name, 't_end', t_end, 'wind', wind, ...
    'cmd', struct('dV', dV, 'dtheta', dth, 'dphi', dphi, 'dbeta', db));
 end
 
-%% ---------------- unpacking and metrics ----------------
+%% Unpacking and metrics
 function tr = local_unpack(T)
 tr = struct();
 tr.t = T.t;

@@ -1,0 +1,16 @@
+
+=== p target 12.0, plant num [0 0 3300 7.532e+04 5.832e+05 974.1], den [1 140.7 5102 7.469e+04 4.422e+05 4.549e+04] ===
+kp   0.0100 poles 5 worst -1.0334e-01 |L|max   0.01340 |L(0)|  2.14e-04 crossover        NaN ncross 0
+kp   0.0500 poles 5 worst -9.8201e-02 |L|max   0.06698 |L(0)|  1.07e-03 crossover        NaN ncross 0
+kp   0.1000 poles 5 worst -9.2472e-02 |L|max   0.13396 |L(0)|  2.14e-03 crossover        NaN ncross 0
+kp   0.2000 poles 5 worst -8.2842e-02 |L|max   0.26791 |L(0)|  4.28e-03 crossover        NaN ncross 0
+kp   0.3000 poles 5 worst -7.5063e-02 |L|max   0.40187 |L(0)|  6.42e-03 crossover        NaN ncross 0
+kp   0.3679 poles 5 worst -7.0580e-02 |L|max   0.49283 |L(0)|  7.88e-03 crossover        NaN ncross 0
+
+=== q target 8.0, plant num [0 0 -4804 -3.173e+04 -6463 6.574e-13], den [1 100.3 3053 2.956e+04 6086 5393] ===
+kp   0.0100 poles 5 worst -9.5270e-02 |L|max   0.02584 |L(0)|  1.20e-07 crossover        NaN ncross 0
+kp   0.0500 poles 5 worst -9.5066e-02 |L|max   0.12918 |L(0)|  5.99e-07 crossover        NaN ncross 0
+kp   0.1000 poles 5 worst -9.4816e-02 |L|max   0.25836 |L(0)|  1.20e-06 crossover        NaN ncross 0
+kp   0.2000 poles 5 worst -9.4376e-02 |L|max   0.51671 |L(0)|  2.40e-06 crossover        NaN ncross 0
+kp   0.3000 poles 5 worst -9.4139e-02 |L|max   0.77507 |L(0)|  3.60e-06 crossover        NaN ncross 0
+kp   0.3679 poles 5 worst -9.4249e-02 |L|max   0.95049 |L(0)|  4.41e-06 crossover        NaN ncross 0

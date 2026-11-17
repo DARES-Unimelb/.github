@@ -1,0 +1,3 @@
+V6 verdict: v_sim_v6:Failed | loops failing V6: phi, r
+
+roll_step phi metrics: rise 4.8975, os 0.603, settle 6.4500, err 1.9078e+00, ripple 3.0061, delta -1.6740e+00, ref_tail 0.233874

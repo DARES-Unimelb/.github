@@ -1,0 +1,100 @@
+UACS twin: wind frame term and density altitude, plant level evidence
+generated 2026-10-10 15:41:59, MATLAB 24.1.0.2653294 (R2024a) Update 5
+params 0.4.0 rev 10 (2026-10-10)
+files sim/sim_plant_rhs.m, plant/flow_state.m, plant/atmo_isa.m, params/uacs_twin_params.m
+density model P.atmo.model = 'const', h_from_state 1, h_ref 0.000 m
+wind applied at the model boundary, dx(1:3) carries the omega x (R*W) term
+
+[A  atmo_isa against the Aerospace Blockset ISA Atmosphere Model block]
+  182 altitudes from C:\Ash\Projects\DARES_UACS\MATLAB\results\sim_v12_calib.mat, -50 to 1000 m
+  all altitudes: max relative rho 4.809e-03, T 1.128e-03, p 5.942e-03, a 5.638e-04
+  h >= 0, 162 altitudes: max relative rho 7.420e-16, T 0.000e+00, p 7.446e-16, a 0.000e+00
+  h >= 0: identical densities 94 of 162, bit identical on all four 0
+  h < 0, 20 altitudes from -50.0 to -2.5 m: max relative rho 4.809e-03, identical 0 of 20
+  block densities below sea level: 1.225
+  that is exactly P.env.rho_sl, so the block saturates its altitude at 0 m 1
+  rho at h = 0 is exactly P.env.rho_sl 1
+  constants: rho_sl 1.225000, T_sl 288.15 K, p_sl 101325 Pa, L 0.0065 K/m, R 287.0531, gamma 1.4
+  the block and the plant use the same fluid over the flight envelope -> PASS
+  density falls with altitude 1, +10 K lowers it 1, 12 km is refused 1
+
+[B  density path through plant/flow_state.m]
+  trim altitude 150.000 m; const rho 1.225000000000000 (is rho_sl 1)
+  isa  rho 1.207456418934230, formula 1.207456418934230, identical 1
+  h_from_state false with h_ref 150.0 gives 1.207456418934230, identical to state driven 1
+  V 25.000000000000 alpha -0.005292774309 beta 0.000000000000 do not depend on the density model 1
+  qbar ratio 0.985678709334066 against density ratio 0.985678709334065 -> PASS
+
+[C  wind frame term in sim/sim_plant_rhs.m]
+  state with omega [0.0600 -0.0400 0.0300] rad/s and wind [0 5 0] m/s NED
+  omega x (R*W) body axes           [-0.15 0 0.3]
+  |dx(1:3) - Newton in v_ground| after rev 10   2.220e-16
+  same against the rev 9 formula                 3.000e-01  (the term that was missing)
+  dx(10:12) against C_bn*v_ground 0.000e+00, against C_bn*v_air 5.000e+00
+  -> PASS
+  5 s doublet in a 5 m/s east wind, ode4 at 0.0025 s, fixed vs oracle 5.551e-17 abs (3.960e-16 rel)
+  the same run with the rev 9 formula against the oracle     1.570e+00 abs (5.550e-01 rel)
+  -> PASS
+  still air against 5 m/s wind over 5 s, same air data:
+    attitude and rates differ by                    0.000e+00
+    ground velocity against v_still + C_nb*W [0 5 0]  0.000e+00
+    full state against still air plus W*t           8.846e-13
+    east position gain 25.000000000 m against 25.000000000 m predicted
+  -> PASS
+
+[D  trim with the density model switched on]
+  density 1.207456 against 1.225000 kg/m^3, drop 1.432 percent
+  const: alpha -0.303254 deg, de -0.811542 deg, throttle 0.430065, |r|max 1.705e-16
+  isa  : alpha -0.251980 deg, de -0.983771 deg, throttle 0.422756, |r|max 2.246e-18
+  fixed reference altitude gives the same trim 1
+  the ISA trim state balances at 2.246e-18 in ISA density and at 1.453e-02 in sea level density
+  trim.rho reports 1.207456418934230 (isa) and 1.225000000000000 (const), the densities actually used 1
+  -> PASS
+
+[E  V12 ISA configuration, projected from our own plant]
+  metric max over states of max|x_a-x_b| / ptp of the const density run
+  const density against a frozen ISA density at 150 m   1.581102e+00
+  const density against density altitude from the state  1.575441e+00
+  frozen ISA(150) against density altitude from state    4.783743e-03
+  reading: the residual between the two density laws is what the reference
+  model has to close. If its ISA block input stays a constant 150 m the ISA
+  configuration lands at 4.784e-03; driven by -pd from the 6DOF position output it
+  lands at the integrator level, the same order as const_density.
+
+[F  single engine control speed and envelope at the ISA density]
+  static thrust per motor rho^(1/3): 53.271461 N at sea level, 53.015932 N at 150 m, exponent 0.333333
+  V_mc sea level (the declared number)              24.452667 m/s, cruise margin 2.189 percent
+  V_mc at 150 m, thrust map still at sea level      24.629668 m/s, cruise margin 1.481 percent
+  V_mc at 150 m, thrust map at the local density    24.570526 m/s, cruise margin 1.718 percent
+  physical correction against the declared number   +0.1179 m/s (+0.482 percent)
+  V_stall      sea level 9.408319 m/s, ISA 150 m 9.476421 m/s
+  V_min_trim   sea level 15.466467 m/s, ISA 150 m 15.578421 m/s (elevator budget 20.0 deg)
+  same bisection rerun here gives sea level 15.466467 m/s, against the stored 15.466467, difference 0.000e+00
+  V_top        sea level 30.966467 m/s, ISA 150 m as built 30.966467 m/s, physical 30.966467 m/s
+  V_max declared 30.0 m/s stays reachable at 150 m: as built 1, physical 1
+  -> PASS
+
+[G  plant/wind_trim.m: crab trim under a steady wind]
+  case                     wind NED      track    psi deg   crab deg     Vg m/s      res F      res M
+  zero                     [0 0 0]           0    0.00000    0.00000   25.00000   1.70e-16   7.38e-19
+  east5                    [0 5 0]           0  -11.53696  -11.53696   24.49490   5.11e-16   1.98e-17
+  east_track_north3west4   [3 -4 0]         90   96.89210    6.89210   20.81935   3.69e-16   4.96e-17
+  south_track_west6        [0 -6 0]        270  -90.00000    0.00000   31.00000   3.41e-16   3.42e-17
+  climb6_east5             [0 5 0]           0  -12.62616  -12.62616   22.32084   5.11e-16   6.63e-17
+  heading against the independent north track formula -asin(W_E/(V*cos gamma)): 2.776e-17 rad
+  cross track ground velocity 8.882e-16 m/s, air data against the still air trim 3.553e-15
+  zero wind returns the input state bit for bit 1
+  5 s on the crab trim in a 5 m/s east wind: dynamic states drift 2.137e-15,
+    east position stays put to 4.441e-15 m, north distance 122.474487 m against 122.474487 m predicted 1
+  -> PASS
+
+[verdict]
+  A isa against the block        PASS (max rel 7.446e-16 over h >= 0)
+  B density path                 PASS
+  C1 wind identity               PASS (2.220e-16 against 3.000e-01)
+  C2 wind trajectory             PASS (5.551e-17 against 1.570e+00)
+  C3 wind translation            PASS (8.846e-13)
+  D isa trim                     PASS
+  F envelope at 150 m ISA        PASS (V_mc 24.5705, V_min_trim 15.5784, V_top 30.9665)
+  G wind trim                    PASS (res F 5.114e-16, res M 6.626e-17, zero wind exact 1)
+  params rev 10, overall PASS

@@ -1,10 +1,10 @@
 function [da, de, dr, dth_l, dth_r] = sim_alloc_act(P, M_cmd, T_cmd)
-% SIM_ALLOC_ACT Five actuator commands from a moment and a thrust request.
+% SIM_ALLOC_ACT Five actuator commands from a moment and a thrust request
 %
-% Uses control/allocate.m when it is on the path. The fallback is a plain
-% pseudo-inverse on the same effectiveness matrix the allocator uses, kept only
-% so the model chain can be built and simulated before the control deliverable
-% lands; sim_deps_report marks any run that used it.
+%   [da, de, dr, dth_l, dth_r] = sim_alloc_act(P, M_cmd, T_cmd)
+%
+% Calls allocate when it is on the path, otherwise a pseudo-inverse fallback
+% P defaults to the base workspace variable P
 
 if nargin < 1 || isempty(P)
    P = evalin('base', 'P');
@@ -18,7 +18,7 @@ V_a = P.op.cruise.V_mps;
 qbar_a = 0.5 * P.env.rho_sl * V_a^2;
 Sb = qbar_a * P.geom.S * P.geom.b;
 Sc = qbar_a * P.geom.S * P.geom.cbar;
-% Same effectiveness matrix allocate builds, restricted to the three surfaces.
+% effectiveness matrix for the three aerodynamic surfaces
 G = [Sb * P.aero.Cl_da, 0, Sb * P.aero.Cl_dr; ...
      0, Sc * P.aero.Cm_de, 0; ...
      Sb * P.aero.Cn_da, 0, Sb * P.aero.Cn_dr];

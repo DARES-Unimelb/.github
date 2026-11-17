@@ -1,0 +1,467 @@
+URL: https://www.mathworks.com/help/control/ref/lti.lqr.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/control/ref/lti.lqr.html
+
+ 
+
+ lqr - Linear-Quadratic Regulator (LQR) design - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Control Systems
+
+ Control System Toolbox
+
+ Control System Design and Tuning
+
+ State-Space Control Design and Estimation
+
+ State-Space Control Design
+
+ lqr
+
+On this page
+Syntax
+Description
+ExamplesLQR Control for Inverted Pendulum Model
+LQR Control Using State-Space Matrices
+
+Input Argumentssys
+A
+B
+Q
+R
+N
+
+Output ArgumentsK
+S
+P
+
+Limitations
+Tips
+Algorithms
+Version History
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+lqr
+R2026b
+Linear-Quadratic Regulator (LQR) design
+collapse all in page
+
+Syntax
+[K,S,P] = lqr(sys,Q,R,N)
+[K,S,P] = lqr(A,B,Q,R,N)
+
+Description
+[K,S,P] = lqr(sys,Q,R,N)
+ calculates the optimal gain matrix K, the solution
+ S of the associated algebraic Riccati equation, and the closed-loop
+ poles P for the continuous-time or discrete-time state-space model
+ sys. Q and R are the weight
+ matrices for states and inputs, respectively. The cross term matrix N
+ is set to zero when omitted.
+
+example
+
+[K,S,P] = lqr(A,B,Q,R,N)
+ calculates the optimal gain matrix K, the solution
+ S of the associated algebraic Riccati equation and the closed-loop
+ poles P using the continuous-time state-space matrices
+ A and B. This syntax is only valid for
+ continuous-time models. For discrete-time models, use dlqr.
+
+example
+
+Examples
+collapse all
+LQR Control for Inverted Pendulum Model
+
+Open Live Script
+
+ pendulumModelCart.mat contains the state-space model of an inverted pendulum on a cart where the outputs are the cart displacement x and the pendulum angle θ. The control input u is the horizontal force on the cart.
+
+[x˙x¨θ˙θ¨]=[01000-0.13000010-0.5300][xx˙θθ˙]+[0205]uy=[10000010][xx˙θθ˙]+[00]u
+
+First, load the state-space model sys to the workspace.
+load('pendulumCartModel.mat','sys')
+
+Since the outputs are x and θ, and there is only one input, use Bryson's rule to determine Q and R.
+Q = [1,0,0,0;...
+ 0,0,0,0;...
+ 0,0,1,0;...
+ 0,0,0,0];
+R = 1;
+
+Find the gain matrix K using lqr. Since N is not specified, lqr sets N to 0.
+[K,S,P] = lqr(sys,Q,R)
+
+K = 1×4
+
+ -1.0000 -1.7559 16.9145 3.2274
+
+S = 4×4
+
+ 1.5346 1.2127 -3.2274 -0.6851
+ 1.2127 1.5321 -4.5626 -0.9640
+ -3.2274 -4.5626 26.5487 5.2079
+ -0.6851 -0.9640 5.2079 1.0311
+
+P = 4×1 complex
+
+ -0.8684 + 0.8523i
+ -0.8684 - 0.8523i
+ -5.4941 + 0.4564i
+ -5.4941 - 0.4564i
+
+Although Bryson's rule usually provides satisfactory results, it is often just the starting point of a trial-and-error iterative design procedure to tune your closed-loop system response based on the design requirements.
+
+LQR Control Using State-Space Matrices
+
+Open Live Script
+
+ aircraftPitchModel.mat contains the state-space matrices of an aircraft where the input is the elevator deflection angle δ and the output is the aircraft pitch angle θ.
+
+[α˙q˙θ˙]=[-0.31356.70-0.0139-0.4260056.70][αqθ]+[0.2320.02030][δ]y=[001][αqθ]+[0][δ]
+
+For a step reference of 0.2 radians, consider the following design criteria:
+Rise time less than 2 seconds
+
+Settling time less than 10 seconds
+
+Steady-state error less than 2%
+
+Load the model data to the workspace. 
+load('aircraftPitchModel.mat')
+
+Define the state-cost weighted matrix Q and the control weighted matrix R. Generally, you can use Bryson's Rule to define your initial weighted matrices Q and R. For this example, consider the output vector C along with a scaling factor of 2 for matrix Q and choose R as 1. R is a scalar since the system has only one input.
+R = 1
+
+R = 
+1
+
+Q1 = 2*C'*C
+
+Q1 = 3×3
+
+ 0 0 0
+ 0 0 0
+ 0 0 2
+
+Compute the gain matrix using lqr.
+[K1,S1,P1] = lqr(A,B,Q1,R);
+
+Check the closed-loop step response with the generated gain matrix K1.
+sys1 = ss(A-B*K1,B,C,D);
+step(sys1)
+
+Since this response does not meet the design goals, increase the scaling factor to 25, compute the gain matrix K2, and check the closed-loop step response for gain matrix K2.
+Q2 = 25*C'*C
+
+Q2 = 3×3
+
+ 0 0 0
+ 0 0 0
+ 0 0 25
+
+[K2,S2,P2] = lqr(A,B,Q2,R);
+sys2 = ss(A-B*K2,B,C,D);
+step(sys2)
+
+In the closed-loop step response plot, the rise time, settling time, and steady-state error meet the design goals.
+
+Input Arguments
+collapse all
+sys — Dynamic system model
+ 
+ss model object
+
+Dynamic system model, specified as an ss model object.
+
+A — State matrix
+
+n-by-n matrix
+
+State matrix, specified as an n-by-n matrix,
+ where n is the number of states.
+
+B — Input-to-state matrix
+ 
+n-by-m matrix
+
+Input-to-state matrix, specified as an n-by-m
+ input-to-state matrix, where m is the number of inputs.
+
+Q — State-cost weighted matrix
+ 
+matrix
+
+State-cost weighted matrix, specified as an
+ n-by-n matrix, where n is the
+ number of states. You can use Bryson's rule to set the initial values of
+ Q given by:
+
+Qi,i=1maximum acceptable value of (errorstates)2, i∈{1,2,...,n}Q=[Q1,10⋯00Q2,2⋯000⋱⋮00⋯Qn,n]
+
+Here, n is the number of states.
+
+R — Input-cost weighted matrix
+ 
+scalar | matrix
+
+Input-cost weighted matrix, specified as a scalar or a matrix of the same size as
+ D'D. Here, D is the feed-through state-space
+ matrix. You can use Bryson's rule to set the initial values of R
+ given by:
+
+Rj,j=1maximum acceptable value of (errorinputs)2, j∈{1,2,...,m}R=[R1,10⋯00R2,2⋯000⋱⋮00⋯Rm,m]
+
+Here, m is the number of inputs.
+
+N — Optional cross term matrix
+ 
+0 (default) | matrix
+
+Optional cross term matrix, specified as a matrix. If N is not
+ specified, then lqr sets N to 0 by
+ default.
+
+Output Arguments
+collapse all
+K — Optimal gain
+ 
+row vector
+
+Optimal gain of the closed-loop system, returned as a row vector of size
+ n, where n is the number of states.
+
+S — Solution of the associated algebraic Riccati equation
+ 
+matrix
+
+Solution of the associated algebraic Riccati equation, returned as an
+ n-by-n matrix, where n is the
+ number of states. In other words, S is the same dimension as
+ state-space matrix A. For more information, see icare and
+ idare.
+
+P — Poles of the closed-loop system
+ 
+column vector
+
+Poles of the closed-loop system, returned as a column vector of size
+ n, where n is the number of states.
+
+Limitations
+The input data must satisfy the following conditions:
+The pair (A,B) must be stabilizable.
+
+R must be positive definite.
+
+[QNNTR] must be positive semidefinite (equivalently, Q−NR−1NT≥0).
+
+(Q−NR−1NT, A−BR−1NT) must have no unobservable mode on the imaginary axis (or unit circle in
+ discrete time).
+
+Tips
+lqr supports descriptor models with nonsingular
+ E. The output S of lqr is the
+ solution of the algebraic Riccati equation for the equivalent explicit state-space model:
+
+dxdt=E−1Ax+E−1Bu
+
+Algorithms
+For continuous-time systems, lqr computes the state-feedback control u=−Kx that minimizes the quadratic cost function
+J(u)=∫0∞(xTQx+uTRu+2xTNu)dt
+
+subject to the system dynamics x˙=Ax+Bu.
+In addition to the state-feedback gain K, lqr
+ returns the solution S of the associated algebraic Riccati equation
+ATS+SA−(SB+N)R−1(BTS+NT)+Q=0
+
+and the closed-loop poles P = eig(A−BK). The gain matrix K is derived from
+ S using
+K=R−1(BTS+NT).
+
+For discrete-time systems, lqr computes the state-feedback control un=−Kxn that minimizes 
+
+J=∑n=0∞{xTQx+uTRu+2xTNu}
+
+subject to the system dynamics xn+1=Axn+Bun.
+In all cases, when you omit the cross term matrix N,
+ lqr sets N to 0.
+
+Version History
+Introduced before R2006a
+
+See Also
+icare | idare | dlqr | lqg | lqi | lqrd | lqry | lqgreg | lqgtrack
+Topics
+Regulate Pressure in Drum Boiler
+
+External Websites
+What Is LQR Control
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

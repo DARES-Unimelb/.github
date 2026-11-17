@@ -1,0 +1,9 @@
+404	-	4096	Control System Toolbox	https://www.mathworks.com/help/control/ref/ss.lqr.html
+200	-	4185	lqi - Linear-Quadratic-Integral control - MATLAB	https://www.mathworks.com/help/control/ref/ss.lqi.html
+404	-	4096	Control System Toolbox	https://www.mathworks.com/help/control/ref/lqr.html
+200	-	3072	lqry - Form linear-quadratic (LQ) state-feedback regulator with output weighting - MATLAB	https://www.mathworks.com/help/control/ref/ss.lqry.html
+404	-	4096	Control System Toolbox	https://www.mathworks.com/help/control/ug/linear-quadratic-regulator.html
+200	-	9403	lqr - Linear-Quadratic Regulator (LQR) design - MATLAB	https://www.mathworks.com/help/control/ref/lti.lqr.html
+200	-	72745	PID Controller - Continuous-time or discrete-time PID controller - Simulink	https://www.mathworks.com/help/simulink/slref/pidcontroller.html
+200	-	11179	Choose a Solver - MATLAB &amp; Simulink	https://www.mathworks.com/help/simulink/ug/choose-a-solver.html
+

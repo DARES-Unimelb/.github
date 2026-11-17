@@ -1,10 +1,9 @@
 function lock_id = matlab_lock_acquire(varargin)
 % MATLAB_LOCK_ACQUIRE Serialise the shared MATLAB session between team members.
 %
-% Only one MATLAB process exists on this machine and only one MCP request is
-% served at a time, so two members running heavy jobs at once starve each other.
-% The lock is a directory plus a JSON owner file, created with mkdir, which is
-% atomic on a local filesystem: whoever creates the directory owns the session.
+% One MATLAB process serves one MCP request at a time, so two members running heavy jobs at
+% once starve each other. The lock is a directory plus a JSON owner file, created with
+% mkdir, which is atomic on a local filesystem: whoever creates the directory owns it.
 %
 % The lock is held for a whole job, not for a single call. Wrap a job, not a line.
 %
@@ -14,6 +13,7 @@ function lock_id = matlab_lock_acquire(varargin)
 %   ... run the job ...
 %   matlab_lock_release(id);
 %
+% Options: owner, timeout_s (1800), poll_s (10), stale_s (900), dir.
 % Throws MATLAB_LOCK:Timeout if the lock cannot be taken within timeout_s.
 
 ip = inputParser;
@@ -44,10 +44,8 @@ while true
         return;
     end
 
-    % Someone holds it. Liveness is judged on the HEARTBEAT when the holder
-    % publishes one, and only falls back to the acquisition time otherwise.
-    % Acquisition-time-only staleness blocked the whole team for 18 minutes
-    % during a hung Simulink compile, because the default timeout was two hours.
+    % Someone holds it. Liveness is judged on the heartbeat when the holder publishes
+    % one, and falls back to the acquisition time otherwise.
     info = local_read_json(fullfile(lockdir, 'owner.json'));
     hb = local_read_json(fullfile(lockdir, 'heartbeat.json'));
     age = inf;
@@ -82,10 +80,9 @@ while true
 end
 end
 
-%% ---------------- local helpers ----------------
+%% Local helpers
 function d = local_lock_dir()
-% Lock lives next to the results, inside the project, so it is visible to all
-% members and survives a session restart.
+% Lock lives inside the project so it is visible to all members and survives a restart.
 here = fileparts(mfilename('fullpath'));
 d = fullfile(here, '..', 'results', '_matlab_lock');
 end
@@ -98,7 +95,7 @@ end
 end
 
 function p = local_pid()
-% feature('getpid') is undocumented; matlab.processid is the supported form.
+% matlab.processid is the supported form; feature('getpid') is the undocumented fallback.
 try
     p = matlab.processid('current');
 catch

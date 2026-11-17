@@ -1,14 +1,13 @@
 function sim_new_model(mdl, file)
-% SIM_NEW_MODEL Start an empty model with the contract solver settings.
+% SIM_NEW_MODEL Start an empty model with the contract solver settings
 %
-% Any loaded copy is discarded, the file on disk is removed, and the model is
-% created and loaded empty. That is what makes the builders repeatable: a block
-% is never added on top of a previous run's block of the same name, which is the
-% failure the "A new block named ... cannot be added" message reports.
+%   mdl    model name
+%   file   path the model will be saved to; the folder is created when missing
 %
-% architecture.md section 6: fixed step ode4 at P.sim.Ts_ctrl by default, with
-% the variable-step solver reserved for the step-size independence cross-check.
-% The sample time and stop time are workspace expressions, not numbers.
+% A loaded copy is discarded and the file on disk deleted first, so a build never
+% adds a block on top of a previous run's block of the same name
+%
+% Fixed step ode4 at the workspace expression sim_ts_ctrl, stop time sim_t_end
 
 if bdIsLoaded(mdl)
    close_system(mdl, 0);
@@ -16,8 +15,7 @@ end
 if exist(file, 'file')
    delete(file);
 end
-% save_system does not create directories, and a missing model/ folder would
-% fail at the very end of the first build.
+% save_system does not create directories, so make the parent folder now
 parent = fileparts(file);
 if ~isempty(parent) && ~exist(parent, 'dir')
    mkdir(parent);

@@ -1,33 +1,24 @@
 function C = sim_ref_calibrate(P, opts)
-% SIM_REF_CALIBRATE Measure what the Aerospace Blockset reference blocks compute.
+% SIM_REF_CALIBRATE Measure what the Aerospace Blockset reference blocks compute
 %
-%   C = sim_ref_calibrate(P)
-%   C = sim_ref_calibrate(P, struct('t_end', 2.0, 'quiet', false))
-%
-% Nothing here is taken from a block name, a port number or the documentation
-% alone. Each claim is a number produced by running the block:
+%   P      parameter struct
+%   opts   optional: t_end in s (default 2.0), quiet true suppresses the summary
+%   C      measured quantities and per-check verdicts, also written to
+%          results/sim_v12_calib.mat, with the text report in
+%          results/sim_v12_calib.txt
 %
 %   port_map    which output port carries which physical quantity, from a known
 %               initial state with zero force and moment
-%   equations   the 6DOF block against an independent RK4 integration of the
-%               documented equations of motion, over a nontrivial force and
-%               moment history, so a wrong sign, frame, unit or rotation
-%               sequence cannot pass
+%   equations   the 6DOF block against an independent RK4 of the documented
+%               equations of motion over a nontrivial force and moment history
 %   isa         the Atmosphere (ISA) block against the standard atmosphere, and
-%               in particular rho(0) against P.env.rho_sl, which is what makes
-%               the constant density criterion run an apples to apples test
+%               rho(0) against P.env.rho_sl
 %   force_path  the reference force and moment block against plant/eom_6dof at
-%               the same state, which is what makes the two models differ only
-%               in the integrator and the kinematics
+%               the same state
 %   const_cmd   both models on one constant elevator and throttle command,
 %               against an independent RK4 oracle
 %
-% The three probe models exist in memory only and are never saved. Every base
-% workspace variable a probe needs travels in one struct that is pushed
-% immediately before each sim, because the base workspace is shared with other
-% members and can be cleared underneath a running job.
-%
-% Writes results/sim_v12_calib.mat and results/sim_v12_calib.txt.
+% Every probe model exists in memory only and is never saved
 
 if nargin < 2
    opts = struct();
@@ -43,8 +34,7 @@ x_trim = tr.x_star(:);
 u_trim = tr.u_star(:);
 h = P.sim.Ts_ctrl;
 
-% Base workspace variables every probe and both models read. Nothing is written
-% with assignin outside sim_push_vars and sim_run_plant_cmd.
+% base workspace variables every probe and both models read, pushed as one struct
 V = struct();
 V.P = P;
 V.sim_ts_ctrl = h;
@@ -68,8 +58,7 @@ C.isa = local_isa(P, V);
 C.force_path = local_force_path(P, V, x_trim, u_trim);
 C.const_cmd = local_const_cmd(P, x_trim, u_trim, opts.t_end);
 
-% The probe models exist in memory only; nothing is saved and nothing of the
-% shared session is left loaded.
+% the probe models exist in memory only, so they are closed here
 for nm = {'v12_cal_eom', 'v12_cal_eq', 'v12_cal_isa', 'v12_cal_aero'}
    if bdIsLoaded(nm{1})
       close_system(nm{1}, 0);
@@ -93,11 +82,11 @@ if ~quiet
 end
 end
 
-%% ---------------- 1. which port is which state ----------------
+%% 1. Which port is which state
 function R = local_port_map(P, V)
-% Known initial state, zero applied force and moment, two solver steps. The four
-% initial condition parameters carry distinct values in every component, so a
-% permuted or transposed port cannot be mistaken for a correct one.
+% known initial state, zero force and moment, two solver steps; the four initial
+% condition parameters carry distinct values in every component, so a permuted or
+% transposed port cannot be mistaken for a correct one
 x0_pos = [137; -42; -151];
 x0_vb = [24; 1.5; -0.75];
 x0_eul = [0.11; 0.19; -0.27];
@@ -114,8 +103,8 @@ V.cal_t_end = 2 * P.sim.Ts_ctrl;
 mdl = local_build_eom_probe('v12_cal_eom', P.sim.Ts_ctrl, V.cal_t_end);
 y = local_run(mdl, V);
 
-% Port order as returned: 1 Ve, 2 Xe, 3 Euler, 4 DCM (3x3), 5 Vb, 6 pqr,
-% 7 pqrdot. Vector ports come back as nT x 3, the DCM as 3 x 3 x nT.
+% port order as returned: 1 Ve, 2 Xe, 3 Euler, 4 DCM (3x3), 5 Vb, 6 pqr,
+% 7 pqrdot; vector ports come back as nT x 3, the DCM as 3 x 3 x nT
 R = struct();
 R.x0 = [x0_vb; x0_om; x0_eul; x0_pos];
 R.out1_Ve = y.signals(1).values(1, :)';
@@ -137,17 +126,17 @@ R.diff = struct( ...
    'pqr', max(abs(R.out6_pqr - x0_om)));
 R.tol = 1e-12;
 R.pass = all(structfun(@(v) v < R.tol, R.diff));
-% The discriminating number: with a nonzero attitude the inertial velocity on
-% port 1 is NOT the body velocity. If it were, the mapping would be a guess.
+% with a nonzero attitude the inertial velocity on port 1 is not the body
+% velocity, so this number rules out a guessed mapping
 R.ve_minus_vb = max(abs(R.out1_Ve - x0_vb));
 R.port1_is_not_vb = R.ve_minus_vb > 1.0;
 end
 
-%% ---------------- 2. the block against the documented equations ----------------
+%% 2. The block against the documented equations
 function R = local_equations(P, V, t_end)
-% Constant, nonzero force and moment on all six channels, so every equation and
-% every sign is exercised. The oracle is a hand written RK4 on the equations the
-% block documents, integrated on the same fixed step.
+% constant nonzero force and moment on all six channels, so every equation and
+% every sign is exercised; the oracle is a hand written RK4 of the documented
+% equations on the same fixed step
 F_ext = [13.5; -27.25; 8.125];
 M_ext = [6.5; -14.75; 9.25];
 x0_pos = [0; 0; -150];
@@ -169,7 +158,7 @@ mdl = local_build_eom_probe('v12_cal_eq', h, t_end);
 y = local_run(mdl, V);
 t = y.time;
 
-% Oracle: same initial state, same constant force and moment, classic RK4.
+% Oracle: same initial state, same constant force and moment, classic RK4
 I = [P.mass.Ixx_cg, 0, -P.mass.Ixz_cg; 0, P.mass.Iyy_cg, 0; -P.mass.Ixz_cg, 0, P.mass.Izz_cg];
 m = P.mass.m;
 n = numel(t);
@@ -179,16 +168,12 @@ for k = 1:n - 1
    Xo(k + 1, :) = local_rk4(Xo(k, :)', h, @(xx) local_eom_ref(xx, F_ext, M_ext, m, I))';
 end
 
-% The block output order is not our state order: [Vb pqr eul Xe].
+% the block output order is not our state order
 Xb = [y.signals(5).values, y.signals(6).values, y.signals(3).values, y.signals(2).values];
 
-% The block wraps its Euler angle output into (-pi, pi]: measured here, the roll
-% output steps by exactly -2*pi each time the unwrapped angle passes pi, at
-% t = 0.5175, 1.2175 and 1.6375 s on this force and moment history. The oracle
-% accumulates instead. Comparing raw angles would therefore report a difference
-% of three whole turns for an identical attitude, so the angles are compared
-% modulo one turn, the turn count is reported, and the attitude itself is checked
-% separately through the block's DCMbe output, which is representation free.
+% the block wraps its Euler angle output into (-pi, pi] while the oracle
+% accumulates, so the angles are compared modulo one turn and the attitude itself
+% is checked separately through the block's DCMbe output
 d_raw = Xb - Xo;
 turns = zeros(size(d_raw));
 for j = 7:9
@@ -226,8 +211,8 @@ R.pass = R.max_rel < R.tol && R.dcm_max_diff < R.tol;
 end
 
 function dx = local_eom_ref(x, F, M, m, I)
-% The equations as the 6DOF (Euler Angles) documentation states them: forces and
-% moments act at the CG in body axes, the flat Earth frame is inertial.
+% the documented 6DOF (Euler Angles) equations: force and moment act at the CG in
+% body axes, the flat Earth frame is inertial
 phi = x(7);
 theta = x(8);
 Vb = x(1:3);
@@ -249,14 +234,10 @@ k4 = f(x0 + h * k3);
 x1 = x0 + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 end
 
-%% ---------------- 3. atmosphere ----------------
+%% 3. Atmosphere
 function R = local_isa(P, V)
-% A fine altitude sweep, not three points. The three point version said the two
-% implementations agreed at 0, 150 and 1000 m, which is necessary but not
-% sufficient: the isa_state cross-check runs both densities at every altitude the
-% trajectory visits, and a disagreement between the sample points would show up
-% there as a residual that no three point check can explain. The sweep is what
-% turns "equal where we looked" into "equal on the whole band".
+% a fine altitude sweep, so the two implementations are compared across the whole
+% band rather than at three points
 h = unique([0; 150; 1000; (-50:2.5:400)']);
 V.cal_h = h;
 V.cal_h_step = P.sim.Ts_ctrl;
@@ -268,11 +249,9 @@ a = y.signals(2).values(1, :)';
 pr = y.signals(3).values(1, :)';
 rho = y.signals(4).values(1, :)';
 
-% Standard atmosphere, troposphere only at these altitudes. The block tabulates
-% sea level density directly rather than recomputing it from p/(R*T), and it uses
-% R = 287.0531, so the reference here uses the same constant, taken from P.env.
-% With 287.05 the two disagree by 1.9e-7, which is a density-law difference
-% rather than round-off and would hide behind a loose tolerance.
+% standard atmosphere, troposphere only at these altitudes; the block tabulates
+% sea level density rather than recomputing it from p/(R*T), and uses
+% R = 287.0531, so this reference uses the gas constant from P.env
 T0 = 288.15;
 P0 = 101325;
 rho0 = 1.225;
@@ -284,19 +263,15 @@ else
    Rgas = 287.0531;
 end
 expo = g / (L * Rgas);
-% Sea level and below is sea level. The Aerospace block saturates its altitude
-% input at 0 m, and plant/atmo_isa.m was changed to do the same, because running
-% the troposphere lapse rate backwards below the datum claimed more than sea
-% level density, which is an artefact rather than a model. This reference follows
-% the same convention so that all three agree on the whole declared range instead
-% of only above the datum.
+% sea level and below is sea level: the block saturates its altitude input at 0 m
+% and our own atmosphere model follows the same convention
 h_eff = max(h, 0);
 T_ref = T0 - L * h_eff;
 rho_ref = rho0 * (T_ref / T0).^(expo - 1);
 p_ref = P0 * (T_ref / T0).^expo;
 a_ref = sqrt(1.4 * Rgas * T_ref);
 
-% And against our own atmosphere model, which is what the plant actually calls.
+% and against our own atmosphere model, which is what the plant actually calls
 if sim_have('atmo_isa')
    [rho_own, T_own, p_own, a_own] = atmo_isa(P, h);
 else
@@ -322,12 +297,8 @@ R.rel_p = max(abs(pr - p_ref) ./ p_ref);
 R.rel_a = max(abs(a - a_ref) ./ a_ref);
 R.arg_rel_rho = h(local_argmax(abs(rho - rho_ref) ./ rho_ref));
 
-% Address by address comparison against plant/atmo_isa.m. Reported as a count of
-% identical altitudes plus the worst ABSOLUTE and RELATIVE difference and the
-% altitude each occurs at. An earlier version printed |difference| / eps(value)
-% and called it "last bits", which was wrong in a way that hid the finding: a
-% difference of many thousands of bits is not a rounding difference, and the
-% label invited the reader to treat it as one.
+% address by address comparison against plant/atmo_isa.m: how many altitudes are
+% identical, plus the worst absolute and relative difference and where it occurs
 R.own_n_identical_rho = sum(rho == rho_own);
 R.own_n_identical_T = sum(T == T_own);
 R.own_n_identical_p = sum(pr == p_own);
@@ -342,10 +313,8 @@ R.own_max_rel_p = max(abs(pr - p_own) ./ pr);
 R.own_max_rel_a = max(abs(a - a_own) ./ a);
 R.own_arg_max_abs_rho = h(local_argmax(abs(rho - rho_own)));
 
-% Split by the sign of the altitude, because the plant asks for -pd and the two
-% halves are worth seeing apart even now that they agree: the negative half is
-% what the agreed saturation convention governs, and a regression there would
-% otherwise be averaged away against 162 agreeing points.
+% split by the sign of the altitude, because the two halves are governed by
+% different behaviour and a regression in one would be averaged away in the total
 pos = h >= 0;
 neg = h < 0;
 R.pos_n = sum(pos);
@@ -363,12 +332,7 @@ R.rho_sl_param = P.env.rho_sl;
 R.rho_at_zero = rho(1);
 R.rho0_is_rho_sl = (rho(1) == P.env.rho_sl);
 R.tol = 1e-3;
-% The gate covers the WHOLE sweep, both bands, for both comparisons. It could be
-% restricted to h >= 0 while the two implementations disagreed below the datum,
-% but they no longer do: plant/atmo_isa.m and the Aerospace block both saturate
-% the altitude at 0 m, so the whole declared range is one band and there is no
-% known boundary behaviour left to carve out. A criterion with a carve-out is a
-% criterion with a place for the next difference to hide.
+% the gate covers the whole sweep, both bands, for both comparisons
 R.sweep_tol = 1e-9;
 R.sweep_pass = R.own_max_rel_rho < R.sweep_tol && R.own_max_rel_T < R.sweep_tol ...
    && R.own_max_rel_p < R.sweep_tol && R.own_max_rel_a < R.sweep_tol;
@@ -381,13 +345,12 @@ function i = local_argmax(v)
 [~, i] = max(v);
 end
 
-%% ---------------- 4. our forces through the reference block ----------------
+%% 4. Our forces through the reference block
 function R = local_force_path(P, V, x_trim, u_trim)
-% The reference block has to reproduce plant/eom_6dof exactly, otherwise the
-% cross-check would be measuring the aerodynamics rather than the kinematics.
-% Three density settings: sea level (the criterion run), the ISA value at the
-% trim altitude (the physical run), and a deliberately wrong one, which shows
-% that the density port is live rather than ignored.
+% the reference block has to reproduce plant/eom_6dof exactly, or the cross-check
+% would be measuring the aerodynamics rather than the kinematics; three densities,
+% sea level, ISA at the trim altitude, and a deliberately wrong one that shows the
+% density port is live
 x = x_trim;
 x(4:6) = [0.05; -0.03; 0.02];
 u = u_trim;
@@ -396,8 +359,8 @@ u(2) = u(2) - deg2rad(1.5);
 u(3) = u(3) + deg2rad(1.0);
 wind = [1.5; -0.5; 0.2];
 
-% The reference block shifts by wind itself, so the comparison state is the
-% air-relative one. eom_6dof takes no wind argument and must be given it.
+% the reference block shifts by wind itself and eom_6dof takes no wind argument,
+% so the comparison state is the air-relative one
 R_b = sim_dcm(x(7:9));
 x_air = x;
 x_air(1:3) = x(1:3) - R_b * wind;
@@ -453,12 +416,11 @@ R.pass = res(1).dF < R.tol && res(1).dM < R.tol ...
    && res(3).dF > 1e-3;
 end
 
-%% ---------------- 5. one constant command on both models ----------------
+%% 5. One constant command on both models
 function R = local_const_cmd(P, x_trim, u_trim, t_end)
-% Fixed elevator and throttle, no aileron or rudder, from the trim state. The
-% longitudinal response then moves u, w, q, theta, pn and pd, and the oracle is
-% an independent RK4 on plant/sim_plant_rhs, which is the same right-hand side
-% the hand written model runs.
+% fixed elevator and throttle, no aileron or rudder, from the trim state; the
+% oracle is an independent RK4 on sim_plant_rhs, the same right-hand side the hand
+% written model runs
 u = u_trim;
 u(2) = u(2) - deg2rad(1.0);
 u(4) = min(u(4) + 0.05, 1.0);
@@ -480,8 +442,8 @@ vars = local_merge(vars, sim_push_ref_vars(P, x_trim, 0));
 X_our = T_our.by_name.x_state;
 X_ref = T_ref.by_name.x_state;
 
-% Oracle: RK4 on the hand written right-hand side, zero wind. The command is
-% constant, so the input handling inside the step cannot differ between models.
+% oracle: RK4 on the hand written right-hand side, zero wind and a constant
+% command, so the input handling inside the step cannot differ between models
 Xo = zeros(n, 12);
 Xo(1, :) = x_trim';
 for k = 1:n - 1
@@ -503,14 +465,11 @@ R.t_end = t_end;
 R.n_samples = n;
 R.meta_our = m_our;
 R.meta_ref = m_ref;
-% The oracle advances the command one sample per step, so it is a 1e-3 relative
-% witness, not a bit level one; the two models are compared to each other at
-% round-off level and that is the number that matters here.
+% the oracle advances the command one sample per step, so it is a 1e-3 witness;
+% the two models are compared to each other at round-off level
 %
-% The denominator is sim_state_scale, not the trajectory excursion. This command
-% is symmetric, so v, p, r, phi, psi and pe stay exactly zero, and a peak to peak
-% denominator of zero turns the relative difference into NaN and fails a run
-% whose absolute differences are 1e-17.
+% the denominator is sim_state_scale: this command is symmetric, so half the
+% states stay at zero and a peak to peak denominator would be zero
 R.tol_oracle = 1e-2;
 R.tol_models = 1e-9;
 denom = sim_state_scale(P);
@@ -520,7 +479,7 @@ R.pass = all(R.d_our_oracle ./ denom < R.tol_oracle) ...
    && all(R.d_ref_our ./ denom < R.tol_models);
 end
 
-%% ---------------- probe models ----------------
+%% Probe models
 function mdl = local_build_eom_probe(mdl, h, t_end)
 mdl = local_new_probe(mdl, h, t_end);
 add_block('simulink/Sources/Constant', [mdl '/F'], 'Value', 'cal_F', ...
@@ -598,7 +557,7 @@ for k = 1:numel(f)
 end
 end
 
-%% ---------------- report ----------------
+%% Report
 function file = local_report(root, C)
 file = fullfile(root, 'results', 'sim_v12_calib.txt');
 fid = fopen(file, 'w');

@@ -1,0 +1,5 @@
+params mtime before: 2026-10-10 09:31:18
+live yaw ratio |Cn_dr|/Cn_beta = 0.396618  (Cn_beta 0.129491, Cn_dr -0.051358)
+params mtime after:  2026-10-10 09:31:18
+revision stable during run: 1
+RUN_BOUND_DONE

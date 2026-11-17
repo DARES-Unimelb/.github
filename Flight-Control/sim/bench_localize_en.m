@@ -1,21 +1,18 @@
 function info = bench_localize_en(varargin)
-% BENCH_LOCALIZE_EN 台架模型的英文副本：把画布上所有中文换成英文，位置与连线一根不动。
+% BENCH_LOCALIZE_EN English copy of the bench model: every Chinese string on the canvas
+% becomes English, with the positions and the wiring untouched
 %
 %   info = bench_localize_en()
 %   info = bench_localize_en('src', 'uacs_flight_bench', 'dst', 'uacs_flight_bench_en')
 %
-% 产出 model/uacs_flight_bench_en.slx。
+% Writes model/uacs_flight_bench_en.slx. Only three kinds of string are replaced: block
+% names, line names and annotation text. Positions, sizes, block parameters and
+% connections are left alone
 %
-% 为什么做成改名而不是重新生成：重新生成会把用户摆好的位置与连线全部覆盖。这个函数只动
-% 三类字符串，块名、线名、注释文本，块的位置、尺寸、参数、连线关系一律不碰。
+% Blocks are renamed deepest first, so renaming a parent cannot invalidate the full
+% paths of its children
 %
-% 改名的次序是按路径深度从深到浅。先改子块再改父系统，否则改父系统名字之后子块的完整
-% 路径就失效了。
-%
-% 三个回调也跟着改：PostLoadFcn 指向 uacs_bench_seed_en，那个函数用的是英文路径表；其余
-% 两个只带模型名，换名字即可。
-%
-% 块参数里没有中文，这一点是查过的，所以不需要翻参数。
+% The bindings are fixed in a second pass, after the model has been closed and reopened
 
 ip = inputParser;
 ip.addParameter('src', 'uacs_flight_bench', @(x) ischar(x) || isstring(x));
@@ -27,7 +24,7 @@ dst = char(ip.Results.dst);
 root = fileparts(fileparts(mfilename('fullpath')));
 src_file = fullfile(root, 'model', [src '.slx']);
 dst_file = fullfile(root, 'model', [dst '.slx']);
-% exist 对 .slx 返回 4，不是 2。这里以及下面的判断都按「非零即存在」写。
+% exist returns 4 for a .slx file, not 2, so every check here is greater than zero
 assert(exist(src_file, 'file') > 0, 'bench_localize_en:NoSrc', '找不到 %s', src_file);
 
 if bdIsLoaded(dst)
@@ -43,7 +40,7 @@ blk_map = local_block_map();
 line_map = local_line_map();
 ann_map = local_ann_map();
 
-% ---------------- 块名 ----------------
+%% Block names
 blks = find_system(dst, 'Type', 'Block');
 depth = cellfun(@(b) sum(b == '/'), blks);
 [~, ord] = sort(depth, 'descend');
@@ -57,7 +54,7 @@ for k = 1:numel(ord)
    end
 end
 
-% ---------------- 线名 ----------------
+%% Line names
 n_line = 0;
 allb = find_system(dst, 'FindAll', 'on', 'Type', 'block');
 done_line = containers.Map('KeyType', 'char', 'ValueType', 'logical');
@@ -87,7 +84,7 @@ for k = 1:numel(allb)
    end
 end
 
-% ---------------- 注释 ----------------
+%% Annotations
 ann = find_system(dst, 'FindAll', 'on', 'Type', 'annotation');
 n_ann = 0;
 for k = 1:numel(ann)
@@ -99,12 +96,8 @@ for k = 1:numel(ann)
    end
 end
 
-% ---------------- 回调 ----------------
-% 用相对定位，不写绝对路径。原来的 PreLoadFcn 是 run('C:\...\uacs_go.m')，把整个 MATLAB
-% 目录搬到别处、或者换一台机器，那条路就断了，模型打不开也跑不起来。这里改成从 .slx 自己
-% 的位置往上找两级拿到工程根，与模型放在 根/model/ 下面这个布局绑定。InitFcn 同样先补
-% 路径再跑 uacs_ensure，这样即使 PreLoadFcn 没跑成，按一次 Run 也能自己站起来。
-% PreLoadFcn 与 InitFcn 里 bdroot 与 get_param(bdroot,'FileName') 都是可用的，实测过。
+%% Callbacks
+% built from the .slx location rather than an absolute path, so the model survives a move
 boot = ['p=fileparts(fileparts(get_param(bdroot,''FileName'')));' ...
    'addpath(p,fullfile(p,''params''),fullfile(p,''plant''),fullfile(p,''control''),' ...
    'fullfile(p,''sim''),fullfile(p,''run''),fullfile(p,''verify''),''-begin'');'];
@@ -113,21 +106,20 @@ set_param(dst, 'InitFcn', [boot 'uacs_ensure']);
 set_param(dst, 'PostLoadFcn', sprintf('uacs_bench_seed_en(''%s'')', dst));
 set_param(dst, 'StopFcn', sprintf('uacs_bench_record(''%s'')', dst));
 
-% ---------------- 线名自带的端口属性 ----------------
+%% Port signal names
 n_sig = local_fix_signalnames(dst, line_map);
 
-% ---------------- 开关档位标签 ----------------
+%% Switch position labels
 n_state = local_fix_states(dst, local_state_map());
 save_system(dst);
 
-% ---------------- 绑定里缓存的块路径 ----------------
-% 这一步必须放到关闭再重新打开之后。改名当步把 ParamSourceInfo 的路径改成新名，保存时
-% Simulink 会按旧的 SID 记录把中文路径写回去，改了个空。重新打开再改才留得住，所以这里
-% 走第二遍，并且逐块回读校验。
+%% Block paths cached in bindings
+% this pass must follow a close and reopen: a path changed in place is written back from
+% the old record on save, so the change only sticks on the second load
 close_system(dst, 0);
 load_system(dst_file);
 [n_bind, n_bad] = local_fix_bindings(dst, blk_map);
-% 端口上还留着一份编译期算出来的传播信号名，它是按旧线名缓存的，编译一次再存才刷新。
+% a port also caches a compiled propagation signal name, which refreshes only on update
 try
    set_param(dst, 'SimulationCommand', 'update');
 catch me
@@ -145,10 +137,10 @@ if n_bad > 0
 end
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function n = local_fix_signalnames(mdl, line_map)
-% 有些端口上存着一份 SignalName，值与它那根线的名字相同，是当初连好线时留下的。线名换
-% 了它不会跟着换，得单独改。Outport 块上有这个属性，其余块没有，取不到就跳过。
+% some ports cache a SignalName equal to their line name; only Outport blocks carry the
+% parameter, the rest are skipped
 n = 0;
 blks = find_system(mdl, 'FindAll', 'on', 'Type', 'Block');
 for k = 1:numel(blks)
@@ -170,10 +162,9 @@ for k = 1:numel(blks)
 end
 end
 
-% ------------------------------------------------------------------------
 function n = local_fix_states(mdl, state_map)
-% 开关的档位标签存在块的 States 结构里，Value 是档位号，Label 是画在开关上的字。它在
-% Values_NNN.mxarray 里，是画布上看得见的字，改块名碰不到。
+% switch positions live in the block's States struct, where Label is the text drawn on
+% the switch
 n = 0;
 blks = find_system(mdl, 'SearchDepth', 1, 'Type', 'Block');
 for k = 1:numel(blks)
@@ -201,15 +192,12 @@ for k = 1:numel(blks)
 end
 end
 
-% ------------------------------------------------------------------------
 function [n, n_bad] = local_fix_bindings(mdl, blk_map)
-% 每一块仪表与每一个控件的 Binding 里缓存着被绑块的完整路径，路径按改名之前的中文名存，
-% 形如 模型/驾驶员/k_pitch。路径不换，仪表与控件显示的名字就还是中文，双击打开一次属性
-% 对话框才刷新。控件的绑定类型是 ParamSourceInfo，仪表是 SignalSpecification，后者在
-% get_param 里可能是对象也可能包在元胞里，两种都认。
-%
-% 仪表侧重建一个新对象而不是改旧对象：旧对象里带着一个按旧线名解析出来的 SignalName，
-% 只改路径它不掉。
+% every gauge and control caches the full path of the block it is bound to, so those
+% paths still carry the Chinese names. Controls hold a ParamSourceInfo and gauges a
+% SignalSpecification, which get_param may return as an object or wrapped in a cell
+% a gauge is rebuilt rather than edited: its old object carries a SignalName resolved
+% from the old line name, which a path-only change does not remove
 n = 0;
 n_bad = 0;
 blks = find_system(mdl, 'SearchDepth', 1, 'Type', 'Block');
@@ -238,8 +226,8 @@ for k = 1:numel(blks)
    end
    np = local_en_path(p, blk_map);
    is_spec = isa(items{1}, 'Simulink.HMI.SignalSpecification');
-   % 仪表侧无条件重建：它的对象里带着一个按旧线名解析出来的 SignalName，路径已经是英文
-   % 也照样带着，只有重建才掉。控件侧只在路径确实不同时改，改了没差别的不动它。
+   % the gauge side is rebuilt unconditionally for the reason above; the control side is
+   % changed only when the path really differs
    if strcmp(np, p) && ~is_spec
       continue
    end
@@ -287,9 +275,9 @@ for k = 1:numel(blks)
 end
 end
 
-% ------------------------------------------------------------------------
 function p2 = local_en_path(p, blk_map)
-% 把绑定里缓存的块路径逐段换成英文名。模型名那一段已经是英文，不动。
+% replace each segment of a cached binding path with its English name; the model name
+% segment is already English
 parts = strsplit(p, '/');
 for i = 1:numel(parts)
    if isKey(blk_map, parts{i})
@@ -299,9 +287,8 @@ end
 p2 = strjoin(parts, '/');
 end
 
-% ------------------------------------------------------------------------
 function m = local_state_map()
-% 开关档位标签。画布上看得见的字，就这三块开关。PID 与 LQR 本来就是英文，不入表。
+% switch position labels; PID and LQR are already English and are not in the table
 pairs = {
    '姿态',    'Attitude'
    '高度',    'Altitude'
@@ -311,10 +298,9 @@ pairs = {
 m = containers.Map(pairs(:, 1), pairs(:, 2));
 end
 
-% ------------------------------------------------------------------------
 function m = local_block_map()
-% 画布上 39 个含中文的块名。叶子名在本模型里互不重复，所以按叶子名映射就够。
-% 子系统名带空格：画布上可读优先，路径里的空格在 Simulink 里合法。
+% the 39 block names that contain Chinese; leaf names are unique in this model, so a
+% leaf name map is enough
 pairs = {
    '驾驶员',            'Pilot'
    '制导与模式',         'Guidance and Mode'
@@ -380,7 +366,8 @@ m = containers.Map(pairs(:, 1), pairs(:, 2));
 end
 
 function m = local_ann_map()
-% 按注释的第一行匹配，不按序号：注释在模型里的存放次序不保证。
+% annotations are matched on their first line, not by index: their storage order is not
+% guaranteed
 games = [ ...
    'Gamepad, optional and off by default' newline newline ...
    'The Pilot subsystem contains a Pilot Joystick block. Its JoystickID is None by default, ' ...

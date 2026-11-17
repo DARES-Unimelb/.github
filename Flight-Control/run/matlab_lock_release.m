@@ -1,9 +1,8 @@
 function matlab_lock_release(lock_id)
 % MATLAB_LOCK_RELEASE Release the shared-session lock taken by matlab_lock_acquire.
 %
-% Safe to call twice and safe to call with a stale or empty handle: the lock is
-% only removed when the owner file still names this owner, so a member can never
-% release somebody else's lock by accident.
+% Safe to call twice, and with a stale or empty handle: the lock is only removed when the
+% owner file still names this owner, so a member cannot release somebody else's lock.
 
 if nargin < 1 || isempty(lock_id) || ~isstruct(lock_id) || ~isfield(lock_id, 'dir')
     return;

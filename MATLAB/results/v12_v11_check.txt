@@ -1,0 +1,31 @@
+=== checkcode ===
+  sim\sim_plant_ref_aero.m           clean (project style warnings filtered)
+  sim\sim_push_ref_vars.m            clean (project style warnings filtered)
+  sim\sim_push_vars.m                clean (project style warnings filtered)
+  sim\sim_guarded_sim.m              clean (project style warnings filtered)
+  sim\sim_build_plant_ref.m          clean (project style warnings filtered)
+  sim\sim_run_plant_cmd.m            clean (project style warnings filtered)
+  sim\sim_ref_calibrate.m            clean (project style warnings filtered)
+  sim\sim_v12_measure.m              clean (project style warnings filtered)
+  sim\sim_v12_trim.m                 clean (project style warnings filtered)
+  verify\v_sim_v12_crosscheck.m      clean (project style warnings filtered)
+  verify\v_sim_v11_models.m          clean (project style warnings filtered)
+  verify\v_sim_all.m                 clean (project style warnings filtered)
+  run\uacs_job_sim_v12.m             clean (project style warnings filtered)
+  run\build_uacs_models.m            clean (project style warnings filtered)
+
+=== census before the rebuild ===
+  fields: uacs_plant, uacs_manual_pid, uacs_lqr, stamp, blk_kind, uacs_plant_ref
+
+=== rebuild the reference model ===
+  built uacs_plant_ref, top 13 total 13 lines 24
+
+=== census after the rebuild ===
+  fields: uacs_plant, uacs_manual_pid, uacs_lqr, stamp, blk_kind, uacs_plant_ref
+
+=== V11 ===
+  V11 PASS, 4 models
+  uacs_plant         top   4/  4 total   4/  4 names 1 -> 1
+  uacs_manual_pid    top  46/ 46 total  92/ 92 names 1 -> 1
+  uacs_lqr           top  56/ 56 total  60/ 60 names 1 -> 1
+  uacs_plant_ref     top  13/ 13 total  13/ 13 names 1 -> 1

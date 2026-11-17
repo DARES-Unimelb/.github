@@ -1,18 +1,10 @@
 function bench_stick_plots()
-% BENCH_STICK_PLOTS 满杆矩阵的图。读 results/bench_stick_traj.mat，写 results/figs/*.png。
+% BENCH_STICK_PLOTS Plots for the full stick matrix. Reads results/bench_stick_traj.mat
+% and writes results/figs/stick_*.png.
 %
-% 图上的标签一律用英文：MATLAB 默认字体渲染中文有缺字风险，图要给人看，不能出现方框。
+%   bench_stick_plots()
 %
-% 五张图
-%   stick_single_roll.png    单轴高低满杆，PID 与 LQR 两列，指令跟踪、速率、舵面、空速高度
-%   stick_single_pitch.png   同上，俯仰轴
-%   stick_single_yaw.png     同上，偏航轴
-%   stick_cross.png          单轴满杆时另外两个轴的峰值响应，看交叉耦合
-%   stick_combo.png          两轴与三轴组合代表工况的舵面时间历程
-%   stick_chatter.png        舵面换向次数与主频，量化颤振
-%
-% 本文件与 verify/bench_stick_figs.m 的区别：那个版本取姿态通道的下标算错了，pitch 那一列
-% 会越界。函数在会话里被调用过就按名字缓存，改内容不生效，所以另起一个名字。
+% Plot labels must stay English: MATLAB's default font renders Chinese as missing glyphs
 
 root = fileparts(fileparts(mfilename('fullpath')));
 S = load(fullfile(root, 'results', 'bench_stick_traj.mat'));
@@ -135,7 +127,7 @@ close(f);
 fprintf('图写到 %s\n', out);
 end
 
-% ------------------------------------------------------------------------
+% Local helpers
 function k = local_get(traj, id, ctrl)
 k = 0;
 for i = 1:numel(traj)

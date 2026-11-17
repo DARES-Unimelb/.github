@@ -1,13 +1,11 @@
 function dx = sim_plant_rhs_ph(t, x, u, P)
-% SIM_PLANT_RHS_PH Placeholder 12-state plant, used only when plant/ is absent.
+% SIM_PLANT_RHS_PH Placeholder 12-state plant, used only when plant/ is absent
 %
-% Independent implementation of the same physics as plant/eom_6dof.m, built from
-% P only, so the Simulink chain can be built, saved and simulated before the
-% plant deliverable lands. Every result records plant_source, and the build
-% report prints it, so a placeholder run can never be mistaken for a real one.
+%   t, x, u, P   as sim_plant_rhs, with the wind shift already applied
+%   dx           12x1 state derivative
 %
-% Differences from the real plant, all deliberate: no alpha-dot (downwash lag)
-% term, no CL_q/Cm_q rate terms beyond q, no gust shaping.
+% Same physics as plant/eom_6dof.m except for the missing alpha-dot (downwash
+% lag) term, the CL_q and Cm_q rate terms beyond q, and the gust shaping
 
 [V, alpha, beta, qbar] = sim_meas_wrap(P, x);
 aero = P.aero;
@@ -37,8 +35,7 @@ F_aero = qbar * S * [-CD * cos(alpha) + CL * sin(alpha); ...
                     -CD * sin(alpha) - CL * cos(alpha)];
 M_aero = qbar * S * [b * Cl; cbar * Cm; b * Cn];
 
-% Propulsion through the authoritative map: two throttles plus the additive
-% symmetric thrust command, exactly as plant/eom_6dof.m does it.
+% two throttles plus the additive symmetric thrust command
 T_l = sim_thrust(P, u(4), V) + 0.5 * u(6);
 T_r = sim_thrust(P, u(5), V) + 0.5 * u(6);
 T_l = max(T_l, 0);

@@ -3,36 +3,20 @@ function out = v_sim_v13_consistency(varargin)
 %
 %   out = v_sim_v13_consistency()
 %
-% The controller is delivered twice. control/pid_cascade_sim.m is the linear
-% simulation every V6 number in results/control_pid_report.txt comes from;
-% model/uacs_manual_pid.slx is what actually flies. Two implementations of one law
-% drift apart silently, and before rev 11 they had, in three places:
-%
-%   theta integral-state clamp   0.174532925 in the model, 0.069813170 in the simulation
-%   V     integral-state clamp   5.000000000 in the model, 6.250000000 in the simulation
-%   q_c   command clamp          1.167830602 in the model, 80.000000000 in the simulation
-%
-% The first two are one quantity read two ways, in opposite directions. The third is
-% the serious one: the simulation clamped the attitude loop's rate command at ten
-% times the loop bandwidth, which never acts, so V6 validated a controller WITHOUT
-% the limit that keeps the roll and yaw loops out of inversion, while the model flew
-% with it. A 13.5 deg bank command asks the roll loop for 1.40 rad/s against a
-% 0.478 rad/s clamp.
-%
-% Four checks, in increasing strength:
+% The controller is delivered twice: control/pid_cascade_sim.m is the linear simulation
+% the V6 numbers come from, model/uacs_manual_pid.slx is what actually flies. Four
+% checks, in increasing strength
 %   1. the model's block parameters NAME the base variables, so nothing is inlined
 %   2. the pushed values EQUAL the design fields
 %   3. the limits the linear simulation APPLIES equal the same fields
-%   4. one bank command through both, from the saved roll_step evidence, peaks at
-%      the same commanded roll rate and settles at the same bank
+%   4. one bank command through both, from the saved roll_step evidence, peaks at the
+%      same commanded roll rate and settles at the same bank
 %
-% Check 2 alone cannot catch the q_c divergence, because both sides reading a field
-% satisfies it. Check 4 catches it: a clamp that acts on one side and not the other
-% cannot command the same peak rate.
+% Check 2 alone cannot catch a clamp that acts on one side but not the other; check 4
+% can, because a clamp on one side only cannot command the same peak rate.
 %
-% This case reads saved evidence and the .slx from disk. It runs the linear
-% simulation, which is seconds, but never the model, so sim_verify stays an
-% independent check of what the scenario jobs produced.
+% Reads the saved evidence and the .slx from disk and runs the linear simulation, which
+% is seconds, but never the model.
 
 ip = inputParser;
 ip.addParameter('tol_rel', 1e-12, @(x) isnumeric(x) && x > 0);
@@ -55,7 +39,7 @@ assert(exist(traj_file, 'file') == 2, 'v_sim_v13:NoData', ...
 [P_init, params_src] = sim_init_params(); %#ok<ASGLU>
 P = evalin('base', 'P');
 D = sim_load_design(P);
-% pid_cascade_sim takes the contract-order linear model, not the raw linearisation.
+% pid_cascade_sim takes the contract-order linear model, not the raw linearisation
 lc = lin_contract(D.lin);
 sim_push_design_vars(P, D);
 if ~bdIsLoaded(mdl)
@@ -66,7 +50,7 @@ loops = {'p', 'q', 'r', 'phi', 'theta', 'V', 'h'};
 surf_of = struct('p', 'aileron', 'q', 'elevator', 'r', 'rudder');
 out = struct('part', {}, 'quantity', {}, 'model', {}, 'design', {}, 'rel', {}, 'pass', {});
 
-% ---------------- 1. the model names the variables, it does not inline numbers ----------------
+% 1. the model names the variables, it does not inline numbers
 for k = 1:numel(loops)
    L = loops{k};
    sub = sprintf('%s/pid_%s', mdl, L);
@@ -86,7 +70,7 @@ out(end + 1) = local_text('names', 'q_c_lim', ...
 out(end + 1) = local_text('names', 'r_c_lim', ...
    get_param([mdl '/r_c_lim'], 'UpperLimit'), 'sim_rate_cmd_lim_r');
 
-% ---------------- 2. the pushed value equals the design field ----------------
+% 2. the pushed value equals the design field
 for k = 1:numel(loops)
    L = loops{k};
    g = D.gains_pid.(L);
@@ -111,7 +95,7 @@ out(end + 1) = local_cmp('pushed', 'rate_cmd_lim_q', ...
 out(end + 1) = local_cmp('pushed', 'rate_cmd_lim_r', ...
    local_base('sim_rate_cmd_lim_r'), P.ctrl.rate_cmd_limit.r_rad_s, opt.tol_rel);
 
-% ---------------- 3. the limits the linear simulation applies ----------------
+% 3. the limits the linear simulation applies
 lin_probe = pid_cascade_sim(P, D.gains_pid, lc, struct('mode', 'attitude', ...
    'theta_step', 0, 'V_step', 0, 'phi_step', deg2rad(20), 't_end_s', 8));
 lm = lin_probe.meta;
@@ -130,7 +114,7 @@ out(end + 1) = local_cmp('applied', 'lin_lim_ih', lm.lim_ih, ...
 out(end + 1) = local_cmp('applied', 'lin_lim_iphi', lm.lim_iphi, ...
    P.ctrl.int_state_limit.phi, opt.tol_rel);
 
-% ---------------- 4. one bank command through both, from saved evidence ----------------
+% 4. one bank command through both, from the saved evidence
 S = load(traj_file);
 traj = S.traj;
 idx = find(strcmp({traj.name}, 'roll_step'), 1);
@@ -142,8 +126,8 @@ phi_cmd_model = mean(tr.cmd(i_tail, 1));
 phi_ss_model = mean(tr.x(i_tail, 7));
 p_cmd_model = max(abs(tr.rate_cmd(:, 1)));
 
-% The linear run is driven by the model's OWN settled bank command, so a difference
-% in the stick-to-bank mapping cannot be mistaken for a controller difference.
+% Drive the linear run with the model's OWN settled bank command, so a difference in the
+% stick-to-bank mapping cannot be mistaken for a controller difference
 lin = pid_cascade_sim(P, D.gains_pid, lc, struct('mode', 'attitude', ...
    'theta_step', 0, 'V_step', 0, 'phi_step', phi_cmd_model, 't_end_s', tr.t(end)));
 nl = numel(lin.t);
@@ -200,7 +184,7 @@ assert(isempty(bad), 'v_sim_v13:Failed', ...
    'model and report disagree on: %s', strjoin({bad.quantity}, ', '));
 end
 
-%% ---------------- local ----------------
+%% Local helpers
 function v = local_param(sub, block, param)
 v = get_param([sub '/' block], param);
 end
@@ -212,8 +196,8 @@ end
 
 function e = local_cmp(part, quantity, model, design, tol)
 % One numeric comparison, with the relative difference reported whatever the outcome.
-% The tolerance is a relative band with an absolute floor, so a quantity that is
-% legitimately zero does not divide by zero.
+% The tolerance is a relative band with an absolute floor of 1e-12, so a quantity that is
+% legitimately zero does not divide by zero
 den = max(abs(design), 1e-12);
 e = struct('part', part, 'quantity', quantity, 'model', model, 'design', design, ...
    'rel', abs(model - design) / den, 'pass', abs(model - design) / den <= tol);

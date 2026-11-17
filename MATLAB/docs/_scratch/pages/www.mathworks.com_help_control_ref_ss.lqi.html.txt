@@ -1,0 +1,281 @@
+URL: https://www.mathworks.com/help/control/ref/ss.lqi.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/control/ref/ss.lqi.html
+
+ 
+
+ lqi - Linear-Quadratic-Integral control - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Control Systems
+
+ Control System Toolbox
+
+ Control System Design and Tuning
+
+ State-Space Control Design and Estimation
+
+ State-Space Control Design
+
+ lqi
+
+On this page
+Syntax
+Description
+Limitations
+Tips
+References
+Version History
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+lqi
+R2026b
+Linear-Quadratic-Integral control
+
+Syntax
+[K,S,e] = lqi(SYS,Q,R,N)
+
+Description
+lqi computes an optimal state-feedback control
+law for the tracking loop shown in the following figure. 
+
+For a plant sys with the state-space equations
+(or their discrete counterpart):
+
+dxdt=Ax+Buy=Cx+Du
+
+the state-feedback
+control is of the form
+
+u=−K[x;xi]
+
+where xi is
+the integrator output. This control law ensures that the output y tracks
+the reference command r. For MIMO systems, the
+number of integrators equals the dimension of the output y.
+
+[K,S,e] = lqi(SYS,Q,R,N) calculates
+the optimal gain matrix K, given a state-space
+model SYS for the plant and weighting matrices Q, R, N.
+The control law u = –Kz =
+–K[x;xi]
+minimizes the following cost functions (for r =
+0)
+
+J(u)=∫0∞{zTQz+uTRu+2zTNu}dt for continuous
+time
+
+J(u)=∑n=0∞{zTQz+uTRu+2zTNu} for discrete time
+
+In discrete time, lqi computes the
+integrator output xi using
+the forward Euler formula
+
+xi[n+1]=xi[n]+Ts(r[n]−y[n])
+
+where Ts is the
+sample time of SYS.
+When you omit the matrix N, N is
+set to 0. lqi also returns the solution S of
+the associated algebraic Riccati equation and the closed-loop eigenvalues e.
+
+Limitations
+For the following state-space system with a plant with augmented
+integrator:
+
+δzδt=Aaz+Bauy=Caz+Dau
+
+The problem data must satisfy:
+The pair (A,B) must be
+ stabilizable.
+
+R must be positive definite.
+
+[QNNTR] must be positive semidefinite (equivalently, Q−NR−1NT≥0).
+
+(Q−NR−1NT,Aa−BaR−1NT) must have no unobservable mode on the imaginary axis (or unit
+ circle in discrete time).
+
+Tips
+lqi supports descriptor models with nonsingular E.
+The output S of lqi is the solution
+of the Riccati equation for the equivalent explicit state-space model
+
+dxdt=E−1Ax+E−1Bu
+
+References
+[1] P. C. Young and J. C. Willems, &#34;An approach to the linear
+ multivariable servomechanism problem&#34;, International Journal of
+ Control, Volume 15, Issue 5, May 1972 , pages 961–979.
+
+Version History
+Introduced in R2008b
+
+See Also
+lqr | lqgreg | lqgtrack | lqg | care | dare
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

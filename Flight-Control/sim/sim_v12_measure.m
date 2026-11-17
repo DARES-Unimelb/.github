@@ -1,31 +1,23 @@
 function M = sim_v12_measure(P, opts)
-% SIM_V12_MEASURE Run the hand written plant and the Aerospace Blockset reference
-% plant on the same command sequence and record the per-state difference.
+% SIM_V12_MEASURE Run the hand written plant and the reference plant on the same
+% command sequence and record the per-state difference
 %
-%   M = sim_v12_measure(P)
-%   M = sim_v12_measure(P, struct('t_end', 9.0, 'tol', 1e-6, 'quiet', false))
+%   P      parameter struct
+%   opts   optional: t_end in s (default 9.0), tol absolute relative limit
+%          (default 1e-4), quiet true suppresses the printed summary
+%   M      results struct, also saved to results/sim_v12_crosscheck.mat
 %
-% Measures, does not assert: the pass or fail decision is
-% verify/v_sim_v12_crosscheck.m, which reads results/sim_v12_crosscheck.mat back
-% from disk. The one thing it does refuse to do is compare a diverged trajectory.
+% Five configurations, both models driven through sim_run_plant_cmd with the same
+% inputs and the same density law on both sides:
+%   const_density  P.atmo.model 'const' against ISA at sea level, so both fly in
+%                  P.env.rho_sl; this is the criterion configuration
+%   const_cmd      the same density, one fixed elevator and throttle setting
+%   crosswind      the same density plus 5 m/s of east wind
+%   isa_frozen     ISA at a frozen altitude of h_ref on both sides
+%   isa_state      ISA at the moving altitude on both sides
 %
-% Five configurations, all driven through sim_run_plant_cmd so the two models see
-% bit-identical inputs. Each sets the density law on BOTH sides, so every
-% configuration is an apples to apples test and a non-zero difference means the
-% two implementations disagree rather than that they are modelling different air.
-%
-%   const_density  our P.atmo.model 'const' against the ISA block evaluated at
-%                  sea level, so both fly in P.env.rho_sl. This is the criterion
-%                  run: the only remaining difference is the integrator and the
-%                  kinematics.
-%   const_cmd      the same density, one fixed elevator and throttle setting.
-%   crosswind      the same density plus 5 m/s of east wind.
-%   isa_frozen     our plant/atmo_isa.m at a frozen altitude of h_ref against the
-%                  ISA block evaluated at that same altitude.
-%   isa_state      the altitude law as well: -pd on our side, -Xe(3) on the
-%                  block's, both moving with the trajectory.
-%
-% Writes results/sim_v12_crosscheck.mat.
+% This function measures and does not assert; M.tol records the limit the
+% verification reads back
 
 if nargin < 2
    opts = struct();
@@ -65,8 +57,7 @@ W_zero = zeros(numel(t), 3);
 t_short = (0:h:5.0)';
 U_short = repmat(local_const_input(u_trim), numel(t_short), 1);
 
-% Density laws. 'const' is the frozen rev 9 behaviour and must stay bit for bit
-% what it was; 'isa' turns on plant/atmo_isa.m.
+% density law: 'const' holds P.env.rho_sl, 'isa' uses the ISA model
 atmo_const = struct('model', 'const', 'h_from_state', false, 'h_ref', 0);
 atmo_frozen = struct('model', 'isa', 'h_from_state', false, 'h_ref', h_trim);
 atmo_state = struct('model', 'isa', 'h_from_state', true, 'h_ref', h_trim);
@@ -93,9 +84,7 @@ M.max_rel_crosswind = cfg(3).max_rel;
 M.rho_sl = P.env.rho_sl;
 M.rho_isa_frozen = cfg(4).aux_ref(1);
 
-% The wind frame term. Measured directly rather than inferred from a trajectory:
-% the two models now share the same right-hand side, so the check is that
-% sim_plant_rhs removes exactly omega x (R*W) and nothing else.
+% wind frame term, measured directly rather than inferred from a trajectory
 M.wind_frame = local_wind_frame(P, x0, u_trim);
 
 save(fullfile(root, 'results', 'sim_v12_crosscheck.mat'), 'M');
@@ -118,15 +107,13 @@ if ~quiet
 end
 end
 
-%% ---------------- one configuration ----------------
+%% One configuration
 function c = local_one(P, atmo, ref_h_isa, ref_h_from_state, name, x0, t, U, W, scale, desc)
-% Every base workspace variable either model reads travels in one struct that
-% sim_run_plant_cmd pushes immediately before the simulation. The shared base
-% workspace can be cleared by another member while this job runs, and a plant
-% that cannot find P looks like a modelling fault rather than a workspace one.
+% every base workspace variable either model reads travels in one struct, which
+% sim_run_plant_cmd pushes immediately before the simulation
 %
-% The density law is set on our side through P.atmo and on the reference side
-% through the ISA block's altitude input, so both models fly in the same air.
+% the density law is set on our side through P.atmo and on the reference side
+% through the ISA block's altitude input, so both models fly in the same air
 Pc = P;
 Pc.atmo.model = atmo.model;
 Pc.atmo.h_from_state = atmo.h_from_state;
@@ -142,20 +129,16 @@ X_ref = T_ref.by_name.x_state;
 assert(all(isfinite(X_our(:))) && all(isfinite(X_ref(:))), 'sim_v12_measure:Diverged', ...
    '%s produced a non finite state', name);
 
-% Both models use the same fixed step and the same stop time, so the grids are
-% expected to be identical. If they ever are not, the reference trajectory is
-% interpolated onto ours with pchip, the same rule V10 uses, and that is recorded.
+% identical grids are expected; anything else is interpolated onto ours and
+% recorded
 interp = 'none';
 if numel(T_our.t) ~= numel(T_ref.t) || any(abs(T_our.t - T_ref.t) > 1e-12)
    X_ref = interp1(T_ref.t, X_ref, T_our.t, 'pchip');
    interp = 'pchip';
 end
 tt = T_our.t;
-% Two guards that make the element by element comparison legitimate.
-% The 6DOF block wraps its Euler angle output into (-pi, pi] while our model
-% accumulates, measured in sim_ref_calibrate, so an angle that leaves that range
-% would differ by a whole turn for an identical attitude. The command sequence is
-% sized to stay well inside it, and this asserts that it did.
+% the block wraps Euler angles into (-pi, pi] while our plant accumulates, so the
+% element by element comparison needs both angles inside that range
 assert(max(abs(X_our(:, 7))) < pi / 2, 'sim_v12_measure:Singularity', ...
    '%s rolled past 90 deg, where the Euler angle kinematics of both models break down', name);
 assert(max(abs(X_our(:, 8))) < pi / 2 && max(abs(X_our(:, 9))) < pi, ...
@@ -168,11 +151,8 @@ denom = ptp;
 small = denom < 1e-4 * scale;
 denom(small) = scale(small);
 rel = d ./ denom;
-% The trajectory excursion is the strict denominator for a state that moves, but
-% it is a degenerate one for a state that barely moves: the ISA configuration's
-% altitude excursion is 0.53 m while the separation reaches 0.83 m, which reads
-% as 158 percent. The same difference against the reference scale of the state is
-% the number to quote for the reported configurations, and both are kept.
+% a state that barely moves makes the trajectory excursion a degenerate
+% denominator, so the reference scale is kept beside it
 rel_scale = d ./ scale;
 
 c = struct();
@@ -200,11 +180,10 @@ c.worst_state_scale = find(rel_scale == c.max_rel_scale, 1);
 c.interp = interp;
 end
 
-%% ---------------- commands ----------------
+%% Commands
 function [U, desc] = local_doublet(u_trim, t)
-% Pitch, throttle, roll and yaw inputs in turn, small enough that the aircraft
-% stays inside the Euler angle region both models are valid in, rich enough that
-% every one of the twelve states moves.
+% pitch, throttle, roll and yaw inputs in turn, small enough that both models
+% stay inside the Euler angle region they are valid in
 da = zeros(size(t));
 de = zeros(size(t));
 dr = zeros(size(t));
@@ -229,16 +208,11 @@ u(5) = u(4);
 u(6) = 0;
 end
 
-%% ---------------- wind frame check ----------------
+%% Wind frame check
 function R = local_wind_frame(P, x, u)
-% Two derivatives at the same state, with a steady wind: the one
-% sim/sim_plant_rhs.m returns, and the one the ground-velocity state obeys,
-% written out here from the state so the comparison does not go through the
-% function under test. All twelve components are compared, not just the three
-% the wind frame term lives in.
-%
-% The quantity the old version got wrong is carried as well, so the record shows
-% how large it was: omega x (R*W), the term between d(v_air)/dt and d(v_g)/dt.
+% two derivatives at the same state with a steady wind: the one sim_plant_rhs
+% returns, and the ground-velocity equation written out here, so the comparison
+% does not go through the function under test
 W = [0; 5.0; 0];
 omega = [0.06; -0.04; 0.03];
 x = x(:);

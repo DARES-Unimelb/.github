@@ -1,14 +1,13 @@
 function probe_tail_for_vmin()
-% PROBE_TAIL_FOR_VMIN What horizontal tail area satisfies the low-speed trim budget?
+% PROBE_TAIL_FOR_VMIN Lowest speed that trims inside the elevator travel budget, against
+% horizontal tail area.
 %
-% The wing loading sets the stall speed, but on this aircraft the ELEVATOR runs out
-% of travel well before the wing stalls, so the usable low-speed limit is set by
-% trim. This scans tail area against the lowest speed that trims inside a stated
-% fraction of elevator travel, and reports the static margin that comes with it.
+%   probe_tail_for_vmin()
 %
-% Purpose: give the team the trade instead of a single number. Enlarging the tail
-% lowers the trimmable speed and raises the static margin; both directions are
-% reported so the choice is explicit.
+% The wing loading sets the stall speed, but on this aircraft the ELEVATOR runs out of
+% travel well before the wing stalls, so the usable low-speed limit is set by trim. The
+% static margin that comes with each tail area is reported alongside, so the trade
+% between a lower trimmable speed and a larger tail is explicit.
 
 root = 'C:\Ash\Projects\DARES_UACS\MATLAB';
 addpath(fullfile(root,'params'), fullfile(root,'plant'), fullfile(root,'run'));
@@ -27,7 +26,7 @@ for ShS = [0.10 0.12 0.14 0.16 0.18 0.20 0.25 0.30]
     P.geom.Sh_over_S = ShS;
     P.geom.Sh = ShS * P.geom.S;
     P.geom.Vh = P.geom.Sh * P.geom.lh / (P.geom.S * P.geom.cbar);
-    % Recompute the derived coefficients that depend on the tail volume.
+    % Recompute the derived coefficients that depend on the tail volume
     P.aero.CL_de = P.aero.tau_elevator * P.aero.CL_alpha * P.geom.Sh / P.geom.S;
     P.aero.Cm_alpha = P.aero.Cm_alpha_wing_body - P.geom.Vh * P.aero.CL_alpha;
     P.aero.Cm_q = -2 * P.aero.CL_alpha * P.geom.Vh * (P.geom.lh / P.geom.cbar);

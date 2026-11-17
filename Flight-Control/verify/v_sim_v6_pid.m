@@ -3,17 +3,14 @@ function out = v_sim_v6_pid(varargin)
 %
 %   out = v_sim_v6_pid()
 %
-% Reads results/sim_manual_pid_traj.mat, which run_manual_pid produced by
-% simulating model/uacs_manual_pid.slx. Criteria, architecture.md V6
-%   rise time of every excited loop within a factor of the bandwidth target
-%   overshoot below 20 percent
-%   no sustained oscillation, taken as a tail ripple below 2 percent of the step
+% Reads results/sim_manual_pid_traj.mat. Asserts, for every excited loop
+%   rise time within rise_factor times 2.2 / P.ctrl.bw, the bandwidth target the gains
+%   were designed against, not the achieved response
+%   overshoot below overshoot_max_pct
+%   tail ripple below ripple_max_pct, so no sustained oscillation
 %
-% Only the scenario that excites a loop is used for that loop's verdict: a loop
-% that was never commanded has no rise time to report, and that is not a pass.
-% The bandwidth targets are the P.ctrl.bw fields the gains were designed
-% against, so the comparison is against the frozen numbers and not against the
-% achieved response.
+% Only the scenario that excites a loop gives that loop its verdict: a loop that was
+% never commanded has no rise time to report, and that is not a pass.
 
 ip = inputParser;
 ip.addParameter('rise_factor', 3.0, @(x) isnumeric(x) && x > 0);

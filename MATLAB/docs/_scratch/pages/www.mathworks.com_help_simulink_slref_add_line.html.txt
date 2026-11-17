@@ -1,0 +1,549 @@
+URL: https://www.mathworks.com/help/simulink/slref/add_line.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/add_line.html
+
+ 
+
+ add_line - (Not recommended) Add line to Simulink model - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulink Environment Fundamentals
+
+ Programmatic Model Editing
+
+ add_line
+
+On this page
+Syntax
+Description
+ExamplesConnect Blocks Using Port Numbers
+Connect Blocks Using Port Handles
+Connect Blocks Using Smart Routing
+Connect Multiple Ports in Subsystem with Single Command
+Add Branched Line
+Connect Blocks Using Port Coordinates
+
+Input Argumentssys
+out
+in
+autoOption
+points
+
+Output Argumentshandle
+
+Version HistoryConsider using the Simulink.connectBlocks function instead of the add_line function
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+add_line
+R2026b
+(Not recommended) Add line to Simulink model
+collapse all in page
+
+add_line is not recommended. Use Simulink.connectBlocks instead (since R2024b). For information on updating
+ your code, see Version History.
+
+Syntax
+handle = add_line(sys,out,in)
+h = add_line(sys,out,in,autorouting=autoOption)
+h = add_line(sys,points)
+
+Description
+handle = add_line(sys,out,in)
+ adds signal lines in the specified model or subsystem that connect the specified
+ output ports to the specified input ports. Connecting multiple input ports to the
+ same output port is not supported. The ports must be unconnected and must be in the
+ same location in the model hierarchy, either at the top level or in the same
+ component. Each pair of ports that you want to connect must be compatible.
+This syntax draws the most direct route from port to port, for example, diagonal
+ lines or lines that go through other blocks. 
+
+example
+
+ h = add_line(sys,out,in,autorouting=autoOption)
+ connects blocks, specifying whether to route the lines around other blocks.
+
+example
+
+h = add_line(sys,points)
+ adds a line drawn by (x,y) coordinate points relative to the
+ upper-left corner of the Simulink® Editor canvas before any canvas resizing. If either end of the line is
+ within five pixels of a corresponding port, the function connects the line to it.
+ The line can have multiple segments.
+
+example
+
+Examples
+collapse all
+Connect Blocks Using Port Numbers
+
+ Suppose you have a loaded model named
+ myModel. The model contains a Gain block
+ named myBlock1 and a Scope block named
+ myBlock2 with two input ports. Connect the output port of
+ the Gain block to the bottom input port of the
+ Scope block.
+
+ Determine the port path of the output port. The port path is the block
+ name followed by a slash and the port number. Since the Gain
+ block only has one output port, the port number is
+ 1.
+out = &#34;myBlock1/1&#34;;
+
+Determine the port path of the input port. The Scope block
+ has two ports. If you pause your pointer on the ports, you can see that the
+ port number of the bottom port is 2.
+in = &#34;myBlock2/1&#34;;
+
+Connect the ports.
+sys = &#34;myModel&#34;;
+add_line(sys,out,in);
+
+Connect Blocks Using Port Handles
+
+ Suppose you have a loaded model named
+ myModel. The model contains a Gain block
+ named myBlock1 and a Scope block named
+ myBlock2 with two input ports. Connect the output port of
+ the Gain block to the bottom input port of the
+ Scope block.
+
+ Get the handle of the model.
+sys = get_param(&#34;myModel&#34;,&#34;Handle&#34;);
+
+Get all port handles of the Gain block.
+hGain = get_param(&#34;myModel/myBlock1&#34;,&#34;PortHandles&#34;);
+
+Get the output port handle of the Gain block.
+out = hGain.Outport;
+
+Get all port handles of the Scope block.
+hScope = get_param(&#34;myModel/myBlock2&#34;,&#34;PortHandles&#34;);
+
+Get the bottom input port handle of the Scope block.
+in = hScope.Inport(2);
+
+Connect the ports.
+add_line(sys,out,in);
+
+Connect Blocks Using Smart Routing
+
+ Suppose the blocks in the previous example are positioned
+ such that the Scope block is directly below the
+ Gain block.
+
+ Connect the blocks as you did in the previous example.
+The connection is a diagonal signal line that overlaps the corners of the
+ block.
+Delete the signal line.
+delete_line(sys,out,in)
+
+Connect the blocks using smart routing.
+add_line(sys,out,in,autorouting=&#34;smart&#34;);
+
+The connection is a signal line consisting of orthogonal line segments
+ that do not overlap the blocks.
+
+Connect Multiple Ports in Subsystem with Single Command
+
+ Suppose you have a loaded model named
+ myModel that contains a Subsystem block
+ named mySubsystem. The subsystem contains an
+ If block named myBlock1 with two output
+ ports, and a Scope block named myBlock2 with
+ two input ports. Connect the output ports of the If block to the
+ input ports of the Scope block.
+
+ Get the handle of the model.
+sysPath = &#34;myModel/mySubsystem&#34;;
+sys = get_param(sysPath,&#34;Handle&#34;);
+
+Get all port handles of the If block.
+hIf = get_param(sysPath+&#34;/myBlock1&#34;,&#34;PortHandles&#34;);
+
+Get the output port handles of the If block.
+out = hIf.Outport;
+
+Get all port handles of the Scope block.
+hScope = get_param(sysPath+&#34;/myBlock2&#34;,&#34;PortHandles&#34;);
+
+Get the input port handles of the Scope block.
+in = hScope.Inport;
+
+Connect the blocks with one command.
+add_line(sys,out,in);
+
+Add Branched Line
+
+ Suppose you have a loaded model named
+ myModel that contains a Sine Wave block
+ named myBlock1, a Gain block named
+ myBlock2, and a Sum block named
+ myBlock3. The Sine Wave block is connected
+ to the Gain block. Branch that signal line and connect the
+ Sine Wave block to the Sum block.
+
+ Get the handle of the model.
+sysName = &#34;myModel&#34;;
+sys = get_param(sysName,&#34;Handle&#34;);
+
+Get all port handles of the Sine Wave block.
+hSine = get_param(sysName+&#34;/myBlock1&#34;,&#34;PortHandles&#34;);
+
+Get the output port handle of the Sine Wave block.
+out = hSine.Outport;
+
+Get all port handles of the Sum block.
+hSum = get_param(sysName+&#34;/myBlock3&#34;,&#34;PortHandles&#34;);
+
+Get one of the input port handles of the Sum block.
+in = hSum.Inport(1);
+
+Connect the blocks. The signal line branches to create the specified
+ connection.
+add_line(sys,out,in);
+
+Connect Blocks Using Port Coordinates
+
+ Suppose you have a loaded model named
+ myModel that contains a Constant block
+ named myBlock1 and a Gain block named
+ myBlock2. Connect the blocks using port
+ coordinates.
+
+ Get the port locations of the output port on the Constant
+ block.
+portConnConst = get_param(&#34;myModel/myBlock1&#34;,&#34;PortConnectivity&#34;);
+portPosConst = portConnConst.Position;
+
+Get the port locations of the input port on the Gain block.
+ The Gain block has two ports, so querying the position
+ returns two positions. The first position corresponds to the input
+ port.
+portConnGain = get_param(&#34;myModel/myBlock2&#34;,&#34;PortConnectivity&#34;);
+portPosGain = portConnGain(1).Position;
+
+Combine the positions of the output and input ports you want to connect
+ into a matrix containing the position of the output port in the first row
+ and the position of the input port in the second row.
+pos = [portPosConst;portPosGain];
+
+Connect the ports.
+add_line(&#34;myModel&#34;,pos);
+
+Input Arguments
+collapse all
+sys — Model or subsystem containing blocks to connect
+ 
+handle | model name | block path
+
+Model or subsystem containing the blocks you want to connect. Specify the
+ model as a handle or name, and the subsystem as a handle or the block path
+ of the corresponding Subsystem block. Format a handle as a
+ numeric scalar. Format a name or path as a string or character
+ vector.
+For information about getting handles, see Get Handles and Paths.
+
+Example: &#34;myModel&#34;
+Example: &#34;myModel/mySubsystem&#34;
+Data Types: double | string | character vector
+
+out — Block output ports to connect
+ 
+handle | port path
+
+Block output ports to connect, specified as one of these values: 
+
+Port handle or array of port handles
+Use &#34;PortHandles&#34; with
+ get_param to get the handles. 
+
+Port path or array of port paths
+The port path is the name of the block to which the port
+ attaches followed by a slash and the port number or name, for
+ example, &#34;myBlock/1&#34;. For conditionally
+ executed subsystem blocks and the Integrator
+ block, use port names. For more information, see Get Handles and Paths.
+
+Format port handles as numeric scalars or numeric arrays. Format port
+ paths as strings, character vectors, or cell arrays of character vectors. If
+ you specify an array, the out array must have the same
+ dimensions as the in array.
+
+For information about getting handles and paths, see Get Handles and Paths.
+Example: h.Outport(1)
+Example: &#34;myBlock/1&#34;
+Example: {'myBlock1/1','myBlock2/1'}
+
+ Tips
+
+ Most block ports are numbered from top to bottom or from left
+ to right. For a description of the port order for various block
+ orientations, see Identify Port Location on Rotated or Flipped Block.
+
+Moving a port on a Subsystem block can change
+ the port number. For more information, see Move Ports.
+
+ Data Types: double | array of doubles | string | character vector | cell array of character vectors
+
+in — Block input ports to connect
+ 
+handle | port path
+
+Block input ports to connect, specified as one of these values: 
+Port handle or array of port handles
+Use &#34;PortHandles&#34; with
+ get_param to get the handles. 
+
+Port path or array of port paths
+The port path is the name of the block to which the port attaches
+ followed by a slash and the port number or name, for example,
+ &#34;myBlock/1&#34;. For conditionally executed
+ subsystem blocks and the Integrator block, use port
+ names. For more information, see Get Handles and Paths.
+
+Format port handles as numeric scalars or numeric arrays. Format port
+ paths as strings, character vectors, or cell arrays of character vectors. If
+ you specify an array, the in array must have the same
+ dimensions as the out array.
+Example: h.Outport(1)
+Example: &#34;myBlock/1&#34;
+Example: {'myBlock1/1','myBlock2/1'}
+
+ Tips
+
+ Most block ports are numbered from top to bottom or from left
+ to right. For a description of the port order for various block
+ orientations, see Identify Port Location on Rotated or Flipped Block.
+
+Moving a port on a Subsystem block can change
+ the port number. For more information, see Move Ports.
+
+ For information about getting handles and paths, see Get Handles and Paths.
+
+ Data Types: double | array of doubles | string | character vector | cell array of character vectors
+
+autoOption — Type of automatic line routing
+ 
+&#34;off&#34; (default) | &#34;on&#34; | &#34;smart&#34;
+
+Type of automatic line routing around other blocks:
+
+&#34;off&#34; — No automatic line routing
+
+&#34;on&#34; — Automatic line routing
+
+&#34;smart&#34; — Automatic line routing that takes
+ advantage of the blank spaces on the canvas and avoids
+ overlapping other lines and labels
+
+Data Types: string | character vector
+
+points — Points of the line to draw
+ 
+coordinates of points on line
+
+Points of the line to draw, specified as at least a
+ 2-by-2 matrix. Add a row for every
+ segment you want to draw. Specify points as (x,y) coordinates from the
+ upper-left corner of the Simulink Editor before any canvas resizing.
+Example: [100 300; 200 300; 200 300; 200
+ 500]
+
+Data Types: numeric array
+
+Output Arguments
+collapse all
+handle — Signal line handle
+ 
+handle
+
+Signal line the function creates, returned as a handle.
+
+Version History
+Introduced before R2006acollapse all
+R2024b: Consider using the Simulink.connectBlocks function instead
+ of the add_line function
+
+There are no plans to remove the add_line function. However,
+ the Simulink.connectBlocks function has these advantages over the
+ add_line function:
+You can connect blocks in different levels of the model hierarchy.
+
+You can connect blocks at any available ports (as opposed to specifying
+ which ports to connect).
+
+See Also
+Simulink.connectBlocks | delete_line | add_block | delete_block | set_param | get_param
+Topics
+Get Handles and Paths
+Create an Enabled Subsystem
+Create a Triggered Subsystem
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

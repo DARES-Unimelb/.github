@@ -1,0 +1,5 @@
+which 1: C:\Ash\Projects\DARES_UACS\MATLAB\params\uacs_twin_params.m
+CL_de 0.121994 tau_ele 0.6500 tau_rud 0.5000 Cm_de -0.054485 Cm_alpha -0.604324 Cm_q -4.153591
+Sv 0.6000 Vv 0.172654 rud_chord 0.500 CY_dr 0.594926 Cn_beta 0.129491 Cn_dr -0.051358
+T_static 93.71572
+w1 C:\Ash\Projects\DARES_UACS\MATLAB\params\uacs_twin_params.m

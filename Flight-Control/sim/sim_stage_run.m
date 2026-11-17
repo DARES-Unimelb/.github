@@ -1,12 +1,9 @@
 function ok = sim_stage_run(name, fn)
-% SIM_STAGE_RUN Run one named stage of a job, log its verdict, never throw.
+% SIM_STAGE_RUN Run one named stage of a job, print its verdict and never throw
 %
-% A shared MATLAB session can drop a request while the job keeps running, so a
-% long job must leave a readable trace of which stage it reached and which one
-% failed. Each stage is timed and its verdict printed immediately, and the
-% stages after a failure still run because they may be independent.
-%
-% Returns true when the stage completed, so a job can summarise at the end.
+%   name   stage label used in the log lines
+%   fn     function handle to run, called with no arguments
+%   ok     true when the stage completed, false when it threw
 
 fprintf('\n===== STAGE %s =====\n', name);
 t0 = tic;

@@ -1,26 +1,18 @@
 function [T, meta] = sim_run_model(mdl, opts)
-% SIM_RUN_MODEL Simulate one built model and return its logged outputs.
+% SIM_RUN_MODEL Simulate one built model and return its logged outputs
 %
-%   [T, meta] = sim_run_model('uacs_manual_pid')
-%   [T, meta] = sim_run_model('uacs_lqr', struct('solver', 'ode45', 't_end', 8))
-%
-% Set-up order matters and is deliberate
-%   1. the solver settings are written into the model, never into a block
-%   2. set_param(...,'SimulationCommand','update') compiles the model first, so
-%      a bad connection or an unresolvable block parameter fails here, in
-%      seconds, instead of inside sim
-%   3. sim runs with ReturnWorkspaceOutputs on, because the return type depends
-%      on the configuration and a scenario must not have to care
-%
-% opts.solver   'ode4' (default, fixed step P.sim.Ts_ctrl) or 'ode45'
-% opts.t_end    stop time in seconds, default sim_t_end from the base workspace
-% opts.tol      [rel abs] for the variable-step solver, default P.sim.rel_tol
-%               and P.sim.abs_tol
-% opts.max_step optional maximum step, s, for the variable-step solver
-% opts.states   save block states and return them in meta.states, with the owning
-%               block of each column in meta.state_blocks and the column offsets in
-%               meta.state_col0. The flag is written to the model either way, so a
-%               state-saving run cannot leave SaveState on for the next caller.
+%   mdl    model name
+%   opts   optional settings, any field may be omitted:
+%     solver   'ode4' (default, fixed step P.sim.Ts_ctrl) or 'ode45'
+%     t_end    stop time in s, default sim_t_end from the base workspace
+%     tol      [rel abs] for the variable-step solver, default P.sim.rel_tol
+%              and P.sim.abs_tol
+%     max_step optional maximum step in s for the variable-step solver
+%     states   true saves block states into meta.states, with the owning block of
+%              each column in meta.state_blocks and the column offsets in
+%              meta.state_col0
+%   T      logged outputs, as returned by sim_read_yout
+%   meta   model, solver, t_end, tol, n_samples, outputs, widths and timings
 
 if nargin < 2
    opts = struct();
@@ -42,11 +34,8 @@ assignin('base', 'sim_t_end', opts.t_end);
 if ~bdIsLoaded(mdl)
    load_system(mdl);
 end
-% Name the outport signals after their blocks. Without this the exported signal
-% labels come back EMPTY and sim_read_yout falls back to out1..outN, so every
-% scenario that looks up a signal by name fails with "Unrecognized field". The
-% exported label follows the SIGNAL LINE name, not the Outport block name, so the
-% line attached to each outport is renamed to match its block.
+% exported labels follow the SIGNAL LINE name, so each outport line is renamed
+% after its block or sim_read_yout falls back to out1..outN
 ops = find_system(mdl, 'SearchDepth', 1, 'BlockType', 'Outport');
 for k = 1:numel(ops)
    nm = get_param(ops{k}, 'Name');
@@ -58,12 +47,7 @@ for k = 1:numel(ops)
       end
    end
 end
-% SaveFormat is deliberately NOT set here. Asking for
-% 'StructureWithTime' together with ReturnWorkspaceOutputs 'on' makes sim fail
-% with a multiple-cause MException whose causes point at the logging
-% configuration; the default Dataset format is what sim_read_yout expects as its
-% first branch anyway. The struct branch there stays for models configured the
-% other way by hand.
+% SaveFormat is left unset: it conflicts with ReturnWorkspaceOutputs
 set_param(mdl, 'StopTime', 'sim_t_end', 'SimulationMode', 'normal', ...
    'SaveTime', 'on', 'SaveOutput', 'on', ...
    'ReturnWorkspaceOutputs', 'on');
@@ -143,10 +127,7 @@ end
 end
 
 function local_rethrow(ME, stage, mdl)
-% Re-raise a Simulink failure with its causes spelled out. sim and the update
-% command both report as MException:MultipleErrors with the real diagnostics one
-% level down in ME.cause, and a bare rethrow loses the only text that names the
-% offending block, which cost real time on this model.
+% the real diagnostics sit one level down in ME.cause, so spell them out
 msg = sprintf('sim_run_model:%s failed on %s: %s', stage, mdl, ME.message);
 for k = 1:numel(ME.cause)
    msg = sprintf('%s\n  cause %d: %s | %s', msg, k, ME.cause{k}.identifier, ME.cause{k}.message);

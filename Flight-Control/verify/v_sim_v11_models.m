@@ -3,23 +3,11 @@ function out = v_sim_v11_models(varargin)
 %
 %   out = v_sim_v11_models()
 %
-% Independent of the generator: the census is read from
-% results/sim_build_census.mat as the builders left it, and each model is closed
-% first and then loaded from its file, so what is counted is what is on disk and
-% not what happens to be in memory. A mismatch asserts, it does not warn.
+% Reads the census the generators left in results/sim_build_census.mat and never writes
+% it. Each model is closed and then loaded from its file, so what is counted is what is
+% on disk and not what happens to be in memory. A mismatch asserts, it does not warn.
 %
-% TWO INDEPENDENT DATA SOURCES, AND THIS FILE IS ONLY ONE OF THEM. The census is
-% written by the generators, build_uacs_models.m for uacs_plant, uacs_manual_pid
-% and uacs_lqr, and sim_build_plant_ref.m for uacs_plant_ref. This verifier reads
-% that file and never writes it. A check that produces the data it checks is
-% checking itself, and the whole value of V11 is that the expected counts come
-% from a build that ran at a different time and did not know it would be audited.
-% Do not make this function register anything, not even to "fix" a missing entry:
-% a missing entry is a failed check, not a gap to be filled in.
-%
-% The census is merged rather than overwritten by both generators, so either one
-% running alone leaves the other's record intact. Every field of census that is
-% not 'stamp' or 'blk_kind' is treated as one model.
+% Every field of census other than 'stamp' and 'blk_kind' is one model.
 
 ip = inputParser;
 ip.addParameter('verbose', true, @(x) islogical(x) || isnumeric(x));
@@ -40,10 +28,8 @@ out = struct('model', {}, 'top_count', {}, 'expected_top', {}, 'total_count', {}
 for k = 1:numel(names)
    name = names{k};
    exp = census.(name);
-   % exist(...,'file') returns 4, not 2, for a .slx: MATLAB classifies it as a
-   % Simulink model rather than a plain file. Asserting == 2 reported a false
-   % "not on disk" for models that were present and loadable, so both codes are
-   % accepted here.
+   % exist(...,'file') returns 4, not 2, for a .slx: MATLAB classes it as a Simulink
+   % model rather than a plain file, so both codes mean "present"
    code = exist(exp.file, 'file');
    assert(code == 2 || code == 4, 'v_sim_v11:MissingFile', ...
       '%s is not on disk (exist returned %d)', exp.file, code);

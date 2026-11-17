@@ -1,0 +1,41 @@
+rev 10 mass 17.000
+trim V 25.00 alpha -0.3033 de -0.8115 throttle 0.4301
+design_pid OK in 201.0 s
+p      Kp    +0.76074597 Ki             +0 Kd             +0 Tf  0.01000 pol +1 stable 1 designed 1
+       crossover     9.9960 (target 10.0000)  bw        NaN  pm   184.12 gm      Inf
+       rise       NaN os     NaN settle       NaN dc  0.01603
+       worst  -5.2596e-02 art  0.000e+00 tried   333 stable   236 score   0.1000
+       Ki = 0 by design on a rate loop: the plant is type 1 in this channel so a second pole at the origin makes the loop unstable, and damping is what the loop is for, not holding a steady rate
+q      Kp    -0.86345409 Ki             +0 Kd             +0 Tf  0.01000 pol -1 stable 1 designed 1
+       crossover     1.9258 (target 10.0000)  bw        NaN  pm   180.55 gm      Inf
+       rise       NaN os     NaN settle       NaN dc -0.00000
+       worst  -9.8781e-02 art  0.000e+00 tried   333 stable   236 score   1.7423
+       Ki = 0 by design on a rate loop: the plant is type 1 in this channel so a second pole at the origin makes the loop unstable, and damping is what the loop is for, not holding a steady rate
+r      Kp      -1.080618 Ki             +0 Kd             +0 Tf  0.01000 pol -1 stable 1 designed 1
+       crossover     0.2506 (target 10.0000)  bw        NaN  pm   180.04 gm      Inf
+       rise       NaN os     NaN settle       NaN dc  0.71407
+       worst  -5.8890e-01 art  0.000e+00 tried   333 stable   158 score   3.5545
+       Ki = 0 by design on a rate loop: the plant is type 1 in this channel so a second pole at the origin makes the loop unstable, and damping is what the loop is for, not holding a steady rate
+phi    Kp     +5.9382865 Ki             +0 Kd   +0.098971442 Tf  0.03000 pol +1 stable 1 designed 1
+       crossover     3.0177 (target  3.0000)  bw     3.0036  pm   180.00 gm      Inf
+       rise    0.7570 os    0.00 settle    1.8582 dc  1.00000
+       worst  -1.6426e-03 art  0.000e+00 tried  7116 stable  2957 score   0.0752
+       Ki = 0: no integral gain lowered the weighted cost, so the loop is delivered without integral action
+theta  Kp     +4.1984533 Ki    +0.74848066 Kd             +0 Tf  0.01000 pol +1 stable 1 designed 1
+       crossover     2.1071 (target  2.5000)  bw     2.1790  pm 1087966.12 gm      Inf
+       rise    0.9433 os    0.98 settle    1.4368 dc  1.00000
+       worst  -1.1998e-01 art  0.000e+00 tried  7116 stable  2923 score   0.0070
+       integral zero at 0.1783 rad/s from the search, which is 0.071 of the 2.500 rad/s target
+V      Kp      +6.373958 Ki     +6.1189996 Kd             +0 Tf  0.01000 pol +1 stable 1 designed 1
+       crossover     0.7949 (target  0.8000)  bw     1.0640  pm 1187375801050722074478156719477857076876382219056339408289177944365993615422790127154787395138203156480.00 gm      Inf
+       rise    2.1662 os    0.98 settle   50.8941 dc  1.00000
+       worst  -5.5664e-02 art  0.000e+00 tried  1226 stable   793 score   0.1046
+       integral zero at 0.9600 rad/s from the search, which is 1.200 of the 0.800 rad/s target
+h      Kp   +0.016092198 Ki             +0 Kd             +0 Tf  0.01000 pol +1 stable 1 designed 1
+       crossover     0.4000 (target  0.4000)  bw     0.4643  pm   180.00 gm      Inf
+       rise    4.9501 os    0.82 settle   10.1120 dc  1.00000
+       worst  -1.5819e-01 art  0.000e+00 tried  1226 stable   642 score   0.0018
+       Ki = 0: no integral gain lowered the weighted cost, so the loop is delivered without integral action
+separation phi/p 0.300 theta/q 1.131 V/q 0.552 h/theta 0.213 h/V 0.436 limit 0.50 ok 0
+polarity [1 -1 -1 1 1 1 1]
+saved diag_gains_v3.mat

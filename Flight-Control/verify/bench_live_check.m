@@ -1,17 +1,11 @@
 function rep = bench_live_check()
-% BENCH_LIVE_CHECK 查一件 bench_check 覆盖不到的事：仿真运行中改操纵量，飞机是否真响应。
+% BENCH_LIVE_CHECK Check that changing a stick value during a running simulation really
+% moves the aircraft, which the set-value-then-sim checks cannot see.
 %
-% 为什么必须单独查：bench_check 的做法是 binding.setValue 改值之后再 sim 一次。那条路
-% 是"改基础工作区变量 + 重新编译"，与"仿真跑着的时候拖动控件"不是一条路。控件绑到
-% 变量与绑到字面值参数，是两种不同的机制，可能一个通一个不通，而静态自检对两者都会
-% 通过，因为重新编译时两者都读到了新值。
+%   rep = bench_live_check()
 %
-% 两个分支各测一次，判据是仿真末态的俯仰角。干预点在跑到 1.2 s 时打进去，留给俯仰环
-% 两秒多的响应时间。
-%   A 运行中改基础工作区变量 sim_stick_pitch   —— 控件绑变量这条路
-%   B 运行中改 Constant 的字面值参数 Value     —— 控件绑参数这条路
-%
-% 报告写 results/bench_live_check.txt。
+% A changes the base variable sim_stick_pitch, B changes the Constant parameter Value.
+% Writes results/bench_live_check.txt.
 
 root = fileparts(fileparts(mfilename('fullpath')));
 mdl = 'uacs_flight_bench';
@@ -28,17 +22,17 @@ set_param(mdl, 'StopTime', '4');
 k_pitch = [mdl '/驾驶员/k_pitch'];
 res = {};
 
-% ---------------- A 运行中改变量 ----------------
+% A: change the base variable during a run
 local_reset(mdl, 0);
 [a, ta] = local_live(mdl, @() assignin('base', 'sim_stick_pitch', 0.30));
 res(end + 1, :) = {a, sprintf('A 运行中改基础工作区变量：末态俯仰角 %.3f deg，干预耗时 %.2f s', a, ta)};
 
-% ---------------- B 运行中改字面值参数 ----------------
+% B: change the literal parameter during a run
 local_reset(mdl, 0);
 [b, tb] = local_live(mdl, @() set_param(k_pitch, 'Value', '0.30'));
 res(end + 1, :) = {b, sprintf('B 运行中改 Constant 字面值参数：末态俯仰角 %.3f deg，干预耗时 %.2f s', b, tb)};
 
-% ---------------- C 对照组：停跑后改值再 sim ----------------
+% C: control, change the value and then call sim
 local_reset(mdl, 0);
 get_param([mdl '/俯仰杆'], 'Binding').setValue(0.30);
 c = local_plain(mdl);
@@ -74,10 +68,12 @@ fprintf('运行中检查：A %.3f deg / B %.3f deg / C %.3f deg\n', a, b, c);
 fprintf('报告 %s\n', report);
 end
 
-% ------------------------------------------------------------------------
+% Local helpers
 function [th, dt] = local_live(mdl, fn)
-% 起一次运行模式的仿真，跑到 1.2 s 时打干预，等它自然结束，读末态俯仰角。
-% 运行模式的仿真与脚本共用一条线程，脚本这边 pause 的时候它才会推进。
+% Start a running-mode simulation, intervene after 1.2 s, wait for it to finish and
+% read the final pitch angle
+% A running-mode simulation shares the thread with the script and only advances
+% while the script pauses
 set_param(mdl, 'SimulationCommand', 'start');
 t0 = tic;
 while ~strcmp(get_param(mdl, 'SimulationStatus'), 'running') && toc(t0) < 15
@@ -119,7 +115,7 @@ th = x(end, 8) * 180 / pi;
 end
 
 function local_reset(mdl, val)
-% 把两条路都恢复到初始状态：基础工作区变量与 Constant 的参数表达式。
+% Reset both paths: the base variable and the Constant parameter expression
 assignin('base', 'sim_stick_pitch', val);
 set_param([mdl '/驾驶员/k_pitch'], 'Value', 'sim_stick_pitch');
 end

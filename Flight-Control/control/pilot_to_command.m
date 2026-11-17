@@ -16,16 +16,14 @@ function [cmd, info] = pilot_to_command(P, stick, t)
 %   cmd.V_c    m/s      airspeed command
 %   cmd.h_c    m        altitude command, altitude mode
 %
-% Authority limits come from P.limits, ramp limits are derived from the
-% bandwidth targets in P.ctrl.bw: a command may not slew faster than the loop
-% that has to follow it. Both are applied here and nowhere else, so the control
-% laws stay free of stick shaping.
+% Authority limits come from P.limits, ramp limits from the bandwidth targets in
+% P.ctrl.bw: a command may not slew faster than the loop that has to follow it.
+% Both are applied here and nowhere else, so the control laws stay free of stick
+% shaping.
 %
-% The pitch stick drives both theta_c and h_c. A mode switch selects which one
-% the controller follows: attitude mode uses theta_c directly, altitude mode
-% feeds h_c to the height loop, which owns the pitch channel. The two are
-% consistent because h_c is the integral of a climb-rate command, not of an
-% independent stick axis.
+% The pitch stick drives both theta_c and h_c, and a mode switch selects which one
+% the controller follows: attitude mode uses theta_c directly, altitude mode feeds
+% h_c to the height loop, which owns the pitch channel.
 %
 % The rate limiter and the altitude integrator are persistent state, reset
 % whenever t does not advance, so every run starts from the same condition.
@@ -41,7 +39,7 @@ V_min = P.limits.V_min_mps;
 V_max = P.limits.V_max_mps;
 h_max = P.limits.h_max_m;
 w_climb = P.limits.climb_rate_max_mps;
-% Yaw rate authority: coordinated turn rate at the bank limit and cruise speed.
+% Yaw rate authority: coordinated turn rate at the bank limit and cruise speed
 r_max = min(P.env.g * tan(phi_max) / P.op.cruise.V_mps, P.ctrl.bw.rate_r_rad_s);
 
 ramp_phi = P.ctrl.bw.att_phi_rad_s * phi_max;
@@ -65,7 +63,7 @@ cmd.phi_c = local_slew(prev.phi_c, raw.phi_c, ramp_phi * dt);
 cmd.theta_c = local_slew(prev.theta_c, raw.theta_c, ramp_theta * dt);
 cmd.r_c = local_slew(prev.r_c, raw.r_c, ramp_r * dt);
 cmd.V_c = local_slew(prev.V_c, raw.V_c, ramp_V * dt);
-% Altitude command integrates the same pitch stick as a climb rate.
+% Altitude command integrates the same pitch stick as a climb rate
 h_target = min(max(prev.h_c + pitch * w_climb * dt, 0), h_max);
 cmd.h_c = local_slew(prev.h_c, h_target, w_climb * dt);
 
@@ -85,7 +83,7 @@ info.dt = dt;
 info.stick = struct('roll', roll, 'pitch', pitch, 'yaw', yaw, 'throttle', thr);
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function y = local_sat(x)
 y = min(max(x, -1), 1);
 end

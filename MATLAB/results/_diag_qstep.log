@@ -1,0 +1,9 @@
+FAILED Simulink:SimInput:DatasetRootInportError | Error loading external input data into root-level Inport block uacs_plant/wind_ned in model 'uacs_plant' using Dataset format.
+  at sim_guarded_sim line 24
+  at sim_run_plant_cmd line 104
+  at diag_qstep line 18
+  at run line 112
+  at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+  at mcpEval line 48
+  at fevalMatlab line 0
+  at fevalJSON line 0

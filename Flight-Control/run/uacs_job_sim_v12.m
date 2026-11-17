@@ -1,10 +1,9 @@
 function uacs_job_sim_v12()
-% UACS_JOB_SIM_V12 Job entry: build the Aerospace Blockset reference plant, prove
-% its port map by measurement, then cross check the two 6DOF models.
-% Owner: ash-v12.
+% UACS_JOB_SIM_V12 Job entry: build the Aerospace Blockset reference plant, prove its port
+% map by measurement, then cross check the two 6DOF models.
 %
-% Stages, each logged separately so a failure says which one, and none of them
-% aborted by an earlier one:
+% Stages, each logged separately so a failure says which one, and none of them aborted by an
+% earlier one:
 %   build_ref    build and save model/uacs_plant_ref.slx
 %   calibrate    identify the 6DOF output ports and check the block against the
 %                documented equations, the ISA block and our own force code
@@ -12,18 +11,11 @@ function uacs_job_sim_v12()
 %   verify       run verify/v_sim_v12_crosscheck.m, which reads the results back
 %                from disk and asserts
 %
-% The job raises at the end when any stage failed, so the log ends with
-% JOB FAILED and a failed criterion is never reported as met.
+% The job raises at the end when any stage failed, so the log ends with JOB FAILED and a
+% failed criterion is never reported as met.
 %
-% Deliberately a FUNCTION with the stages NESTED inside it, not a script.
-% run_job evaluates the job in the base workspace, and the base workspace is
-% shared with every other member of the session: a direct probe or control run by
-% somebody else can clear it between two statements of this job. That happened
-% once and cost a run, because the stage flags vanished mid job and the failure
-% was then reported at the summary line instead of at its cause. Nested functions
-% share this function's workspace, so no stage result has to travel through base,
-% and the few variables the models genuinely need there are re-pushed immediately
-% before each simulation by sim_run_plant_cmd.
+% Deliberately a function with the stages nested inside it: nested functions share this
+% function's workspace, so no stage result has to travel through the base workspace.
 
 root = fileparts(fileparts(mfilename('fullpath')));
 addpath(fullfile(root, 'params'), fullfile(root, 'plant'), fullfile(root, 'control'), ...
@@ -99,7 +91,7 @@ assert(ok, 'uacs_job_sim_v12:Failed', ...
    ['V12 failed; see results/sim_v12_calib.txt, results/sim_v12_crosscheck.mat ' ...
     'and results/sim_v12_report.txt']);
 
-%% ---------------- stages, nested so their results cannot be cleared ----------------
+%% Stages, nested so their results cannot be cleared
    function stage_build(P)
       build = sim_build_plant_ref(P);
       save(fullfile(sim_root(), 'results', 'sim_v12_ref_census.mat'), 'build');
@@ -122,7 +114,7 @@ assert(ok, 'uacs_job_sim_v12:Failed', ...
    end
 end
 
-%% ---------------- summary ----------------
+%% Summary
 function local_summary(root, P, v, tr, verdict, stage_ok, meas)
 file = fullfile(root, 'results', 'sim_v12_report.txt');
 fid = fopen(file, 'w');

@@ -1,7 +1,9 @@
 function p = sim_pos(col, row, w, h)
-% SIM_POS Grid position for a block, so the generated diagrams stay readable.
+% SIM_POS Pixel position vector for a block on the layout grid
 %
-% col and row are zero based; w and h are the block size in pixels.
+%   col, row   zero-based grid cell
+%   w, h       block size in pixels, default 80 by 40
+%   p          [left top right bottom]
 
 if nargin < 3
    w = 80;

@@ -1,24 +1,16 @@
 function info = sim_bench_guidance(mdl)
-% SIM_BENCH_GUIDANCE 台架的制导与模式子系统：把驾驶员指令加工成有效参考。
+% SIM_BENCH_GUIDANCE Guidance and mode subsystem, turning pilot commands into an effective reference
 %
-%   制导与模式/   入 cmd 5x1 / fb 9x1      出 ref 5x1
+%   in cmd 5x1 / fb 9x1    out ref 5x1 / state 1x1
 %
-%   cmd 与 ref 的分量次序相同，都是 [phi_c theta_c r_c V_c h_c]。
-%   姿态模式下 ref 就是 cmd；高度模式下第二个分量换成 pid_h 的输出，
-%   也就是"俯仰杆变成爬升率指令"，由高度环把 theta 当中间指令用。
+% cmd and ref share the component order [phi_c theta_c r_c V_c h_c]. In attitude
+% mode ref is cmd; in altitude mode component 2 becomes the pid_h output, so the
+% pitch stick commands a climb rate while the altitude loop drives theta
 %
-% fb 是导航与测量送来的反馈向量，次序固定
+% fb is the feedback vector, fixed order
 %   1 phi   2 theta   3 p   4 q   5 r   6 V   7 h   8 alpha   9 beta
 %
-% 飞行模式的选择量 sim_flight_mode 是本子系统里的一个 Constant，画布上那个"模式"
-% 拨动开关绑的就是它。放在这里而不是顶层，是为了顶层不再多一根选择线。
-%
-% 高度环 pid_h 放在这里而不是放在 PID 控制器里，是因为两个控制器都要用它：
-% 姿态模式下它就是纯透传，高度模式下它给出俯仰指令。放在任一控制器里都会让另一个
-% 控制器反过来依赖那个块。
-%
-% theta_lim 把 pid_h 的输出卡在俯仰包线上。没有它，高度环在大误差下会给出超过结构
-% 限制的俯仰指令。
+% sim_flight_mode selects the mode
 
 sub = [mdl '/制导与模式'];
 sim_add_block(mdl, '制导与模式', 'simulink/Ports & Subsystems/Subsystem', [1060 60 1220 210]);
@@ -43,10 +35,9 @@ sim_add_block(sub, 'theta_switch', 'simulink/Signal Routing/Switch', sim_pos(5, 
 sim_add_block(sub, 'ref_mux', 'simulink/Signal Routing/Mux', sim_pos(6, 2, 20, 110), ...
    'Inputs', '5');
 sim_add_block(sub, 'ref', 'simulink/Sinks/Out1', sim_pos(7, 2, 30, 14), 'Port', '1');
-% 模式档位单独送出去一路，顶层那块状态读数接的就是它。
 sim_add_block(sub, 'state', 'simulink/Sinks/Out1', sim_pos(7, 6, 30, 14), 'Port', '2');
 
-% 高度误差用的是 cmd 的第 5 路与 fb 的第 7 路。
+% altitude error: cmd component 5 minus fb component 7
 sim_connect(sub, 'cmd/1', 'cmd_split/1', 'fb/1', 'fb_split/1');
 sim_connect(sub, 'cmd_split/5', 'h_err/1', 'fb_split/7', 'h_err/2');
 sim_connect(sub, 'h_err/1', 'pid_h/1', 'pid_h/1', 'theta_lim/1', ...

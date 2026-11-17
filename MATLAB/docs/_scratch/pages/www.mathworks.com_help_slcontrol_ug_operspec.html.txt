@@ -1,0 +1,744 @@
+URL: https://www.mathworks.com/help/slcontrol/ug/operspec.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/slcontrol/ug/operspec.html
+
+ 
+
+ operspec - Operating point specifications - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Control Systems
+
+ Simulink
+ Control Design
+
+ Operating Points
+
+ operspec
+
+On this page
+Syntax
+Description
+ExamplesCreate Operating Point Specification Object
+Copy Operating-Point Specification
+Create Array of Operating Point Specification Objects
+
+Input Argumentsmdl
+dim
+
+Output Argumentsopspec
+
+Tips
+Version HistorySpecifications for finding periodic operating points
+PortWidth property of operating point specification inputs and outputs will be removed
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+operspec
+R2026b
+Operating point specifications
+collapse all in page
+
+Syntax
+opspec = operspec(mdl)
+opspec = operspec(mdl,dim)
+
+Description
+opspec = operspec(mdl) returns
+the default operating point specification object for the Simulink® model mdl.
+Use opspec for steady-state operating point trimming
+using findop.
+
+example
+
+opspec = operspec(mdl,dim) returns
+an array of default operating point specification objects with the
+specified dimensions, dim.
+
+example
+
+Examples
+collapse all
+Create Operating Point Specification Object
+
+Open Script
+
+Open Simulink model.
+sys = 'watertank';
+open_system(sys)
+
+Create the default operating point specification object for the model.
+opspec = operspec(sys)
+
+opspec = 
+
+ Operating point specification for the Model watertank.
+ (Time-Varying Components Evaluated at time t=0)
+
+States: 
+----------
+ x Known SteadyState Min Max dxMin dxMax 
+___________ ___________ ___________ ___________ ___________ ___________ ___________
+ 
+(1.) watertank/PID Controller/Integrator/Continuous/Integrator
+ 0 false true -Inf Inf -Inf Inf 
+(2.) watertank/Water-Tank System/H
+ 1 false true 0 Inf -Inf Inf 
+
+Inputs: None 
+----------
+
+Outputs: None 
+----------
+
+opspec contains specifications for the two states in the model. Since the model has no root level inports or outports, opspec does not contain input or output specifications. To add output specifications, use addoutputspec.
+Modify the operating point specifications for each state using dot notation. For example, configure the first state to:
+Be at steady state.
+
+Have a lower bound of 0.
+
+Have an initial value of 2 for trimming.
+
+opspec.States(1).SteadyState = 1;
+opspec.States(1).x = 2;
+opspec.States(1).Min = 0;
+
+Copy Operating-Point Specification
+
+Open Live Script
+
+ You can create new operspec variables in three ways: 
+Using the operspec command
+
+Using assignment with the equals (=) operator
+
+Using the copy command 
+
+Using the = operator results in linked variables that both point to the same underlying data. Using the copy command results in an independent operspec object. In this example, create operspec objects both ways, and examine their behavior.
+mdl = 'watertank';
+open_system(mdl)
+opspec1 = operspec(mdl)
+
+opspec1 = 
+ Operating point specification for the Model watertank.
+ (Time-Varying Components Evaluated at time t=0)
+
+States: 
+----------
+ x Known SteadyState Min Max dxMin dxMax 
+___________ ___________ ___________ ___________ ___________ ___________ ___________
+ 
+(1.) watertank/PID Controller/Integrator/Continuous/Integrator
+ 0 false true -Inf Inf -Inf Inf 
+(2.) watertank/Water-Tank System/H
+ 1 false true 0 Inf -Inf Inf 
+
+Inputs: None 
+----------
+
+Outputs: None 
+----------
+
+Create a new operating point specification object using assignment with the = operator. 
+opspec2 = opspec1;
+
+opspec2 is an operspec object that points to the same underlying data as opspec1. Because of this link, you cannot independently change properties of the two operspec objects. To see this, change a property of opspec2. For instance, change the initial value for the first state from 0 to 2. The change shows in the States section of the display.
+opspec2.States(1).x = 2
+
+opspec2 = 
+ Operating point specification for the Model watertank.
+ (Time-Varying Components Evaluated at time t=0)
+
+States: 
+----------
+ x Known SteadyState Min Max dxMin dxMax 
+___________ ___________ ___________ ___________ ___________ ___________ ___________
+ 
+(1.) watertank/PID Controller/Integrator/Continuous/Integrator
+ 2 false true -Inf Inf -Inf Inf 
+(2.) watertank/Water-Tank System/H
+ 1 false true 0 Inf -Inf Inf 
+
+Inputs: None 
+----------
+
+Outputs: None 
+----------
+
+Examine the display of opspec1 to see that the corresponding property value of opspec1 also changes from 0 to 2.
+opspec1
+
+opspec1 = 
+ Operating point specification for the Model watertank.
+ (Time-Varying Components Evaluated at time t=0)
+
+States: 
+----------
+ x Known SteadyState Min Max dxMin dxMax 
+___________ ___________ ___________ ___________ ___________ ___________ ___________
+ 
+(1.) watertank/PID Controller/Integrator/Continuous/Integrator
+ 2 false true -Inf Inf -Inf Inf 
+(2.) watertank/Water-Tank System/H
+ 1 false true 0 Inf -Inf Inf 
+
+Inputs: None 
+----------
+
+Outputs: None 
+----------
+
+To create an independent copy of an operating point specification, use the copy command. 
+opspec3 = copy(opspec1);
+
+Now, when you change a property of opspec3, opspec1 does not change. For instance, change the initial value for the first state from 2 to 4. 
+opspec3.States(1).x = 4
+
+opspec3 = 
+ Operating point specification for the Model watertank.
+ (Time-Varying Components Evaluated at time t=0)
+
+States: 
+----------
+ x Known SteadyState Min Max dxMin dxMax 
+___________ ___________ ___________ ___________ ___________ ___________ ___________
+ 
+(1.) watertank/PID Controller/Integrator/Continuous/Integrator
+ 4 false true -Inf Inf -Inf Inf 
+(2.) watertank/Water-Tank System/H
+ 1 false true 0 Inf -Inf Inf 
+
+Inputs: None 
+----------
+
+Outputs: None 
+----------
+
+In opspec1, the corresponding value remains 2. 
+opspec1.States(1).x
+
+ans = 
+2
+
+This copy behavior occurs because operspec is a handle object. For more information about handle objects, see Handle Object Behavior.
+
+Create Array of Operating Point Specification Objects
+
+Open Script
+
+Open Simulink model.
+sys = 'watertank';
+open_system(sys)
+
+Create a 2-by-3 array of operating point specification objects. You can batch trim model at multiple operating points using such arrays.
+opspec = operspec(sys,[2,3]);
+
+Each element of opspec contains a default operating point specification object for the model.
+Modify the operating point specification objects using dot notation. For example, configure the second state of the specification object in row 1, column 3.
+opspec(1,3).States(2).SteadyState = 1;
+opspec(1,3).States(1).x = 2;
+
+You can also create multidimensional arrays of operating point specification objects. For example, create a 3-by-4-by-5 array.
+opspec = operspec(sys,[3,4,5]);
+
+Input Arguments
+collapse all
+mdl — Simulink model
+ 
+character vector | string
+
+Simulink model name, specified as a character vector or
+string.
+
+dim — Array dimensions
+ 
+integer | row vector of integers
+
+Array dimensions, specified as one of the following:
+Integer — Create a column vector of dim
+ operating point specification objects.
+
+Row vector of integers — Create an array of operating point
+ specification objects with the dimensions specified by
+ dim.
+For example, to create a 4-by-5 array of operating point
+ specification objects, use:
+opspec = operspec(mdl,[4,5]);
+
+To create a multidimensional array of operating point
+ specification objects, specify additional dimensions. For example,
+ to create a 2-by-3-by-4 array, use:
+opspec = operspec(mdl,[2,3,4]);
+
+Output Arguments
+collapse all
+opspec — Operating point specifications
+ 
+OperatingSpec object | array of OperatingSpec objects
+
+Operating point specifications, returned as an OperatingSpec object or an
+ array of such objects.
+You can modify the operating point specifications using dot notation. For example, if
+ opspec is a single OperatingSpec
+ object, opspec.States(1).x accesses the state values of
+ the first model state. If opspec is an array of
+ OperatingSpec objects
+ opspec(2,3).Inputs(1).u accesses the input level of
+ the first inport block for the specification in row 2,
+ column 3.
+
+Each OperatingSpec object has the following properties.
+Property | Description | 
+Model | Simulink model name, returned as a character vector. | 
+States | State operating point specifications, returned as a vector
+of state specification objects. Each entry in States represents
+the supported states of one Simulink block.
+For a
+list of supported states for operating point objects, see Simulink Model States Included in Operating Point Object.
+Edit the properties of this object using dot notation or the set function.
+Note
+If the block has multiple named continuous states, States contains
+one structure for each named state.
+
+Each state specification object has the following fields:
+
+Field | Description | 
+Nx (read-only) | Number of states in the block
+ | 
+Block | Block path, returned as a character vector.
+ | 
+StateName | State name
+ | 
+x | Values of all supported block states, specified as a
+vector of length Nx.
+If the corresponding
+flag in Known field of States is 1, x contains
+the known state values. Otherwise, x contains initial
+guesses for the state values.
+ | 
+Ts | (Only for discrete-time states) Sample time and offset
+of each supported block state, returned as a vector.
+ | 
+SampleType | State time rate, returned as one of the following:
+'CSTATE' —
+ Continuous-time state
+
+'DSTATE' — Discrete-time
+ state
+
+ | 
+inReferencedModel | Flag indicating whether the block is inside a reference
+model, returned as one of the following:
+1 — Block is inside a
+ reference model.
+
+0 — Block is in the
+ current model file.
+
+ | 
+Known | Flags indicating whether state values are known during
+trimming, specified as a logical vector of length Nx.
+1 — Known value that is
+ fixed during operating point search
+
+0 (default) — Unknown
+ value found by optimization
+
+To fix a state during an operating point search,
+set the corresponding Known flag to 1,
+and specify the value for that state using the x property
+of States.
+ | 
+SteadyState | Flags indicating whether output values are at steady
+state during trimming, specified as a logical vector of length Nx.
+1 (default) — Equilibrium
+ state
+
+0 — Nonequilibrium
+ state
+
+ | 
+Min | Minimum bounds on state values, specified as a vector
+of length Nx. By default, the minimum bound for
+each state is -Inf.
+ | 
+Max | Maximum bounds on state values, specified as a vector
+of length Nx. By default, the maximum bound for
+each state is Inf.
+ | 
+dxMin | Minimum bounds on state derivatives that are not at steady-state,
+specified as a vector of length Nx. By default,
+the minimum bound for each state derivative is -Inf.
+When you specify a derivative bound, you must also set SteadyState to 0.
+ | 
+dxMax | Maximum bounds on state derivatives that are not at steady-state,
+specified as a vector of length Nx. By default,
+the maximum bound for each state derivative is Inf.
+When you specify a derivative bound, you must also set SteadyState to 0.
+ | 
+Description | Block state description, specified as a character vector.
+ | 
+
+ | 
+Inputs | Input level specifications at the operating point, returned
+as a vector of input specification objects. Each entry in Inputs represents
+the input levels of one root-level inport block in the model.
+Each
+input specification object has the following fields:
+
+Field | Description | 
+Nu (read only) | Number of inport block signals
+ | 
+Block | Inport block name
+ | 
+PortDimensions | Dimension of signals accepted by the inport
+ | 
+u | Inport block input levels at the operating point, returned
+as a vector of length PortWidth.
+If
+the corresponding flag in Known field of Inputs is 1, u contains
+the known input values. Otherwise, u contains initial
+guesses for the input values.
+ | 
+Known | Flags indicating whether input levels are known during
+trimming, specified as a logical vector of length PortWidth.
+1 — Known input level
+ that is fixed during operating point search
+
+0 (default) — Unknown
+ input level found by optimization
+
+To fix an input level during an operating point
+search, set the corresponding Known flag to 1,
+and specify the input value using the u property
+of Inputs.
+ | 
+Min | Minimum bounds on input levels, specified as a vector
+of length PortWidth. By default, the minimum bound
+for each input is -Inf.
+ | 
+Max | Maximum bounds on input levels, specified as a vector
+of length PortWidth. By default, the maximum bound
+for each input is Inf.
+ | 
+Description | Inport block input description, specified as a character
+vector.
+ | 
+
+ | 
+Outputs | Output level specifications at the operating point, returned
+as a vector of output specification objects. Each entry in Outputs represents
+the output levels of one root-level outport block of the model or
+one trim output constraint in the model.
+You can specify
+additional trim output constraints using addoutputspec.
+Each
+output specification object has the following fields:
+
+Field | Description | 
+Ny (read only) | Number of outport block signals
+ | 
+Block | Outport block name
+ | 
+PortNumber | Number of this outport in the model
+ | 
+y | Outport block output levels at the operating point, specified
+as a vector of length PortWidth.
+If
+the corresponding flag in Known field of Outputs is 1, y contains
+the known output values. Otherwise, y contains
+initial guesses for the output values.
+ | 
+Known | Flags indicating whether output levels are known during
+trimming, specified as a logical vector of length PortWidth.
+1 — Known output level
+ that is fixed during operating point search
+
+0 (default) — Unknown
+ output level found by optimization
+
+To fix an output level during an operating point
+search, set the corresponding Known flag to 1,
+and specify the output value using the y property
+of Outputs.
+ | 
+Min | Minimum bounds on output levels, specified as a vector
+of length PortWidth. By default, the minimum bound
+for each output is -Inf.
+ | 
+Max | Maximum bounds the output levels, specified as a vector
+of length PortWidth. By default, the maximum bound
+for each output is Inf.
+ | 
+Description | Outport block input description, specified as a character
+vector.
+ | 
+Period | Period of a periodic output signal to
+ monitor, specified as a positive scalar
+ value.
+You can specify a period for
+ only one signal in your model. When you do so, the
+ findop function ignores any
+ trimming specifications in the operating point
+ specification.
+To perform regular
+ trimming operations, the Period
+ value for all output specifications must remain at
+ the default value of –1.
+For an
+ example that monitors a periodic output signal,
+ see Find Periodic Operating Point for Switching Boost Converter Model.
+ | 
+PeriodicTolerance | Tolerance for periodic signal convergence,
+ specified as a positive scalar value. This value
+ is the tolerance for determining whether two
+ points in the signal, separated by one period, are
+ equal. | 
+
+ | 
+Time | Times at which the time-varying functions in the model
+are evaluated, returned as a vector.
+ | 
+CustomObjFcn | Function providing an additional custom objective function
+for trimming, specified as a handle to the custom function, or a character
+vector or string that contains the function name. The custom function
+must be on the MATLAB® path or in the current working folder.
+You
+can specify a custom objective function as an algebraic combination
+of model states, inputs, and outputs. For more information, see Compute Operating Points Using Custom Constraints and Objective Functions.
+ | 
+CustomConstrFcn | Function providing additional custom constraints for
+trimming, specified as a handle to the custom function, or a character
+vector or string that contains the function name. The custom function
+must be on the MATLAB path or in the current working folder.
+You can specify custom equality and inequality constraints
+as algebraic combinations of model states, inputs, and outputs. For
+more information, see Compute Operating Points Using Custom Constraints and Objective Functions.
+ | 
+CustomMappingFcn | Function that maps model states, inputs, and outputs
+to the vectors accepted by CustomConstrFcn and CustomObjFcn,
+specified as a handle to the custom function, or a character vector
+or string that contains the function name. The custom function must
+be on the MATLAB path or in the current working folder.
+For
+complex models, you can pass subsets of the model inputs, outputs,
+and states to the custom constraint and objective functions using
+a custom mapping function. If you specify a custom mapping, you must
+use the mapping for both the custom constraint function and the custom
+objective function. For more information, see Compute Operating Points Using Custom Constraints and Objective Functions.
+ | 
+
+Tips
+You can create new operspec variables in these ways: 
+Construct a new object with the operspec
+ command.
+
+Create a new variable by assignment with the equals (=)
+ operator.
+
+Copy an operspec object using the
+ copy command. 
+
+Using operspec or copy creates a
+ new, independent object. When you use assignment, there is a link between the
+ old and new variable. For an example, see Copy Operating-Point Specification.
+
+Version History
+Introduced before R2006aexpand all
+R2026a: Specifications for finding periodic operating points
+
+You can now monitor a single periodic output signal in your model to determine
+ when it is at a periodic steady state. To do so, set the Period
+ and PeriodicTolerance properties of the corresponding output
+ specification.
+
+R2021b: PortWidth property of operating point specification inputs and 
+ outputs will be removed
+
+The input and output PortWidth properties of operating point
+ specifications will be removed in a future release. Use the new
+ Nu and Ny properties instead.
+To update your code, change instances of PortWidth to either
+ Nu or Ny as shown in the following
+ table.
+Not Recommended | Recommended | 
+
+ op = operspec('scdplane');
+numOut = op.Outputs(1).PortWidth;
+numIn = op.Inputs(1).PortWidth;
+
+ | 
+ op = operspec('scdplane');
+numOut = op.Outputs(1).Ny;
+numIn = op.Inputs(1).Nu;
+
+ | 
+
+See Also
+findop | addoutputspec | update
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

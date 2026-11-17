@@ -1,0 +1,41 @@
+UACS twin: control allocation report (V7, V8)
+generated 11-Oct-2026 03:01:43 by control/uacs_job_control_design.m
+parameter set rev 11, P 0.5.0
+allocation linearisation point: V 25.00 m/s, qbar 382.81 Pa
+effectiveness G, rows [L M N], columns [da de dr dT_rl], dT_rl = T_r - T_l:
+  [123.98 0 30.0921 0]
+  [0 -382.949 0 0]
+  [-18.0553 0 -114.854 0.9]
+against the linearised plant (I*B(4:6,:)), max difference 1.973e-13 of the largest derivative
+total thrust column I*B(4:6,6) = [0 -0.119118 0], expected [0; z_arm; 0] = [0 -0.119118 0], difference 5.371e-14
+priority: elevator first and alone for pitch; then aileron and rudder; differential thrust last,
+weighted by its own authority ratio, 2.4620 rudder-equivalents at the commanded throttle
+weights [da dr dT] = [1 1 2.46198] (normalised by each limit, larger means more expensive)
+
+--- V7 unsaturated reconstruction ---
+11 moment commands at up to 30 percent of each axis authority, max relative error 2.257e-02 (tolerance 1e-09)
+max absolute error 6.258e-01 N*m, all outputs inside limits: 1
+--- V7 saturation ---
+command [L M N] = [216.385 668.371 200.459] N*m, four times each authority
+outputs da 0.000000, de -0.436332, dr 0.000000 rad; dth_l 0.000000, dth_r 0.860130
+limits da/de/dr 0.436332 rad, differential 0.430065 throttle (headroom 0.430065, structural cap 0.600000)
+inside every limit: 1; throttle sum preserved: 1
+unmet moment demand [dL dM dN] = [-216.385 -501.279 -180.103] N*m
+
+--- V8 differential thrust, authoritative numbers from sizing/sizing_summary.m ---
+cruise throttle 0.4234, headroom 0.4234, structural cap 0.6000, effective 0.4234, limiting factor: throttle headroom
+symmetric modulation with dT = T_L - T_R = 45.1114 N gives yaw 40.6002 N*m
+analytic y_motor*dT = 0.9000 * 45.1114 = 40.6002 N*m
+plant/thrust_moment returns -40.6002 N*m, relative difference 2.000e+00 (tolerance 1e-02)
+sweep over nine differentials up to +-95 percent of the cruise thrust per motor: max error 2.544e-16
+allocate.m differential authority at cruise: 20.3554 N*m, relative difference from the budget 0.499
+  the difference is real and explained: sizing_summary evaluates T = T_static*throttle and
+  therefore counts the low motor at 0 N, while plant/throttle_to_thrust subtracts the ram
+  drag k_ram*V and clips at zero, so the high motor loses that term and the low one cannot
+  go negative. The allocator uses the plant law, which is the conservative one.
+rudder authority at cruise 50.1146 N*m
+ratio differential thrust / rudder = 0.8101 (with the structural cap 1.1480)
+the same ratio as the allocator computes it: 0.4062
+allocator yaw path check, M_cmd = 67.65 N*m: dr 0.000000 rad, dth_l 0.005997, dth_r 0.854134, achieved N 17.5401 N*m
+achieved N against y_motor*dT_ach: relative difference 0.000e+00
+V8 verdict: 1

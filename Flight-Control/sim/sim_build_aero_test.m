@@ -1,19 +1,15 @@
 function info = sim_build_aero_test(P, opts)
-% SIM_BUILD_AERO_TEST Build and save model/uacs_aero_test.slx, the aerodynamic test page.
+% SIM_BUILD_AERO_TEST Build and save model/uacs_aero_test.slx, the aerodynamic test page
 %
-% Seven sliders, all live while the page runs:
-%   V m/s, alpha deg, beta deg, altitude m, elevator deg, aileron deg, rudder deg
-% and thirteen readouts taken from plant/aero_forces.m, the same function the flight
-% models use: the six coefficients, the three wind-axis forces, the three body moments
-% and the density. Nothing here is a second aerodynamic model; if a coefficient
-% disagrees with the aircraft, the aircraft is the one that is right.
+%   opts.reload_fcn  PreLoadFcn, and InitFcn unless ensure_fcn is given
+%   opts.ensure_fcn  InitFcn
 %
-% Rates are held at zero and the attitude angles at alpha and zero, which is the
-% steady case. Cm_alphadot therefore vanishes, because aero_forces evaluates it with
-% alpha_dot = q and q is zero here.
+% Seven sliders, live while the page runs: V m/s, alpha deg, beta deg, altitude m,
+% elevator deg, aileron deg, rudder deg. Thirteen readouts: the six coefficients,
+% the three wind axis forces, the three body moments and the density
 %
-% opts.reload_fcn  model callback run on open and before every simulation, so the page
-%                  initialises P in the base workspace by itself
+% Steady case: the rates are zero and the attitude angles are alpha and zero, so
+% Cm_alphadot vanishes
 
 if nargin < 2
    opts = struct();
@@ -28,9 +24,8 @@ mdl = 'uacs_aero_test';
 file = fullfile(sim_root(), 'model', [mdl '.slx']);
 sim_new_model(mdl, file);
 
-% ---------------- sliders ----------------
-% A Slider Gain multiplies its input by the slider value, so every slider is fed a
-% Constant 1 and the slider itself is the value. Low and High set the range.
+%% Sliders
+% a Slider Gain multiplies its input, so each is fed a Constant 1 and Low/High set the range
 sim_add_block(mdl, 'one', 'simulink/Sources/Constant', sim_pos(0, 0, 50, 30), 'Value', 'sim_c_one');
 spec = { ...
    's_v',     1,  '5',   '35',  '20',    'V 空速 m/s'; ...
@@ -43,18 +38,14 @@ spec = { ...
 for k = 1:size(spec, 1)
    sim_add_block(mdl, spec{k, 1}, 'simulink/Math Operations/Slider Gain', ...
       sim_pos(spec{k, 2}, 0, 70, 40), 'Low', spec{k, 3}, 'High', spec{k, 4});
-   % Gain is set in a SECOND call. Passing Low, High and Gain together leaves the order
-   % of application undefined, and a Gain outside the block's current range is quietly
-   % replaced by the default with only a warning: the airspeed slider then reads 1 m/s
-   % instead of 20.
+   % Gain needs its own call: passed together with Low and High the order is undefined,
+   % and a Gain outside the current range is silently reset to the default
    set_param([mdl '/' spec{k, 1}], 'Gain', spec{k, 5});
    sim_connect(mdl, 'one/1', [spec{k, 1} '/1']);
 end
 
-% ---------------- degrees to radians ----------------
-% Every angle channel is entered in degrees because that is how a person reads a trim
-% table, and converted once here. All five, not just the first three: a conversion gain
-% that is never created cannot be wired.
+%% Degrees to radians
+% angles are entered in degrees and converted once; all five need a gain block to wire
 angle_spec = {'s_alpha', 4; 's_beta', 6; 's_de', 10; 's_da', 12; 's_dr', 14};
 for k = 1:size(angle_spec, 1)
    sim_add_block(mdl, [angle_spec{k, 1} '_rad'], 'simulink/Math Operations/Gain', ...
@@ -62,7 +53,7 @@ for k = 1:size(angle_spec, 1)
    sim_connect(mdl, [angle_spec{k, 1} '/1'], [angle_spec{k, 1} '_rad/1']);
 end
 
-% ---------------- probe and readouts ----------------
+%% Probe and readouts
 sim_add_block(mdl, 'probe_mux', 'simulink/Signal Routing/Mux', sim_pos(2, 2, 20, 150), ...
    'Inputs', '7');
 sim_connect(mdl, 's_v/1', 'probe_mux/1', 's_alpha_rad/1', 'probe_mux/2', ...
@@ -84,8 +75,7 @@ for k = 1:numel(readouts)
    sim_connect(mdl, sprintf('probe_split/%d', k), sprintf('d_%02d/1', k));
 end
 
-% A scope on the six coefficients, and a lift-drag scope that is the one a person
-% actually watches while dragging alpha.
+% a scope on the six coefficients, and a lift-drag scope
 sim_add_block(mdl, 'coef_mux', 'simulink/Signal Routing/Mux', sim_pos(5, 15, 20, 130), ...
    'Inputs', '6');
 sim_connect(mdl, 'probe_split/1', 'coef_mux/1', 'probe_split/2', 'coef_mux/2', ...

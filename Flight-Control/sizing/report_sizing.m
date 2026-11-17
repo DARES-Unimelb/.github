@@ -1,10 +1,10 @@
 function report_sizing()
 % REPORT_SIZING Preliminary sizing pass for the 20 kg twin-engine UAV.
 %
-% Prints the sizing table, the authority budget and the implied modes, and draws
-% the drag and thrust-required curves used by the design notes.
+%   report_sizing()     with init_uacs_twin on the path
 %
-% Run:  run_matlab_file('report_sizing.m')  after init_uacs_twin on the path.
+% Prints the sizing table, the authority budget and the implied modes, and draws the
+% drag and thrust-required curves.
 
 P = uacs_twin_params();
 S = sizing_summary(P);
@@ -72,7 +72,7 @@ fprintf('roll subsidence time constant %8.3f s\n', S.modes.roll_subsidence_tau_s
 fprintf('dutch roll (approx)           %8.2f rad/s (%.2f Hz)\n', ...
     S.modes.dutch_roll_approx_rad_s, S.modes.dutch_roll_approx_rad_s / (2 * pi));
 
-%% ---- figure: drag and thrust required versus speed ----
+%% Drag and thrust required versus speed
 Vv = linspace(max(1.15 * S.V_stall, 8), 45, 200);
 CLv = (P.mass.m * P.env.g) ./ (0.5 * P.env.rho_sl * Vv.^2 * P.geom.S);
 CDv = P.aero.CD0 + P.aero.k_induced * CLv.^2;
@@ -81,9 +81,8 @@ Pshaft = Dv .* Vv;
 Pelec = Pshaft / P.prop.power.eta_total_cruise;
 LDv = CLv ./ CDv;
 
-% Available thrust from the same momentum-theory map the plant uses, both motors
-% at full throttle. No fitted ram-drag slope any more: an independently entered
-% k_ram disagreed with the theory by a factor of four.
+% Available thrust from the same momentum-theory map the plant uses, both motors at
+% full throttle
 Tavail = 2 * prop_thrust_from_throttle(P, 1.0, Vv);
 Tavail(Tavail < 0) = NaN;
 
@@ -124,7 +123,7 @@ xlabel('true airspeed (m/s)'); ylabel('C_L required');
 title('Lift coefficient required');
 legend({'C_L', 'C_L_{max}', 'stall speed'}, 'Location', 'northeast', 'FontSize', 8);
 
-%% ---- print the summary block that the report quotes ----
+%% Summary block that the report quotes
 fprintf('\n==== REPORT BLOCK ====\n');
 fprintf('| item | value |\n|---|---|\n');
 fprintf('| take-off mass | %.1f kg |\n', P.mass.m);

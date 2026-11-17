@@ -1,0 +1,473 @@
+URL: https://www.mathworks.com/help/simulink/slref/simulink.simulationinput.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/simulink.simulationinput.html
+
+ 
+
+ Simulink.SimulationInput - Create Simulink.SimulationInput objects to make changes to model for multiple or individual simulations - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulation
+
+ Run Simulations
+
+ Run Individual Simulations
+
+ Simulink
+
+ Simulation
+
+ Run Simulations
+
+ Run Multiple Simulations
+
+ Simulink.SimulationInput
+
+On this page
+Description
+CreationDescription
+Input ArgumentsmdlName
+
+PropertiesModelName
+InitialState
+ExternalInput
+BlockParameters
+Variables
+ModelParameters
+PreSimFcn
+PostSimFcn
+UserString
+VariantConfiguration
+
+Object Functions
+ExamplesCreate Simulink.SimulationInput Object
+Create Array of Simulink.SimulationInput Objects
+Set Block Parameter Value Using Simulink.SimulationInput Object
+Use Dataset as External Input with Simulink.SimulationInput Object
+
+Version HistoryNew property and function for variant configuration
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+Simulink.SimulationInput
+R2026b
+Create Simulink.SimulationInput objects to make changes to
+ model for multiple or individual simulations
+expand all in page
+
+Description
+The Simulink.SimulationInput object allows you
+ to make changes to a model and run simulations with those changes. These changes are
+ temporarily applied to the model. Using a Simulink.SimulationInput object, you can change initial state, model
+ parameters, block parameters, external inputs, and variables. Through the Simulink.SimulationInput object, you can also specify
+ MATLAB® functions to run at the start and the end of each simulation by using the
+ setPreSimFcn function and the setPostSimFcn.
+
+Creation
+
+Syntax
+simIn = Simulink.SimulationInput(mdlName)
+
+Description
+simIn = Simulink.SimulationInput(mdlName)
+ creates a Simulink.SimulationInput object to configure a simulation
+ of the model specified by mdlName.
+
+example
+
+Input Arguments
+expand all
+mdlName — Model name
+
+string | character vector
+
+Model name, specified as a string or a character vector. When you specify
+ the model name, do not include the .slx extension.
+
+Properties
+expand all
+
+ ModelName — Name of model
+ 
+character vector
+
+Name of the model for which the SimulationInput object is
+ created.
+
+ InitialState — Initial state
+ 
+Simulink.op.ModelOperatingPoint object
+
+Initial state of the model for a simulation, specified as a
+ Simulink.op.ModelOperatingPoint object.
+
+ ExternalInput — External input
+ 
+Simulink.SimulationData.Dataset object | timeseries object | numerical array
+
+External inputs added to the model for a simulation.
+
+ BlockParameters — Block parameters
+ 
+array of Simulink.Simulation.BlockParameter objects
+
+Block parameters of the model that are modified.
+
+ Variables — Variables 
+ 
+array of Simulink.Simulation.Variable objects
+
+Variables of the model that are modified.
+
+ ModelParameters — Model parameters
+ 
+array of Simulink.Simulation.ModelParameter objects
+
+Model parameters of the model that are modified.
+
+ PreSimFcn — Presimulation function
+ 
+MATLAB function
+
+MATLAB function to run before the start of the simulation.
+
+ PostSimFcn — Post simulation function
+ 
+MATLAB function
+
+MATLAB function to run after each simulation.
+
+ UserString — User string
+ 
+character array | string
+
+Brief description of the simulation specified as a character array or a
+ string.
+
+ VariantConfiguration — Name of variant configuration
+ 
+string | character vector
+
+Since R2024a
+Name of variant configuration to apply to the model before running the
+ simulation, specified as a string or character vector.
+This property is applicable for models that use variant elements such as
+ variant blocks and variant parameters, and also have variant configurations
+ created for the model using Simulink®
+ Variant Manager™. For such a model, you can specify a variant configuration that can
+ activate a specific variant path across the model hierarchy before the simulation
+ runs.
+
+For an example, see Run Simulations for Variant Models Using Variant Configurations (Simulink Variant Manager).
+Example: &#34;LinInterExpNoNoise&#34;
+Data Types: char | string
+
+Object Functions
+applyToModel | Apply configuration in SimulationInput object to
+ model | 
+getVariantConfiguration | Get name of variant configuration from SimulationInput
+ object | 
+loadVariablesFromExternalSource | Load variables from a custom file into Simulink.SimulationInput
+ object | 
+loadVariablesFromMATFile | Load variables from MAT file into Simulink.SimulationInput
+ object | 
+removeVariable | Remove variable from SimulationInput or
+ Simulation object | 
+setBlockParameter | Set block parameter values for simulation using
+ SimulationInput or Simulation
+ object | 
+setExternalInput | Specify external input data for top-level input ports using
+ SimulationInput or Simulation
+ object | 
+setInitialState | Specify initial state for simulation using
+ SimulationInput or Simulation
+ object | 
+setPostSimFcn | Set MATLAB function to run after each simulation | 
+setPreSimFcn | Specify MATLAB function to run before start of each simulation on
+ Simulink.SimulationInput object | 
+setModelParameter | Set model parameter values for simulation using
+ Simulink.SimulationInput or Simulation
+ object | 
+setVariable | Set variable values for simulation using
+ SimulationInput or Simulation
+ object | 
+setVariantConfiguration | Set variant configuration for simulation using SimulationInput
+ object | 
+showContents | View summary of specification in SimulationInput or
+ Simulation object | 
+validate | Validate contents of SimulationInput
+ object | 
+
+Examples
+collapse all
+Create Simulink.SimulationInput Object
+
+ Create a SimulationInput object
+ to configure a simulation of the model sldemo_househeat.
+
+ Open the
+ model.
+mdl = &#34;sldemo_househeat&#34;;
+openExample(&#34;simulink_general/sldemo_househeatExample&#34;,...
+ SupportingFile=mdl)
+
+Create a single SimulationInput object for the
+ model.
+simin = Simulink.SimulationInput(mdl);
+
+Create Array of Simulink.SimulationInput Objects
+
+ This example shows you how to create an array of SimulationInput objects to configure several simulations
+ of the model vdp.
+
+ Open the model.
+mdl = &#34;vdp&#34;;
+openExample(&#34;simulink_general/VanDerPolOscillatorExample&#34;,...
+ SupportingFile=mdl)
+
+Create an array of SimulationInput objects by
+ using a for loop.
+simin(1:10) = Simulink.SimulationInput(mdl);
+
+Set Block Parameter Value Using Simulink.SimulationInput 
+ Object
+
+ Modify the value of a block parameter for a simulation of the
+ model sldemo_househeat using a
+ Simulink.SimulationInput object.
+
+ Open the
+ model.
+mdl = &#34;sldemo_househeat&#34;;
+openExample(&#34;simulink_general/sldemo_househeatExample&#34;,...
+ SupportingFile=mdl)
+
+Create an array of SimulationInput object for
+ the model.
+simin(1:10) = Simulink.SimulationInput(mdl);
+
+Specify the Value parameter for the block named
+ Set Point using the setBlockParameter
+ function.
+blk = mdl + &#34;/Set Point&#34;;
+for k = 1:10
+simin(k) = setBlockParameter(simin(k),blk,...
+ Value=num2str(rand()*10+70));
+end
+
+Simulate the model.
+out = parsim(simin);
+
+Use Dataset as External Input with 
+ Simulink.SimulationInput Object
+
+Open the model.
+openExample(&#34;simulink_features/ComponentBasedModelingUsingModelReferenceExample&#34;)
+mdl = &#34;LimitedCounter&#34;;
+open_system(mdl)
+
+Create a Dataset object for this
+ model.
+t = (0:0.01:10)';
+ds = Simulink.SimulationData.Dataset;
+ds = setElement(ds,1,timeseries(5*ones(size(t)),t));
+ds = setElement(ds,2,timeseries(10*sin(t),t));
+ds = setElement(ds,3,timeseries(-5*ones(size(t)),t));
+
+Create a Simulink.SimulationInput object and set the external
+ inputs.
+simin = Simulink.SimulationInput(mdl);
+simin = setExternalInput(simin,ds);
+
+Simulate the model.
+out = sim(simin);
+
+Version History
+Introduced in R2017aexpand all
+R2024a: New property and function for variant configuration
+
+For variant models, use the VariantConfiguration property to
+ specify the variant configuration to apply to the model before the simulation runs. To
+ set the property value, use the setVariantConfiguration
+ function.
+
+See Also
+Functions
+sim | parsim | batchsim
+Tools
+Simulation
+ Manager
+Objects
+Simulink.SimulationOutput | Simulation
+Topics
+Run Simulations Programmatically
+Running Multiple Simulations in Simulink
+Run Parallel Simulations for a Thermal Model of a House Using parsim
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

@@ -25,16 +25,12 @@ function P = uacs_twin_params()
 %
 % Each entry that is not MEASURED is also flagged in P.meta.estimated_fields.
 
-%% ---------------- environment ----------------
+%% Environment
 env.rho_sl = 1.225;      % kg/m^3, ISA sea level
 env.g = 9.80665;         % m/s^2
 env.mu_sl = 1.789e-5;    % Pa*s, for Reynolds number checks
-% ISA constants, used by plant/atmo_isa.m. R is fixed by measurement, not by
-% taste: at R = 287.05 the density at 150 m comes out 1.9e-7 low against the
-% Aerospace Blockset ISA Atmosphere Model block, which is a different density law
-% rather than round-off, and the V12 ISA cross-check reads that gap as a
-% trajectory difference. R = 287.0531 reproduces the block bit for bit at 0, 150
-% and 1000 m, measured in results/atmo_wind_report.txt.
+% ISA constants, used by plant/atmo_isa.m; R = 287.0531 is the value the
+% Aerospace Blockset ISA block uses, so the two agree bit for bit
 env.T_sl = 288.15;       % K, ISA sea level temperature
 env.p_sl = 101325.0;     % Pa, ISA sea level pressure
 env.L_isa = 0.0065;      % K/m, troposphere lapse rate, temperature falls with h
@@ -42,27 +38,15 @@ env.R_air = 287.0531;    % J/(kg*K), specific gas constant of dry air
 env.gamma_air = 1.4;     % ratio of specific heats, for the speed of sound
 env.h_trop_m = 11000.0;  % m, top of the modelled troposphere; above it atmo_isa errors
 
-%% ---------------- mass and inertia ----------------
+%% Mass and inertia
 % xyz positions are relative to the reference origin defined above.
-%
-% Take-off mass is 17.0 kg, set by the team on 2026-10-10: the payload is fixed at
-% 12 kg and the airframe, propulsion and battery budget is 5.0 kg. This replaced a
-% 20 kg baseline, and the reduction matters: at 20 kg on a 3.4 m span the wing
-% loading forced a large angle of attack at low speed, and the tail needed to trim
-% it was so large that the static margin and the low-speed trim requirement could
-% not be met together. A direct search over the whole aspect-ratio and tail-area
-% space found no solution at 20 kg. If the mass grows again, expect that conflict
-% to return, and re-check the V_min trim limit in init_uacs_twin.
 mass.m = 17.0;           % kg, take-off mass. Team requirement.
 mass.payload_kg = 12.0;  % kg, fixed payload. Team requirement.
 mass.airframe_budget_kg = 5.0;   % kg, all-up minus payload. Team requirement.
-% The airframe budget of 5 kg is tight: the payload is 71 percent of take-off
-% mass. The battery alone takes 2.10 kg to meet the 20 minute endurance target at
-% 200 Wh/kg, leaving 2.90 kg for structure, propulsion and systems. That forces
-% small motors, so the installed peak power is modest and the static thrust to
-% weight ratio is about 0.7. If the endurance target or the specific energy of the
-% chosen cells changes, this table has to be rebalanced; the self-check asserts
-% that it sums to mass.m and that the non-payload part equals the budget.
+% The budget is tight: the payload is 71 percent of take-off mass and the battery
+% alone takes 2.10 kg for the endurance target, so the installed peak power is
+% modest and the self-check asserts the table sums to mass.m and that the
+% non-payload part equals the budget
 mass.items = {
 %   name                     m[kg]   x[m]    y[m]    z[m]
     'wing'                    1.10   -0.05   0.00    0.00
@@ -79,23 +63,22 @@ mass.items = {
     'margin'                  0.25    0.00   0.00    0.00
 };
 
-% Point-mass inertia built from mass.items, then scaled by a distribution
-% factor that accounts for mass spread away from each point. SIZED.
+% Point-mass inertia built from mass.items, then scaled by a distribution factor
+% that accounts for mass spread away from each point. SIZED.
 mass = uacs_apply_override('mass', mass);
 [mass.Ixx, mass.Iyy, mass.Izz, mass.Ixz, mass.dist_scale] = local_inertia(mass.items);
 
-% Inertia about the actual centre of gravity (parallel axis from the origin).
+% Inertia about the actual centre of gravity (parallel axis from the origin)
 [mass.x_cg, mass.y_cg, mass.z_cg] = local_cg(mass.items);
 mass.Ixx_cg = mass.Ixx - mass.m * (mass.y_cg^2 + mass.z_cg^2);
 mass.Iyy_cg = mass.Iyy - mass.m * (mass.x_cg^2 + mass.z_cg^2);
 mass.Izz_cg = mass.Izz - mass.m * (mass.x_cg^2 + mass.y_cg^2);
 mass.Ixz_cg = mass.Ixz + mass.m * mass.x_cg * mass.z_cg;
 
-%% ---------------- design operating point ----------------
-% Declared BEFORE the control-surface, geometry and aerodynamics sections, because
-% the tail sizing and the zero-lift pitching moment are both derived from the
-% cruise trim condition and so need the cruise speed to exist first. Moving this
-% block below those sections breaks the file with an undefined `op`.
+%% Design operating point
+% This block must stay above the control-surface, geometry and aerodynamics
+% sections, because the tail sizing and the zero-lift pitching moment are derived
+% from the cruise trim condition; moving it breaks the file with an undefined op
 % Cruise is the primary linearisation point; climb, slow and bank are used for
 % gain-schedule sanity checks, robustness sweeps and trim-envelope limits.
 op.cruise.h_m = 150.0;            % m AGL
@@ -122,7 +105,7 @@ op.bank.bank_deg = 30.0;
 op.bank.phi_deg = 30.0;
 op = uacs_apply_override('op', op);
 
-%% ---------------- control surface limits ----------------
+%% Control surface limits
 % Declared before geometry because the horizontal tail is sized by the elevator
 % travel available at the low-speed corner.
 act.aileron.max_deg = 25.0;    % ESTIMATE.
@@ -140,23 +123,20 @@ act.rudder.rate_deg_s = 100.0;
 act.rudder.tau_s = 0.045;
 act.rudder.trim_deg = 0.0;
 
-% Servo resolution and backlash are not modelled in v1; they belong to the
-% bench-validation phase, not to the control-design phase.
+% Servo resolution and backlash are not modelled in v1
 act = uacs_apply_override('act', act);
 
-%% ---------------- geometry ----------------
-% DESIGN CONSTRAINT: total span must not exceed 3.5 m. The span is entered as a
-% number and asserted against the limit, so a change that breaks the constraint
-% fails at init instead of silently producing an illegal aircraft.
+%% Geometry
+% DESIGN CONSTRAINT: total span must not exceed 3.5 m; the span is asserted
+% against the limit at init
 geom.span_limit_m = 3.50;      % m, hard limit. Team requirement.
 geom.b = 3.40;                 % m, wing span, 0.10 m inside the limit. ESTIMATE.
 geom.AR = 5.00;                % aspect ratio, the free shape parameter. ESTIMATE.
 geom = uacs_apply_override('geom', geom);
 geom.S = geom.b^2 / geom.AR;   % m^2, wing reference area. SIZED from b and AR.
 geom.cbar = geom.S / geom.b;   % m, mean aerodynamic chord. SIZED.
-% Wing lift slope, needed by the tail sizing below. Repeated as aero.CL_alpha with
-% the same value; the parameter self-check asserts the two agree, so a change in one
-% place cannot silently desynchronise the tail sizing from the aerodynamics.
+% Wing lift slope, needed by the tail sizing below; repeated as aero.CL_alpha with
+% the same value, and the self-check asserts the two agree
 aero_CL_alpha_design = 4.65;   % 1/rad, finite-wing estimate. ESTIMATE.
 geom.taper = 0.75;             % tip/root chord ratio. ESTIMATE.
 geom.dihedral_deg = 3.0;       % deg, wing dihedral. ESTIMATE.
@@ -164,26 +144,10 @@ geom.sweep_deg = 0.0;          % deg, quarter-chord sweep. ESTIMATE.
 geom.x_ac = 0.0;               % m, wing aerodynamic centre, by definition the origin.
 geom.iwing_deg = 2.0;          % deg, wing rigging incidence. ESTIMATE.
 
-% The horizontal tail is sized by the LOW-SPEED TRIM requirement, because trim is
-% harder to satisfy than stability here and the two pull in opposite directions:
-%   stability   static margin grows linearly with tail area
-%   trim        elevator control power grows as the tail area SQUARED, because both
-%               CL_de ~ Sh and Vh ~ Sh enter Cm_de
-% At 17 kg the elevator runs out of travel well before the wing stalls, so the
-% usable low-speed limit is set by trim. Measured trade at the rev 8 geometry,
-% level flight, budget 80 percent of 25 deg = 20 deg of elevator:
-%   Sh/S 0.10 -> trims down to 17.98 m/s, static margin  51 percent cbar
-%   Sh/S 0.14 -> 16.01 m/s,                       63 percent
-%   Sh/S 0.16 -> 15.28 m/s,                       69 percent
-%   Sh/S 0.18 -> 14.66 m/s,                       74 percent  (rejected: outside the band)
-%   Sh/S 0.25 -> 12.99 m/s,                       94 percent
-% 0.16 is chosen: it buys 2.7 m/s of usable low-speed envelope over 0.10 while
-% keeping the static margin just inside the 70 percent plausibility band that
-% init_uacs_twin asserts. The margin is high because a 5 kg airframe budget pushes
-% the centre of gravity forward, and the tail is sized by trim rather than by
-% stability. Going larger lowers the trimmable speed further but the pitch response
-% gets very sluggish and the margin leaves the band entirely.
-% Reproduce the table with sizing/probe_tail_for_vmin.m.
+% The horizontal tail is sized by the LOW-SPEED TRIM requirement rather than by
+% static margin: at this wing loading the elevator runs out of travel well before
+% the wing stalls, and Sh/S = 0.16 buys usable low-speed envelope while keeping
+% the static margin inside the plausibility band that init_uacs_twin asserts
 geom.Sh_over_S = 0.16;         % horizontal tail area / wing area. ESTIMATE, trim-sized.
 geom.lh = 1.95;                % m, wing AC to tail AC arm. ESTIMATE.
 geom.ih_deg = -1.0;            % deg, horizontal tail incidence. ESTIMATE.
@@ -192,18 +156,12 @@ geom.Sh = geom.Sh_over_S * geom.S;      % m^2. SIZED.
 geom.Vh = geom.Sh * geom.lh / (geom.S * geom.cbar);    % tail volume. SIZED.
 geom.elevator_trim_frac = 0.80;   % max fraction of elevator travel, design intent.
 
-% The fin is SIZED by the single-engine control requirement, not by taste. The
-% quantity that matters is the RATIO of rudder authority to weathercock
-% stiffness, Cn_dr/Cn_beta, not the fin area alone. Both scale with the fin volume
-% so a bigger fin does not by itself buy control, and because Cn_r carries a
-% factor 2 the damping grows faster than the rudder:
+% The fin is SIZED by the single-engine control requirement. What sets V_mc is the
+% RATIO of rudder authority to weathercock stiffness, Cn_dr/Cn_beta, not the fin
+% area alone:
 %   Cn_beta =  -Vv * CY_beta_tail                  (stiffness, hurts V_mc)
 %   Cn_dr   =  -Vv * CY_dr * (S_rudder/S_fin)      (authority, helps V_mc)
 %   V_mc    = sqrt( 2 * T_peak * y_motor / (rho * S * b * |Cn_dr| * dr_max) )
-% Reference point: the published Aerosonde model has Cn_dr/Cn_beta = -0.945 with
-% a 35 percent chord rudder. A 0.55 m^2 fin at 35 percent chord gave only -0.240,
-% which is why V_mc came out above the cruise speed. The fin is trimmed back to
-% 0.42 m^2 and the rudder chord raised to 0.45 of the fin chord.
 geom.Sv = 0.600;               % m^2, vertical tail area. ESTIMATE, control-sized.
 geom.lv = 1.95;                % m, wing AC to vertical tail AC arm. ESTIMATE.
 geom = uacs_apply_override('geom', geom);
@@ -214,12 +172,8 @@ geom.aileron.chord_frac = 0.25;   % fraction of local chord. ESTIMATE.
 geom.aileron.y_inboard = 0.35;    % fraction of semispan, inboard edge. ESTIMATE.
 geom.elevator.chord_frac = 0.40;  % fraction of tail chord. ESTIMATE, control-sized.
 geom.rudder.chord_frac = 0.50;    % fraction of fin chord. ESTIMATE, control-sized.
-% Practical range for a powered rudder is roughly 0.25 to 0.50 of the fin chord.
-% This sits at the top of that range because the rudder authority RATIO, not the
-% fin area, is what sets the single-engine control speed, and the 3.5 m span
-% limit keeps the tail arm short.
 
-%% ---------------- aerodynamics ----------------
+%% Aerodynamics
 % All derivatives are per radian unless the name ends in _deg.
 % Cm is about the body y axis, Cn about the body z axis, Cl about the body x
 % axis, all in the standard body convention.
@@ -235,11 +189,10 @@ geom.rudder.chord_frac = 0.50;    % fraction of fin chord. ESTIMATE, control-siz
 aero.CL0 = 0.22;          % wing-fuselage lift at alpha = 0. ESTIMATE.
 aero.CL_alpha = 4.65;     % 1/rad, AR 5.8 finite-wing estimate. ESTIMATE.
 
-% Control-surface effectiveness is derived from flap theory rather than entered as
-% a bare number, so it moves with the surface geometry instead of staying behind:
+% Control-surface effectiveness comes from flap theory, so it moves with the
+% surface geometry instead of staying behind:
 %   lift increment = tau * CL_alpha * (S_surface/S_ref) * deflection
-% tau is the flap effectiveness factor, roughly 0.65 for the 40 percent chord
-% elevator and 0.50 for the 50 percent chord rudder.
+% tau is roughly 0.65 for the 40 percent chord elevator, 0.50 for the rudder.
 aero.tau_elevator = 0.65;    % ESTIMATE, 40 percent chord elevator.
 aero.tau_rudder = 0.50;      % ESTIMATE, 50 percent chord rudder.
 aero.CL_q = 3.90;         % 1/rad, pitch-rate lift, 2*CL_alpha*lh/cbar. ESTIMATE.
@@ -256,21 +209,12 @@ aero.CD_de = 0.010;       % 1/rad. ESTIMATE.
 aero.CD_beta = 0.0;       % 1/rad. ESTIMATE.
 
 % Zero-lift pitching moment is DERIVED from the tail setting, and the tail setting
-% is itself derived from a stated trim target rather than hand-tuned.
-%
-% The parameter a designer sets is the tail's angle relative to the WING chord
-% line. Measuring from the wing chord makes the wing's own zero-lift angle drop
-% out. Requiring zero elevator trim at the design cruise point then fixes the
-% tail's zero-lift angle and, through it, the downwash the design implies:
+% from the trim target of zero elevator at the design cruise point:
 %   Cm(trim) = Cm0_wing - Vh*CL_alpha*a_t + Cm_alpha*alpha_trim = 0
 %   =>  a_t = (Cm0_wing + Cm_alpha*alpha_trim) / (Vh*CL_alpha)
 %   =>  eps_downwash = i_tail_rel_wing - a_t
-% The implied downwash is asserted to lie in a physical band, so the tail setting
-% and the camber moment cannot drift into a combination that needs impossible
-% elevator travel. Two earlier versions of this block were wrong and both were
-% caught by the elevator trim assertion: a hand-entered Cm0 of +0.020 demanded
-% 17 deg of trim on a level cruise, and substituting the wing zero-lift angle for
-% the tail angle gave Cm0 = -0.074 and demanded 83 deg, over three times travel.
+% The tail angle is measured from the WING chord line, which makes the wing's own
+% zero-lift angle drop out.
 aero.CL0 = 0.22;          % wing-fuselage lift at alpha = 0. ESTIMATE.
 aero.alpha0_wing = -aero.CL0 / aero.CL_alpha;   % rad, wing zero-lift angle. SIZED.
 aero.Cm0_wing = -0.012;   % ESTIMATE, camber moment about the wing AC.
@@ -283,7 +227,7 @@ aero.Cm_q = -2 * aero.CL_alpha * geom.Vh * (geom.lh / geom.cbar);    % SIZED.
 aero.Cm_de = -aero.CL_de * geom.Vh * (geom.lh / geom.cbar);          % SIZED.
 aero.Cm_alphadot = -2.5;  % 1/rad, downwash lag. ESTIMATE.
 
-% Trim target: zero elevator at the design cruise point.
+% Trim target: zero elevator at the design cruise point
 q_design = 0.5 * env.rho_sl * op.cruise.V_mps^2;
 CL_design = mass.m * env.g / (q_design * geom.S);
 aero.alpha_trim_design = (CL_design - aero.CL0) / aero.CL_alpha;   % rad. SIZED.
@@ -293,12 +237,9 @@ aero.eps_downwash_deg = aero.i_tail_rel_wing_deg - rad2deg(aero.alpha_tail_zerol
 aero.Cm0 = aero.Cm0_wing - geom.Vh * aero.CL_alpha * aero.alpha_tail_zerolift;        % SIZED.
 
 aero.CY_beta = -0.750;    % side force due to sideslip. ESTIMATE.
-% Rudder side force, built from the same flap relation as the elevator but on the
-% fin planform, then derated because a fin sits in the fuselage and wing wake:
+% Rudder side force, from the same flap relation as the elevator but on the fin
+% planform, then derated because a fin sits in the fuselage and wing wake:
 %   CY_dr = k_body * tau_rudder * CL_alpha * Sv / S,   k_body = 0.85
-% Deriving it matters: the previously hand-entered 0.18 made the rudder about
-% three times weaker than the elevator relative to the published Aerosonde
-% reference, which is what made the single-engine case uncontrollable.
 aero.k_body_rudder = 0.85;   % ESTIMATE, fin in fuselage and wing wake.
 aero.CY_dr = aero.k_body_rudder * aero.tau_rudder * aero.CL_alpha * geom.Sv / geom.S;
 
@@ -311,16 +252,15 @@ aero.Cl_betadot = 0.0;    % neglected in v1.
 
 % Weathercock stability and yaw damping, both tail-volume driven.
 % Sign chain, in the body convention used throughout this file: a positive
-% sideslip (nose right of the relative wind) puts the fin at a positive local
-% incidence, and the resulting side force acts in the negative y direction, so
-% CY_beta_tail is negative. That side force acts behind the CG, which gives a
-% NOSE-LEFT restoring yaw, so the yawing moment coefficient is positive:
+% sideslip puts the fin at a positive local incidence, and the resulting side
+% force acts in the negative y direction behind the CG, giving a nose-left
+% restoring yaw:
 %   Cn_beta = -Vv * CY_beta_tail                    (positive, restoring)
 %   Cn_r    =  2 * Vv * CY_beta_tail                (negative, damping)
 %   Cn_dr   = -Vv * CY_dr * (S_rudder / S_fin)      (negative)
 % The rudder term carries the rudder-to-fin area ratio, equal to the rudder chord
-% fraction for a full-span rudder. Without that factor the rudder chord fraction
-% is dead data and changing it does nothing, which is how it was first written.
+% fraction for a full-span rudder; without that factor the chord fraction is dead
+% data
 aero.CY_beta_tail = -0.750;                      % ESTIMATE, side force per rad of sideslip.
 aero.Cn_beta = -geom.Vv * aero.CY_beta_tail;     % SIZED, must come out positive.
 aero.Cn_p = -0.030;       % 1/rad. ESTIMATE.
@@ -329,10 +269,9 @@ aero.Cn_da = -0.0060;     % adverse yaw from aileron. ESTIMATE.
 aero.Cn_dr = -geom.Vv * aero.CY_dr * geom.rudder.chord_frac;   % SIZED.
 aero.Cn_betadot = 0.0;    % neglected in v1.
 
-%% ---------------- propulsion ----------------
-% Twin wing-mounted motors with counter-rotating propellers. Counter rotation
-% cancels the torque and P-factor asymmetry of a conventional twin, so the
-% asymmetry model below only carries the effects that survive cancellation.
+%% Propulsion
+% Twin wing-mounted motors with counter-rotating propellers, which cancels the
+% torque and P-factor asymmetry of a conventional twin
 prop.kind = 'counter_rotating';
 prop.D = 0.4064;          % m, 16 inch propeller. ESTIMATE.
 prop.pitch_in = 8.0;      % inch, nominal pitch. ESTIMATE.
@@ -341,10 +280,7 @@ prop.n_motors = 2;
 prop.endurance_target_s = 1200;   % s, 20 min. Team requirement.
 
 prop.power.peak_per_motor_W = 1500;    % W electrical, short burst. ESTIMATE.
-% Sized by the airframe mass budget, not by desire: 0.17 kg per motor-and-ESC pair
-% at the 17 kg take-off mass corresponds to roughly a 1.5 kW class outrunner. The
-% result is a static thrust to weight ratio near 0.9, which is a normal fixed-wing
-% figure and not a deficiency.
+% Sized by the airframe mass budget, which allows only a modest 1.5 kW class motor
 prop.power.eta_prop_cruise = 0.72;     % ESTIMATE.
 prop.power.eta_motor = 0.88;           % ESTIMATE.
 prop.power.eta_esc = 0.95;             % ESTIMATE.
@@ -353,37 +289,29 @@ prop.power.eta_total_cruise = prop.power.eta_prop_cruise * ...
 prop.power.figure_of_merit = 0.55;     % static thrust efficiency. ESTIMATE.
 
 % Static thrust is DERIVED from the peak shaft power by momentum theory rather
-% than entered as an independent number. Entering both lets them contradict each
-% other, and the contradiction lands straight in the engine-out yaw moment:
+% than entered independently, so the two cannot contradict each other:
 %   T_static = (P_shaft * FM * sqrt(2*rho*A))^(2/3),  A = pi*D^2/4
-% FM is the ideal-to-actual power ratio, P_ideal = T*v_i and P_actual = P_ideal/FM,
-% so it enters the thrust relation linearly, not as a power. The relation is
-% monotone in both inputs, so thrust and power can never drift apart.
+% FM is the ideal-to-actual power ratio, P_ideal = T*v_i and P_actual = P_ideal/FM
 prop = uacs_apply_override('prop', prop);
 prop.disk_area = pi * prop.D^2 / 4;                             % SIZED.
 prop.P_shaft_peak = prop.power.peak_per_motor_W * ...
                     prop.power.eta_motor * prop.power.eta_esc;  % SIZED.
 prop.T_static_max = (prop.P_shaft_peak * prop.power.figure_of_merit * ...
                      sqrt(2 * env.rho_sl * prop.disk_area))^(2/3);   % SIZED, N per motor.
-% Throttle is the fraction of PEAK SHAFT POWER, not of thrust. The exponent below
-% describes the power law, and the thrust that results follows power^(2/3), so
-% thrust goes as throttle^(4/3). See prop_thrust_from_throttle.m.
+% Throttle is the fraction of PEAK SHAFT POWER, not of thrust, and the resulting
+% thrust follows power^(2/3), so thrust goes as throttle^(4/3)
 prop.throttle_exponent = 2/3;  % ESTIMATE, throttle to shaft power.
 
-% Available thrust versus advance speed is tabulated at init from the same
-% momentum theory, instead of from a fitted ram-drag line. An independently
-% entered slope k_ram was measured to disagree with momentum theory by a factor
-% of four, and that slope feeds the thrust-speed coupling in the A matrix.
+% Available thrust versus advance speed, tabulated at init from the same momentum
+% theory; do not replace it with a fitted ram-drag line, whose slope feeds the
+% thrust-speed coupling in the A matrix
 prop.speed_table_V = [0 5 10 15 20 25 30 35 40 45];    % m/s. SIZED
 prop.speed_table_T = local_thrust_table(prop, env.rho_sl);   % N per motor. SIZED
 
 prop.y_motor = 0.90;      % m, motor station outboard of the centreline. ESTIMATE.
 prop.x_motor = -0.05;     % m. ESTIMATE.
-% The offset used is the one the LAYOUT gives: the motor station relative to the CG
-% height, with the thrust line at the motor axis. It is deliberately NOT derived
-% from the trim budget below. Deriving it from the budget put the motors 0.55 m
-% above the CG, which is not a layout anyone would build; the budget is a limit to
-% check against, not a value to consume.
+% Thrust line offset taken from the LAYOUT, not from the trim budget below: the
+% budget is a limit to check against, not a value to consume
 prop.z_motor = -0.10;     % m, motor axis above the reference origin. ESTIMATE.
 prop.z_thrust_offset = prop.z_motor - mass.z_cg;   % m. SIZED, negative is above the CG.
 % Layout limit: the engine-out nose-down moment must stay inside the elevator
@@ -395,10 +323,8 @@ prop.z_thrust_offset_max = prop.engine_out_margin * ...
     (0.5 * env.rho_sl * op.cruise.V_mps^2) * geom.S * geom.cbar * ...
     abs(aero.Cm_de) * deg2rad(act.elevator.max_deg) / prop.T_static_max;   % SIZED, m.
 
-% In-flight thrust: use prop.thrust_speed_table_T versus prop.thrust_speed_table_V,
-% interpolated by thrust_from_speed(). Do not reconstruct thrust from a fitted
-% ram-drag slope; the table is the consistent form and the slope is an output of
-% it, not an input.
+% In-flight thrust comes from prop.speed_table_T against prop.speed_table_V,
+% interpolated by thrust_from_speed
 prop.differential_limit = 0.60;% structural cap on |differential| throttle. ESTIMATE.
 prop.esc.tau_s = 0.060;        % ESC plus motor electrical time constant. ESTIMATE.
 prop.esc.rate_per_s = 4.0;     % throttle units per second. ESTIMATE.
@@ -408,29 +334,24 @@ prop.esc.max_throttle = 1.0;
 op.bank.bank_deg = 30.0;
 op.bank.phi_deg = 30.0;
 
-%% ---------------- atmosphere and wind ----------------
-% Density model. 'const' holds P.env.rho_sl at every altitude: that is the frozen
-% rev 9 behaviour and what every accepted number in architecture.md was measured
-% with. 'isa' evaluates plant/atmo_isa.m at the density altitude, which is -pd
-% from the state when h_from_state is true, else the fixed h_ref. At 150 m ISA
-% gives 1.2074564 kg/m^3, 1.43 percent below sea level, so switching the model on
-% moves every trim, mode and envelope number and has to be recorded in the report
-% next to the number it produced.
+%% Atmosphere and wind
+% Density model: 'const' holds P.env.rho_sl at every altitude, 'isa' evaluates
+% plant/atmo_isa.m at the density altitude, which is -pd from the state when
+% h_from_state is true, else the fixed h_ref. At 150 m ISA is 1.43 percent below
+% sea level, so switching the model moves every trim, mode and envelope number.
 atmo.model = 'const';
 atmo.h_from_state = true;      % true -> density altitude = -pd, the state altitude
 atmo.h_ref = 0.0;              % m, density altitude used when h_from_state is false
 atmo.dT_sl = 0.0;              % K offset from ISA
-% Wind is applied at the model boundary, not read from here: sim/sim_plant_rhs.m
-% takes the NED wind from the uacs_plant wind inport and shifts the velocity
-% there. The time-varying path is the [t wn we wd] matrix that sim_push_scenario
-% pushes, one sample per solver step; wind_ned below is the steady value a
-% plant-level study carries, and it is zero in the frozen set.
+% Wind is applied at the model boundary, not read from here: the plant model takes
+% the NED wind from its wind inport and shifts the velocity there; wind_ned below
+% is the steady value a plant-level study carries
 atmo.wind_ned = [0.0; 0.0; 0.0];      % m/s steady wind, NED
 atmo.gust_rms = [0.0; 0.0; 0.0];      % m/s, Dryden-lite rms, used by the gust case
 atmo.gust_tau = [1.0; 1.0; 1.0];      % s, first-order shaping time constants
 atmo = uacs_apply_override('atmo', atmo);
 
-%% ---------------- sensor models ----------------
+%% Sensor models
 sensor.imu.rate_hz = 400.0;         % gyro and accelerometer update. ESTIMATE.
 sensor.imu.gyro_noise_dps = 0.05;   % deg/s, 1-sigma. Datasheet class.
 sensor.imu.gyro_bias_dps = 0.50;    % deg/s, constant bias after calibration.
@@ -454,7 +375,7 @@ sensor.gnss.tau_s = 0.200;          % s, latency.
 sensor.mag.rate_hz = 50.0;
 sensor.mag.noise_deg = 1.0;
 
-%% ---------------- sampling and simulation ----------------
+%% Sampling and simulation
 sim.Ts_ctrl = 0.0025;      % s, 400 Hz inner loop. Matches typical gyro rate.
 sim.Ts_outer = 0.010;      % s, 100 Hz attitude and energy loops.
 sim.Ts_alloc = 0.010;      % s, 100 Hz control allocation and mixer.
@@ -466,7 +387,7 @@ sim.abs_tol = 1e-10;
 sim.t_end_s = 60.0;
 sim = uacs_apply_override('sim', sim);
 
-%% ---------------- controller bandwidth targets ----------------
+%% Controller bandwidth targets
 ctrl.bw.rate_p_rad_s = 12.0;      % roll rate loop target crossover
 ctrl.bw.rate_q_rad_s = 8.0;       % pitch rate loop target crossover
 ctrl.bw.rate_r_rad_s = 5.0;       % yaw rate loop target crossover
@@ -480,22 +401,12 @@ ctrl.int_limit = struct('phi', deg2rad(15), 'theta', deg2rad(10), ...
                         'V', 5.0, 'h', 20.0);
 ctrl = uacs_apply_override('ctrl', ctrl);
 
-% The state-domain bound each integrator is clamped to, in rad*s, (m/s)*s or m*s.
-% ctrl.int_limit above is the ERROR-domain bound: the persistent error the loop is
-% meant to absorb. An integrator state is that error held over time, so the two are
-% related by the loop time constant 1/bw, and ctrl.int_state_margin is how many of
-% those the state may hold before the clamp acts at all.
-%
-% The clamp is a SAFETY NET, not the mechanism that stops the windup. The
-% back-calculation in the controller is that mechanism, and the margin is what keeps
-% the clamp out of its way. At margin 1 the clamp became the whole anti-windup, and
-% the cost was measured twice over: the achievable pitch on a 30 deg command fell
-% from 28.47 deg to 26.79 deg, settling time rose from 4.768 s to 5.583 s, and the
-% anti-windup on/off comparison printed identical numbers to every digit, so the
-% comparison could not fail whatever the controller did. Under the same manoeuvre
-% the back-calculation settles at 3.9 times the unmargined bound, so 8 leaves about
-% a factor 2 of headroom. V6 asserts that the clamp stays out of the way; this
-% comment is not the evidence.
+% ctrl.int_limit above is the ERROR-domain bound, the persistent error the loop is
+% meant to absorb; these are the STATE-domain bounds, in rad*s, (m/s)*s or m*s,
+% related by the loop time constant 1/bw and scaled by
+% ctrl.int_state_margin. The clamp is a safety net, not the anti-windup mechanism:
+% back-calculation is, and at margin 1 the clamp took over and degraded the pitch
+% response. V6 asserts the clamp stays out of the way.
 ctrl.int_state_margin = 8.0;
 ctrl = uacs_apply_override('ctrl', ctrl);
 ctrl.int_state_limit.phi = ctrl.int_state_margin * ctrl.int_limit.phi / ctrl.bw.att_phi_rad_s;
@@ -503,15 +414,14 @@ ctrl.int_state_limit.theta = ctrl.int_state_margin * ctrl.int_limit.theta / ctrl
 ctrl.int_state_limit.V = ctrl.int_state_margin * ctrl.int_limit.V / ctrl.bw.speed_rad_s;
 ctrl.int_state_limit.h = ctrl.int_state_margin * ctrl.int_limit.h / ctrl.bw.height_rad_s;
 
-% Rate-command clamps for the attitude outer loops. The outer loop is a proportional
-% law on attitude error, so ANY attitude error becomes a rate command however large:
-% with the roll stick at its stop the roll loop demanded 1.40 rad/s at once and reached
-% 17.73 rad/s as the error persisted, while the airframe sustains only 1.23 rad/s. The
-% aileron then saturated, sideslip built to 9 degrees, and the aircraft rolled INVERTED.
+% Rate-command clamps for the attitude outer loops: the outer loop is a
+% proportional law on attitude error, so any attitude error becomes a rate command
+% however large, and without a clamp the aileron saturates until the aircraft rolls
+% inverted.
 %
 % Each limit is DERIVED from the steady-state balance of the moment against its own
-% damping derivative at the cruise condition, taken at 70 percent so the loop still has
-% headroom to correct. Steady rate from a full-scale surface:
+% damping derivative at the cruise condition, taken at 70 percent so the loop still
+% has headroom to correct. Steady rate from a full-scale surface:
 %   roll   p_ss = (|Cl_da|*da_max / |Cl_p|) * 2*V/b
 %   pitch  q_ss = (|Cm_de|*de_max / |Cm_q|) * 2*V/cbar
 ctrl.rate_cmd_frac = 0.70;
@@ -522,31 +432,28 @@ ctrl.rate_cmd_limit.p_rad_s = ctrl.rate_cmd_frac * ...
 ctrl.rate_cmd_limit.q_rad_s = ctrl.rate_cmd_frac * ...
    (abs(aero.Cm_de) * deg2rad(act.elevator.max_deg) / abs(aero.Cm_q)) * ...
    2 * op.cruise.V_mps / geom.cbar;
-% Yaw keeps the coordinated-turn limit already used for the pilot stick. It is filled
-% in after the limits section below, because bank_max_deg is defined there.
+% Yaw keeps the coordinated-turn limit; it is filled in after the limits section
+% below, because bank_max_deg is defined there
 ctrl.rate_cmd_limit.r_rad_s = NaN;
 
-%% ---------------- controller weights (LQR) ----------------
-% Bryson-style starting values. The design script overwrites these only after
-% recording why; do not edit them to make one plot look better.
+%% Controller weights (LQR)
+% Bryson-style starting values, overwritten by the design script only after
+% recording why
 lqr.long.q_diag = [1/2.0^2, 1/deg2rad(5)^2, 1/deg2rad(15)^2, 1/deg2rad(10)^2];
 lqr.long.r_diag = [1/deg2rad(20)^2, 1/0.30^2];
 lqr.lat.q_diag  = [1/deg2rad(5)^2, 1/deg2rad(60)^2, 1/deg2rad(30)^2, 1/deg2rad(20)^2];
 lqr.lat.r_diag  = [1/deg2rad(20)^2, 1/deg2rad(20)^2];
 lqr = uacs_apply_override('lqr', lqr);
 
-%% ---------------- limits and failsafe ----------------
-% V_min is the LARGER of two limits: the stall margin and the lowest speed the
-% aircraft can actually trim. At this wing loading trim binds, not stall, so the
-% stall number alone would promise a speed the aircraft cannot fly.
+%% Limits and failsafe
+% V_min is the LARGER of the stall margin and the lowest speed the aircraft can
+% actually trim; at this wing loading trim binds, so the stall number alone would
+% promise a speed the aircraft cannot fly.
 %
-% The trimmable minimum is NOT computed here. A closed-form Cm relation was tried
-% and was badly wrong: de against V is strongly nonlinear, so the linearised form
-% predicted -20.0 deg of elevator at 15.41 m/s where the real trim needs -33.5 deg,
-% under-reporting the low-speed limit by 2.6 m/s. init_uacs_twin therefore solves
-% it with the real trim solver and OVERWRITES these two fields, and the values below
-% are only a placeholder to keep the struct complete. Do not read V_min_mps without
-% running init_uacs_twin first: the init-time value is the authoritative one.
+% The trimmable minimum is NOT computed here, because a closed-form Cm relation is
+% badly wrong at this wing loading. init_uacs_twin solves it with the real trim
+% solver and OVERWRITES these two fields, so never read V_min_mps without running
+% init_uacs_twin first.
 limits.stall_margin_factor = 1.20;
 limits = uacs_apply_override('limits', limits);
 limits.V_stall_mps = sqrt(2 * mass.m * env.g / ...
@@ -554,10 +461,9 @@ limits.V_stall_mps = sqrt(2 * mass.m * env.g / ...
 limits.V_min_stall_mps = limits.stall_margin_factor * limits.V_stall_mps;
 limits.V_min_trim_mps = NaN;      % filled by init_uacs_twin via the trim solver
 limits.V_min_mps = NaN;           % filled by init_uacs_twin, = max(stall, trim)
-% V_max is a LIMIT for the flight envelope, and it must be reachable: at the rev 8
-% mass and installed power the thrust-limited level-flight ceiling is 30.9 m/s, so a
-% 40 m/s limit would be a promise the aircraft cannot keep. 30.0 m/s sits just
-% inside the ceiling, and the self-check asserts V_max does not exceed it.
+% V_max is a LIMIT for the flight envelope and it must be reachable: at this mass
+% and installed power the thrust-limited level-flight ceiling is about 30.9 m/s,
+% and the self-check asserts V_max does not exceed it
 limits.V_max_mps = 30.0;
 limits.bank_max_deg = 45.0;
 limits.pitch_max_deg = 30.0;
@@ -567,41 +473,19 @@ limits.nz_max = 3.0;
 limits.nz_min = -1.5;
 limits = uacs_apply_override('limits', limits);
 
-% Yaw rate-command clamp, filled here because it needs bank_max_deg above. It matches
-% the coordinated-turn limit the pilot stick already uses, so the clamp can never be
-% tighter than what the stick itself commands.
+% Yaw rate-command clamp, filled here because it needs bank_max_deg above; it
+% matches the coordinated-turn limit the pilot stick already uses, so the clamp can
+% never be tighter than what the stick itself commands
 ctrl.rate_cmd_limit.r_rad_s = min(env.g * tan(deg2rad(limits.bank_max_deg)) / ...
    op.cruise.V_mps, ctrl.bw.rate_r_rad_s);
 
-%% ---------------- provenance ----------------
+%% Provenance
 % meta.revision is incremented on every edit that can change a design number, and
-% every job log and result file must print it. Raising it is what makes a
-% measurement reproducible: without it two runs of the same script against
-% different parameter edits look identical and neither can be reproduced. A round
-% of measurements was voided once because the file changed three times while the
-% numeric checks were running.
+% every job log and result file must print it, so a measurement stays reproducible
 meta.revision = 11;
 meta.version = '0.5.0';
 meta.date = '2026-10-11';
-% rev 9: horizontal tail raised from Sh/S 0.10 to 0.16 because the elevator ran out
-% of travel at 17.98 m/s with the smaller tail, well above stall. Also moved the
-% trim-solved limits (V_min_trim_mps, V_min_mps) to NaN placeholders that
-% init_uacs_twin resolves, and added V_top_thrust_limited_mps.
-% rev 10: density altitude and the wind frame term. env gains the ISA constants
-% (T_sl, p_sl, L_isa, R_air, gamma_air, h_trop_m) and atmo gains the density-model
-% switch. No rev 9 design number moves: the default model is still the constant
-% sea level density, P.env.rho_sl is unchanged at 1.225, and the wind enters only
-% through the new omega x (R*W) term in sim/sim_plant_rhs.m, which is zero when
-% the wind is zero. The before and after comparison is results/atmo_regress_report.txt.
-% rev 11: the controller authority fields became single-source. ctrl gains
-% int_state_margin and int_state_limit, so the integral-state clamp is derived in one
-% place instead of being invented separately by the linear design simulation and by
-% the built model; they disagreed by 2.5x on theta and by 0.8x on V, in opposite
-% directions. ctrl.rate_cmd_limit was already in this file, but only the built model
-% read it, so the design-time linear simulation validated a controller without the
-% limit that keeps the roll and yaw loops out of inversion; control/pid_cascade_sim.m
-% now reads it too. No geometry, mass, aerodynamic or propulsion number moves. The
-% before and after comparison is results/model_report_consistency.txt.
+% Revision history is recorded in the project log, not here
 meta.author = 'Ash';
 meta.aircraft = 'twin-engine high-wing, 20 kg MTOW, wing-mounted counter-rotating props';
 meta.estimated_fields = { ...
@@ -622,7 +506,7 @@ meta.sized_fields = { ...
     'aero.Cn_dr', 'prop.power.eta_total_cruise', 'prop.z_thrust_offset', ...
     'prop.disk_area', 'prop.P_shaft_peak', 'prop.T_static_max'};
 
-%% ---------------- pack ----------------
+%% Pack
 P = struct();
 P.env = env;
 P.mass = mass;
@@ -646,7 +530,7 @@ P.tags = struct( ...
     'b', geom.b, 'S', geom.S, 'cbar', geom.cbar, 'AR', geom.AR);
 end
 
-%% ================= local functions =================
+%% Local functions
 function [xcg, ycg, zcg] = local_cg(items)
 m = cell2mat(items(:, 2));
 x = cell2mat(items(:, 3));
@@ -664,10 +548,8 @@ x = cell2mat(items(:, 3));
 y = cell2mat(items(:, 4));
 z = cell2mat(items(:, 5));
 r2 = x.^2 + y.^2 + z.^2;
-% Characteristic radius of the airframe, used to convert point-mass inertia
-% into a distributed-mass estimate. Mass spread about its own centroid
-% contributes roughly k*m*L^2 in every axis; L is taken as a fraction of the
-% mean distance of the items from the origin.
+% Point-mass inertia plus a distributed-mass term k*m*L^2 per axis, with L taken
+% as a fraction of the mean distance of the items from the origin
 L = 0.55 * mean(sqrt(r2));
 scale = L^2;                 % m^2
 Ixx = sum(m .* (y.^2 + z.^2)) + sum(m) * scale * 0.35;
@@ -679,9 +561,7 @@ end
 function T = local_thrust_table(prop, rho)
 % LOCAL_THRUST_TABLE Available thrust versus advance speed at full throttle.
 % Momentum theory relates IDEAL power to momentum flux, so the shaft power is
-% scaled by the figure of merit before use. Skipping that scale made the table
-% disagree with T_static_max by exactly 1/FM (measured 302 N against 93.7 N) and
-% made the implied figure of merit exceed unity at high speed.
+% scaled by the figure of merit before use.
 V = prop.speed_table_V;
 T = zeros(size(V));
 P_ideal = prop.P_shaft_peak * prop.power.figure_of_merit;
@@ -693,14 +573,13 @@ end
 function T = local_thrust_at_speed(V, P_shaft, rho, A)
 % Solve P_shaft = 2*rho*A*v_i*(V + v_i)^2 for v_i, then T = 2*rho*A*v_i*(V+v_i).
 % The power equation balances the whole ideal-power budget, which is what caps
-% available thrust at high advance speed. Constant power implies thrust falls
-% roughly as 1/V, which is the behaviour expected of a fixed-pitch propeller.
+% available thrust at high advance speed.
 if P_shaft <= 0
     T = 0;
     return;
 end
 if V <= 0
-    % Closed form at the static point; this is the T_static_max expression.
+    % Closed form at the static point; this is the T_static_max expression
     vi = (P_shaft / (2 * rho * A))^(1/3);
     T = 2 * rho * A * vi^2;
     return;

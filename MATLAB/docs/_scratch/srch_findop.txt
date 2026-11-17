@@ -1,0 +1,7 @@
+QUERY: findop operating point Simulink
+STATUS: 404
+
+/help/releases/R2026b/includes/web/css/doc_center.css
+/help/releases/R2026b/includes/web/css/doc_center_localnav.css
+/help/releases/R2026b/includes/shared/highlight/styles/mwdochighlight.min.css
+/help/releases/R2026b/includes/web/css/doc_center_print.css

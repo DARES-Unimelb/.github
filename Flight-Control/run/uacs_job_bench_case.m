@@ -1,14 +1,14 @@
-% UACS_JOB_BENCH_CASE Job entry: 复现"速度指令关到底 + 俯仰拉满/到底"两个工况，看升降舵在干什么。
+% UACS_JOB_BENCH_CASE Job entry: throttle 0 with full and with minimum pitch, to see what
+% the elevator is doing.
 %
-% Run with:  addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run'); run_job('bench_case')
+% Run with:  addpath('<repo>/run'); run_job('bench_case')
 % Output: results/bench_case.txt
 %
-% 为什么要专门跑这一遍：用户报"速度调为 0 再满俯仰或最低俯仰时，升降舵表在 -15 与 +25 之间
-% 来回闪"。是速率限幅器的极限环、还是位置饱和引起的抖振，只有把 de 的时间历程拿出来才分得清。
-% 本作业除了给极值，还数末段 de 的换向次数：稳态里换向几十次就是抖振，几次就是正常回调。
+% Besides the extremes it counts elevator reversals over the last quarter of the run:
+% dozens in steady state mean chatter, a few mean normal recovery.
 %
-% 本作业改内存里的模型参数，跑完改回去，不保存。自检期间要用的 StopFcn 记录钩子在这里先摘掉，
-% 免得每次 sim 都往流水里写一行"本轮没记"。
+% Model parameters are edited in memory and restored, nothing is saved. The StopFcn
+% recording hook is detached first so these runs write no trace lines.
 
 this = mfilename('fullpath');
 if isempty(this)
@@ -61,7 +61,7 @@ for c = 1:2
    fprintf(fid, '  迎角                最小 %8.2f  最大 %8.2f deg\n', min(g(:, 3)), max(g(:, 3)));
    fprintf(fid, '  高度                最小 %8.2f  最大 %8.2f  末值 %8.2f m\n', ...
       min(g(:, 2)), max(g(:, 2)), g(end, 2));
-   % 末段换向次数：稳态里 de 的差分反复变号就是抖振。取最后四分之一的时间窗。
+   % Reversals over the last quarter of the run.
    k0 = find(t >= t(end) * 0.75, 1);
    if isempty(k0)
       k0 = 1;

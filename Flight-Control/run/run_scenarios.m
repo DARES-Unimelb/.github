@@ -8,13 +8,12 @@ function R = run_scenarios(varargin)
 %   V9   5 m/s crosswind in level flight, against the same run without wind
 %   V10  ode45 against ode4 on one command sequence, interpolated onto a common
 %        time grid, reported as a relative trajectory difference per state
-%   V11  the block census is written by build_uacs_models and asserted by
+% V11  the block census is written by build_uacs_models and asserted by
 %        verify/v_sim_v11_models.m, which reads the .slx files back from disk
 %   V12  SKIP: Aerospace Blockset is not installed, and the reason is printed
 %
-% This function measures and records; it does not assert. The pass or fail
-% decision lives in verify/v_sim_*.m, which reads the saved results and the
-% model files from disk instead of trusting this function's own numbers.
+% This function measures and records; it does not assert. The pass or fail decision lives
+% in verify/v_sim_*.m, which reads the saved results and the model files from disk.
 
 ip = inputParser;
 ip.addParameter('which', {'v6', 'v9', 'v10', 'v12'}, @iscell);
@@ -71,7 +70,7 @@ end
 fprintf('scenario report -> %s\n', R.report_file);
 end
 
-%% ---------------- V6 ----------------
+%% V6
 function out = local_v6(P, D, probe)
 file = fullfile(sim_root(), 'results', 'sim_manual_pid_traj.mat');
 if exist(file, 'file')
@@ -90,7 +89,7 @@ for k = 1:numel(traj)
 end
 end
 
-%% ---------------- V9 ----------------
+%% V9
 function out = local_v9(P, D, t_end)
 mdl = 'uacs_manual_pid';
 V_min = P.limits.V_min_mps;
@@ -110,11 +109,9 @@ for k = 1:2
    else
       wind = [0, 0, wind_e, 0; t_end, 0, wind_e, 0];
       nm = 'wind';
-      % The crosswind case MUST start from the crab trim of its own wind, not from the
-      % still air trim. Starting from the still air trim puts beta = -asin(5/25) =
-      % -11.54 deg on the aircraft at t = 0, which is not an equilibrium of the wind
-      % case: the run then measures the recovery from a bad initial condition rather
-      % than the response to wind, and it contaminates the residual that V9 judges.
+      % The crosswind case must start from the crab trim of its own wind, not from the still
+      % air trim: starting from the still air trim puts beta = -asin(5/25) = -11.54 deg on
+      % the aircraft at t = 0, which is not an equilibrium of the wind case.
       wt = wind_trim(D.trim, [0; wind_e; 0], 0);
       x0 = wt.x_star;
    end
@@ -131,25 +128,17 @@ tn = n.T.t;
 V_w = sqrt(sum(w.T.by_name.x_state(:, 1:3).^2, 2));
 beta_w = asin(max(-1, min(1, w.T.by_name.x_state(:, 2) ./ max(V_w, 1e-9))));
 
-% Both runs hold their own ground track, so the judged quantity is whether the
-% crosswind run can hold the SAME track the still air run holds. The old formula
-% subtracted wind_e*t, which assumes the wind case starts from the still air trim and
-% therefore shows the full kinematic 5 m/s drift before any aerodynamic response; the
-% crosswind run is now initialised in the crab trim of its own wind, so that drift is
-% already cancelled by the aircraft and the subtraction invented 150 m of error over
-% 30 s. Comparing the two ground tracks directly is the honest statement of "the track
-% deviation stays bounded".
+% Both runs hold their own ground track, so the judged quantity is whether the crosswind run
+% can hold the same track the still air run holds.
 %
-% The absolute value is still reported, because it is the number that shows the wind is
-% actually present and being balanced: with the crab trim the crosswind run's own east
-% displacement stays near zero while the still air run drifts with the wind.
+% The absolute value is reported as well, because it is the number that shows the wind is
+% actually present and being balanced.
 pe_w = w.T.by_name.x_state(:, 11);
 pe_n = interp1(n.T.t, n.T.by_name.x_state(:, 11), tw, 'pchip');
 pd_w = w.T.by_name.x_state(:, 12);
 pd_n = interp1(n.T.t, n.T.by_name.x_state(:, 12), tw, 'pchip');
 i_settle = tw >= 0.3 * t_end;
-% Track error of the crosswind run against its own initial east position: a crabbed
-% aircraft flying its intended track holds this near zero.
+% Track error of the crosswind run against its own initial east position.
 residual = pe_w - pe_w(1);
 % Signed comparison with the still air run, kept as evidence of the wind's presence.
 residual_vs_nowind = pe_w - pe_n;
@@ -171,8 +160,7 @@ out.cmd_phi_tail_deg = mean(w.T.by_name.cmd(i_settle, 1)) * 180 / pi;
 out.drift_rate_mps = (pe_w(end) - pe_w(1)) / (tw(end) - tw(1));
 out.residual_max_m = max(abs(residual(i_settle)));
 out.residual_tail_m = mean(residual(i_settle));
-% Reported as evidence rather than judged: the crosswind run barely moves east while
-% the still air run drifts, so this difference is the wind being present and balanced.
+% Reported as evidence, not judged.
 out.residual_vs_nowind_max_m = max(abs(residual_vs_nowind(i_settle)));
 out.alt_residual_max_m = max(abs(alt_residual(i_settle)));
 out.psi_range_deg = [min(w.T.by_name.x_state(:, 9)), max(w.T.by_name.x_state(:, 9))] * 180 / pi;
@@ -190,7 +178,7 @@ save(file, 'wind_case', 'nowind_case', 'summary', 'stamp', 'plant_probe');
 out.file = file;
 end
 
-%% ---------------- V10 ----------------
+%% V10
 function out = local_v10(P, D, t_end)
 mdl = 'uacs_manual_pid';
 V_min = P.limits.V_min_mps;
@@ -199,9 +187,8 @@ thr = (P.op.cruise.V_mps - V_min) / (V_max - V_min);
 dt = 0.02;
 t = (0:dt:t_end)';
 n = numel(t);
-% Stick columns are [time, roll, pitch, yaw, throttle]. One command sequence
-% for both solvers: a pitch doublet, then a throttle step, gentle enough to stay
-% in the linear region and rich enough to excite rate, attitude and speed.
+% Stick columns are [time, roll, pitch, yaw, throttle]. One sequence for both solvers:
+% a pitch doublet, then a throttle step, gentle enough to stay in the linear region.
 roll = zeros(n, 1);
 pitch = zeros(n, 1);
 yaw = zeros(n, 1);
@@ -216,12 +203,11 @@ sim_push_scenario(struct('t_end', t_end, 'x0', D.trim.x_star, 'stick', stick, ..
 [T4, m4] = sim_run_model(mdl, struct('solver', 'ode4', 't_end', t_end));
 [T45, m45] = sim_run_model(mdl, struct('solver', 'ode45', 't_end', t_end));
 
-% Common time base: the fixed-step grid. The variable-step trajectory is
-% interpolated onto it with pchip, a shape preserving cubic, so a monotone
-% segment cannot pick up the overshoot a plain spline would add; the same
-% comparison with linear interpolation is reported alongside as a sensitivity.
-% The state matrix comes from by_name.x_state: sim_run_model returns a struct
-% whose fields are the model's NAMED outports, so there is no plain .x field.
+% Common time base: the fixed-step grid, with the variable-step trajectory interpolated
+% onto it by pchip, a shape preserving cubic; the same comparison with linear interpolation
+% is reported alongside as a sensitivity.
+% The state matrix comes from by_name.x_state: sim_run_model returns a struct whose fields
+% are the model's named outports, so there is no plain .x field.
 X4 = T4.by_name.x_state;
 X45 = T45.by_name.x_state;
 X45_pchip = interp1(T45.t, X45, T4.t, 'pchip');
@@ -272,7 +258,7 @@ out.file = file;
 save(fullfile(sim_root(), 'results', 'sim_v10_traj.mat'), 'out');
 end
 
-%% ---------------- report ----------------
+%% Report
 function r = local_v12_reason()
 try
    v = ver('aeroblks');

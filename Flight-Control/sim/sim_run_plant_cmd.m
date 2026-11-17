@@ -1,27 +1,19 @@
 function [T, meta] = sim_run_plant_cmd(mdl, t, u_act, wind_ned, opts)
-% SIM_RUN_PLANT_CMD Simulate a bare plant model from an open-loop command series.
+% SIM_RUN_PLANT_CMD Simulate a bare plant model from an open-loop command series
 %
-%   [T, meta] = sim_run_plant_cmd('uacs_plant', t, u_act, wind_ned)
-%   [T, meta] = sim_run_plant_cmd('uacs_plant_ref', t, u_act, wind_ned, opts)
+%   mdl       plant model name, uacs_plant or uacs_plant_ref
+%   t         nTx1 time vector
+%   u_act     nTx6 actuator commands [da de dr dth_l dth_r dT]
+%   wind_ned  nTx3 steady wind in NED, m/s
+%   opts      optional settings:
+%     solver   'ode4' (default, fixed step sim_ts_ctrl) or 'ode45'
+%     tol      [rel abs] for the variable-step solver
+%     vars     struct pushed into the base workspace just before the simulation
+%   T         logged outputs, as returned by sim_read_yout
+%   meta      model, solver, t_end, tol, n_samples, outputs, widths and timings
 %
-% The plant models are objects with two root inports and no sources of their own,
-% so the command has to come from outside. Simulink.SimulationInput with a
-% Dataset of timeseries feeds them, and because both uacs_plant and
-% uacs_plant_ref are driven through this one function with the same timeseries
-% objects, the two models see bit-identical inputs. Driving one through
-% LoadExternalInput and the other through a From Workspace block would have left
-% their interpolation rules free to differ, which is a difference that would land
-% in the cross-check undetected. The two mechanisms were measured against each
-% other first and agreed to the last bit (results/v12_probe_ext.txt) before this
-% choice was made.
-%
-% opts.solver   'ode4' (default, fixed step sim_ts_ctrl) or 'ode45'
-% opts.tol      [rel abs] for the variable-step solver
-% opts.vars     struct of base workspace variables pushed immediately before the
-%               simulation. See sim_push_vars for why this is not left to the
-%               caller's earlier push.
-%
-% T comes back through sim_read_yout, so a scenario reads signals by name.
+% Both plant models are driven through this one function with the same timeseries
+% objects, so they see identical inputs
 
 if nargin < 5
    opts = struct();
@@ -39,23 +31,16 @@ if ~isfield(opts, 'tol') || isempty(opts.tol)
 end
 
 assignin('base', 'sim_t_end', t(end));
-% Re-push the modelling variables here, in the function that calls sim, because
-% the shared base workspace can be cleared by another member between the caller's
-% push and the solver's first derivative.
+% pushed here, next to the call to sim, because the shared base workspace can be
+% cleared by another member in between
 pushed = 0;
 if isfield(opts, 'vars') && isstruct(opts.vars)
    pushed = sim_push_vars(opts.vars);
 end
 assignin('base', 'sim_t_end', t(end));
-% Each run loads the model from disk, so a changed initial condition in the base
-% workspace is compiled in. Reusing a model that is already loaded can leave the
-% previous run's mask parameter values in the compiled model.
-%
-% The load is by FULL PATH. Loading by bare model name resolves only when model/ is
-% on the MATLAB path or the model is already open, and this line closes the model
-% first, so the bare name worked only while some other caller happened to have left
-% model/ on the path. In the default state it failed with "Unable to find system or
-% file 'uacs_plant'", which stopped the V12 calibrate and crosscheck stages.
+% each run reloads the model from <root>/model, so the current base workspace
+% initial condition is compiled in; a bare name resolves only when model/ is on
+% the path
 if bdIsLoaded(mdl)
    close_system(mdl, 0);
 end
@@ -66,9 +51,8 @@ else
    load_system(mdl);
 end
 
-% Exported signal labels follow the SIGNAL LINE name, not the Outport block name,
-% so each line into an outport is renamed to match its block. Same rule as
-% sim_run_model.
+% exported labels follow the SIGNAL LINE name, so each outport line is renamed
+% after its block
 ops = find_system(mdl, 'SearchDepth', 1, 'BlockType', 'Outport');
 for k = 1:numel(ops)
    nm = get_param(ops{k}, 'Name');
@@ -81,7 +65,7 @@ for k = 1:numel(ops)
    end
 end
 
-% Root inport names, in port order, so the Dataset elements match the ports.
+% root inport names in port order, so the Dataset elements match the ports
 ips = find_system(mdl, 'SearchDepth', 1, 'BlockType', 'Inport');
 names = cell(1, numel(ips));
 for k = 1:numel(ips)

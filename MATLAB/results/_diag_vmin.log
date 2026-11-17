@@ -1,0 +1,18 @@
+elevator_trim_frac 0.800000, de_max 25.00 deg, V_stall 9.4083, stall_margin_factor 1.200
+published V_min_stall 11.2900, V_min 12.6342
+V  14.00  de_frac 0.600594
+V  15.00  de_frac 0.487817
+V  15.41  de_frac 0.447798
+V  16.00  de_frac 0.395518
+V  17.00  de_frac 0.319022
+V  17.50  de_frac 0.285597
+V  17.90  de_frac 0.260849
+V  17.98  de_frac 0.256097
+V  18.00  de_frac 0.254918
+V  18.50  de_frac 0.226693
+V  20.00  de_frac 0.154348
+V  25.00  de_frac 0.000000
+V  30.00  de_frac 0.083844
+recomputed V_min_trim 12.6342
+option A: V_min_mps = 18.5 -> margin over stall 1.966
+option B: need Cm_de or Sh/act.elevator.max_deg larger, or elevator_trim_frac above 0.8000

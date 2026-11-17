@@ -3,16 +3,13 @@ function out = v_sim_v10_stepsize(varargin)
 %
 %   out = v_sim_v10_stepsize()
 %
-% Reads the trajectories run_scenarios saved. The two solvers use different time
-% grids, so the variable-step trajectory is interpolated onto the fixed-step
-% grid with pchip before the comparison; the linear interpolation numbers are
-% reported next to it as a sensitivity, not as the criterion.
+% Reads results/sim_v10_stepsize.mat. The two solvers use different time grids, so the
+% variable-step trajectory is interpolated onto the fixed-step grid with pchip; the
+% linear interpolation numbers are reported as a sensitivity, not as the criterion.
 %
-% Criterion, architecture.md V10: the largest per-state difference is below 1
-% percent. The denominator is the state's own peak-to-peak excursion in the
-% fixed-step run, which is the strict reading; for a state that barely moves the
-% reference scale of sim_state_scale is used instead, and which states those are
-% is reported.
+% Asserts the largest per-state difference is below 'tol'. The denominator is the
+% state's own peak-to-peak excursion in the fixed-step run, or the reference scale of
+% sim_state_scale for a state that barely moves.
 
 ip = inputParser;
 ip.addParameter('tol', 0.01, @(x) isnumeric(x) && x > 0);

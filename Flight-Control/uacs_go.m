@@ -1,28 +1,25 @@
-% UACS_GO  唯一的人机交互入口。改参数、开模型都从这一个文件走。
+% UACS_GO  Single entry point. Edit the parameters and run the models from here.
 %
-% 用法，三种任选：
-%   1. 在本文件里改第 1 节的数字，然后按 F5（运行）。
-%   2. 直接双击 model\uacs_flight_bench.slx（飞行台架）或 model\uacs_aero_test.slx
-%      （气动测试）。模型打开时会自动运行本文件，不需要任何前置命令。
-%   3. 命令行敲 uacs_go。
+% Three ways to run it:
+%   1. Edit the numbers in section 1 below, then press F5.
+%   2. Double-click model\uacs_flight_bench.slx (flight bench) or model\uacs_aero_test.slx
+%      (aerodynamics). Opening a model runs this file first.
+%   3. Type uacs_go at the command line.
 %
-% 本文件只有旋钮与时间。展平、比对、配平、线性化、增益、缓存这些机械动作全部在
-% params/uacs_apply_config.m 里，末尾那一段只负责把旋钮打包交过去。
-%
-% 三条规矩：
-%   - 本文件不新增参数，只覆盖 params/uacs_twin_params.m 里已有的字段。写错字段名会
-%     当场报错，不会静默多出一个没人读的参数。
-%   - 只填"原值"（原参数文件里标 ESTIMATE 的那些）。派生量（标 SIZED 的）由脚本算出，
-%     在本文件里改它们没有意义：会被覆盖，或者被自检断言拦下。
-%   - 只要有任何一项与冻结基准不同，启动时就会打出 PARAMETER OVERRIDES ACTIVE 横幅。
-%     看到横幅就说明这一轮的结果不能引用 rev 11 的结论。
+% Rules for editing:
+%   - Only fields that already exist in params/uacs_twin_params.m can be overridden here.
+%     A misspelled field name errors immediately.
+%   - Fill in only the original values (marked ESTIMATE in the parameter file). Derived
+%     values (marked SIZED) are recomputed, so editing them has no effect.
+%   - Any value differing from the frozen baseline prints a PARAMETER OVERRIDES ACTIVE
+%     banner at startup.
 
-%% ==================== 第 1 节：参数 ====================
+%% Parameters
 
-% ---- 1.1 质量与重心 ----------------------------------------------------
-% 每行 {名称, 质量 kg, x m, y m, z m}。机体坐标：x 向前、y 向右、z 向下，
-% 原点是机翼气动中心。总重、重心、三个惯量全部由这张表算出，不要另外填 mass.m。
-% 12 kg 载荷就在 payload 那一行，改它就能做装载变化试验。
+%% 1.1 Mass and centre of gravity
+% Rows are {name, mass kg, x m, y m, z m} in body axes (x forward, y right, z down)
+% with the origin at the wing aerodynamic centre. Total mass, centre of gravity and the
+% inertias are derived from this table. The payload row holds the 12 kg payload.
 uacs_mass = {
    'wing',             1.10,  -0.05,  0.00,  0.00
    'fuselage_boom',    0.55,   0.00,  0.00,  0.00
@@ -38,138 +35,134 @@ uacs_mass = {
    'margin',           0.25,   0.00,  0.00,  0.00
    };
 
-% ---- 1.2 机翼与尾翼几何 ------------------------------------------------
-% 机翼只有两个自由量：翼展与展弦比。面积 S = b^2/AR、平均气动弦 cbar = S/b、
-% 尾容量 Vh/Vv 全部由它们算出。翼展上限 3.5 m 由团队要求钉死，自检会拦。
-uacs_wing.span_m       = 3.40;    % m，翼展（上限 3.50）
-uacs_wing.aspect_ratio = 5.00;    % 展弦比，机翼形状的自由参数
-uacs_wing.taper        = 0.75;    % 梢根比
-uacs_wing.dihedral_deg = 3.0;     % 上反角
-uacs_wing.incidence_deg= 2.0;     % 机翼安装角
+%% 1.2 Wing and tail geometry
+% Span and aspect ratio are the only free wing variables; area S = b^2/AR, mean chord
+% cbar = S/b and the tail volumes are derived from them. Span is hard limited to 3.50 m.
+uacs_wing.span_m       = 3.40;    % span m, limit 3.50
+uacs_wing.aspect_ratio = 5.00;    % aspect ratio, free wing shape parameter
+uacs_wing.taper        = 0.75;    % taper ratio
+uacs_wing.dihedral_deg = 3.0;     % dihedral deg
+uacs_wing.incidence_deg= 2.0;     % wing incidence deg
 
-uacs_tail.h_area_ratio = 0.16;    % 平尾面积 / 机翼面积
-uacs_tail.h_arm_m      = 1.95;    % 机翼气动中心到平尾气动中心的力臂
-uacs_tail.h_incidence_deg = -1.0; % 平尾安装角
-uacs_tail.v_area_m2    = 0.600;   % 垂尾面积
-uacs_tail.v_arm_m      = 1.95;    % 垂尾力臂
+uacs_tail.h_area_ratio = 0.16;    % horizontal tail area / wing area
+uacs_tail.h_arm_m      = 1.95;    % wing to tail aerodynamic centre arm m
+uacs_tail.h_incidence_deg = -1.0; % horizontal tail incidence deg
+uacs_tail.v_area_m2    = 0.600;   % vertical tail area m^2
+uacs_tail.v_arm_m      = 1.95;    % vertical tail arm m
 
-% ---- 1.3 气动导数（只读抄录，改这里不生效） ----------------------------
-% 这一节不参与覆盖。在原参数文件里它们的原值与派生量是逐条交错的（CL_de 紧跟
-% CL_alpha、k_induced 紧跟 e_oswald，共八处），做成旋钮要在那八处各插一行覆盖调用，
-% 这一版没做。要改气动导数就直接改 params/uacs_twin_params.m 第 222 行起。
-% 下面这张表只是当前值的抄录，方便核对。
-uacs_aero.CL0           = 0.220;    % 零迎角升力系数
-uacs_aero.CL_alpha      = 4.65;     % 1/rad，升力线斜率
-uacs_aero.CL_max        = 1.33;     % 失速升力系数
-uacs_aero.alpha_stall_deg = 14.0;   % 失速迎角
-uacs_aero.CD0           = 0.030;    % 零升阻力系数
-uacs_aero.e_oswald      = 0.780;    % 奥斯瓦尔德效率，决定诱导阻力
-uacs_aero.CD_alpha      = 0.100;    % 迎角平方项阻力
-uacs_aero.CD_de         = 0.010;    % 升降舵配平阻力
-uacs_aero.Cm0_wing      = -0.012;   % 翼身零升俯仰力矩
-uacs_aero.Cm_alpha_wing_body = 0.020;  % 翼身俯仰刚度
-uacs_aero.Cm_q          = -12.236;  % 俯仰阻尼
-uacs_aero.Cm_alphadot   = -2.500;   % 下洗滞后导数
-uacs_aero.tau_elevator  = 0.650;    % 升降舵效率因子
-uacs_aero.tau_rudder    = 0.500;    % 方向舵效率因子
-uacs_aero.CY_beta       = -0.750;   % 侧力导数
-uacs_aero.Cl_beta       = -0.090;   % 上反效应
-uacs_aero.Cl_p          = -0.388;   % 滚转阻尼
-uacs_aero.Cl_r          = 0.050;    % 滚转-偏航交叉
-uacs_aero.Cl_da         = 0.0412;   % 副翼操纵效能
-uacs_aero.Cl_dr         = 0.010;    % 方向舵滚转交叉
-uacs_aero.Cn_p          = -0.030;   % 偏航-滚转交叉
-uacs_aero.Cn_da         = -0.006;   % 副翼不利偏航
+%% 1.3 Aerodynamic derivatives (read-only copy, not applied)
+% To change these edit params/uacs_twin_params.m; the values below are a copy for reference.
+uacs_aero.CL0           = 0.220;    % lift coefficient at zero angle of attack
+uacs_aero.CL_alpha      = 4.65;     % lift curve slope, 1/rad
+uacs_aero.CL_max        = 1.33;     % stall lift coefficient
+uacs_aero.alpha_stall_deg = 14.0;   % stall angle of attack deg
+uacs_aero.CD0           = 0.030;    % zero-lift drag coefficient
+uacs_aero.e_oswald      = 0.780;    % Oswald efficiency, sets induced drag
+uacs_aero.CD_alpha      = 0.100;    % drag term quadratic in angle of attack
+uacs_aero.CD_de         = 0.010;    % elevator trim drag
+uacs_aero.Cm0_wing      = -0.012;   % wing-body zero-lift pitching moment
+uacs_aero.Cm_alpha_wing_body = 0.020;  % wing-body pitch stiffness
+uacs_aero.Cm_q          = -12.236;  % pitch damping
+uacs_aero.Cm_alphadot   = -2.500;   % downwash lag derivative
+uacs_aero.tau_elevator  = 0.650;    % elevator effectiveness factor
+uacs_aero.tau_rudder    = 0.500;    % rudder effectiveness factor
+uacs_aero.CY_beta       = -0.750;   % side force derivative
+uacs_aero.Cl_beta       = -0.090;   % dihedral effect
+uacs_aero.Cl_p          = -0.388;   % roll damping
+uacs_aero.Cl_r          = 0.050;    % roll-yaw cross derivative
+uacs_aero.Cl_da         = 0.0412;   % aileron control power
+uacs_aero.Cl_dr         = 0.010;    % rudder roll cross derivative
+uacs_aero.Cn_p          = -0.030;   % yaw-roll cross derivative
+uacs_aero.Cn_da         = -0.006;   % aileron adverse yaw
 
-% ---- 1.4 执行机构 ------------------------------------------------------
-% tau_s 是一阶舵机时间常数，rate_deg_s 是最大角速率。
+%% 1.4 Actuators
+% tau_s is the first-order servo time constant, rate_deg_s the maximum rate deg/s.
 uacs_act.aileron_max_deg  = 25.0;   uacs_act.aileron_rate_deg_s  = 120.0;  uacs_act.aileron_tau_s  = 0.045;
 uacs_act.elevator_max_deg = 25.0;   uacs_act.elevator_rate_deg_s = 100.0;  uacs_act.elevator_tau_s = 0.045;
 uacs_act.rudder_max_deg   = 25.0;   uacs_act.rudder_rate_deg_s   = 100.0;  uacs_act.rudder_tau_s   = 0.045;
 
-% ---- 1.5 推进 ----------------------------------------------------------
-% 油门是峰值轴功率的比例，不是转速。螺旋桨直径与静拉力上限都由这里算出。
-uacs_prop.peak_power_per_motor_W = 1500.0;  % 每台电机峰值轴功率
-uacs_prop.diameter_m      = 0.4064;  % 螺旋桨直径
-uacs_prop.figure_of_merit = 0.550;   % 桨的品质因数
-uacs_prop.esc_tau_s       = 0.060;   % 电调一阶滞后
-uacs_prop.y_motor_m       = 0.900;   % 电机横向站位（差动推力力臂）
-uacs_prop.z_motor_m       = -0.100;  % 电机垂向站位（推力线偏移）
-uacs_prop.differential_limit = 0.600;% 差动油门结构上限
+%% 1.5 Propulsion
+% Throttle is a fraction of peak shaft power, not a speed.
+uacs_prop.peak_power_per_motor_W = 1500.0;  % peak shaft power per motor W
+uacs_prop.diameter_m      = 0.4064;  % propeller diameter m
+uacs_prop.figure_of_merit = 0.550;   % propeller figure of merit
+uacs_prop.esc_tau_s       = 0.060;   % ESC first-order lag s
+uacs_prop.y_motor_m       = 0.900;   % motor lateral station m, the differential thrust arm
+uacs_prop.z_motor_m       = -0.100;  % motor vertical station m, thrust line offset
+uacs_prop.differential_limit = 0.600;% differential throttle structural limit
 
-% ---- 1.6 控制目标（PID） ----------------------------------------------
-% 这七个带宽是设计目标。注意内环速率环的实际目标不取 rate_*，而是由
-% control/design_pid.m 的 local_inner_target 从机体结构模态另算（当前 10.0 rad/s）。
-uacs_ctrl.bw_rate_p_rad_s     = 12.0;   % 滚转速率环
-uacs_ctrl.bw_rate_q_rad_s     =  8.0;   % 俯仰速率环
-uacs_ctrl.bw_rate_r_rad_s     =  5.0;   % 偏航速率环
-uacs_ctrl.bw_att_phi_rad_s    =  3.0;   % 滚转姿态环
-uacs_ctrl.bw_att_theta_rad_s  =  2.5;   % 俯仰姿态环
-uacs_ctrl.bw_speed_rad_s      =  0.8;   % 空速环
-uacs_ctrl.bw_height_rad_s     =  0.4;   % 高度环
-uacs_ctrl.rate_filter_tau_s   = 0.010;  % D 项一阶滤波时间常数
-uacs_ctrl.anti_windup_Kb      = 1.0;    % 反算抗积分饱和增益
-uacs_ctrl.int_state_margin    = 8.0;    % 积分状态界 = margin * 误差界 / 带宽
-uacs_ctrl.rate_cmd_frac       = 0.70;   % 速率指令限幅取满舵稳态速率的比例
-uacs_ctrl.int_limit_phi_deg   = 15.0;   % 滚转环允许吸收的持续误差
-uacs_ctrl.int_limit_theta_deg = 10.0;   % 俯仰环
-uacs_ctrl.int_limit_V_mps     =  5.0;   % 空速环
-uacs_ctrl.int_limit_h_m       = 20.0;   % 高度环
+%% 1.6 Control targets (PID)
+% These seven bandwidths are design targets. The inner rate loop does not use bw_rate_*:
+% local_inner_target in control/design_pid.m derives it from the body structural mode.
+uacs_ctrl.bw_rate_p_rad_s     = 12.0;   % roll rate loop
+uacs_ctrl.bw_rate_q_rad_s     =  8.0;   % pitch rate loop
+uacs_ctrl.bw_rate_r_rad_s     =  5.0;   % yaw rate loop
+uacs_ctrl.bw_att_phi_rad_s    =  3.0;   % roll attitude loop
+uacs_ctrl.bw_att_theta_rad_s  =  2.5;   % pitch attitude loop
+uacs_ctrl.bw_speed_rad_s      =  0.8;   % airspeed loop
+uacs_ctrl.bw_height_rad_s     =  0.4;   % height loop
+uacs_ctrl.rate_filter_tau_s   = 0.010;  % derivative term first-order filter time constant
+uacs_ctrl.anti_windup_Kb      = 1.0;    % back-calculation anti-windup gain
+uacs_ctrl.int_state_margin    = 8.0;    % integral state bound = margin * error bound / bandwidth
+uacs_ctrl.rate_cmd_frac       = 0.70;   % rate command limit as a fraction of the full-stick steady rate
+uacs_ctrl.int_limit_phi_deg   = 15.0;   % sustained error the roll loop may absorb deg
+uacs_ctrl.int_limit_theta_deg = 10.0;   % pitch loop deg
+uacs_ctrl.int_limit_V_mps     =  5.0;   % airspeed loop m/s
+uacs_ctrl.int_limit_h_m       = 20.0;   % height loop m
 
-% ---- 1.7 LQR 权重 ------------------------------------------------------
-% Bryson 型。q 是状态惩罚（越大越紧），r 是控制惩罚（越大越省舵）。
+%% 1.7 LQR weights
+% Bryson form: q penalises states (larger is tighter), r penalises control
+% (larger saves actuation).
 uacs_lqr.long_q = [1/2.0^2, 1/deg2rad(5)^2, 1/deg2rad(15)^2, 1/deg2rad(10)^2];  % [dV dalpha dq dtheta]
 uacs_lqr.long_r = [1/deg2rad(20)^2, 1/0.30^2];                                  % [dde dT]
 uacs_lqr.lat_q  = [1/deg2rad(5)^2, 1/deg2rad(60)^2, 1/deg2rad(30)^2, 1/deg2rad(20)^2]; % [dbeta dp dr dphi]
 uacs_lqr.lat_r  = [1/deg2rad(20)^2, 1/deg2rad(20)^2];                           % [dda ddr]
 
-% ---- 1.8 包线、配平点、大气 --------------------------------------------
-uacs_limits.bank_max_deg       = 45.0;   % 最大滚转角
-uacs_limits.pitch_max_deg      = 30.0;   % 最大俯仰角
-uacs_limits.V_max_mps          = 30.0;   % 最大空速（必须可达，自检会拦）
-uacs_limits.climb_rate_max_mps =  6.0;   % 最大爬升率
-uacs_limits.h_max_m            = 400.0;  % 最大高度
-uacs_limits.nz_max             =  3.0;   % 最大过载
-uacs_limits.nz_min             = -1.5;   % 最小过载
-uacs_cruise.V_mps              = 25.0;   % 设计配平速度
-uacs_cruise.h_m                = 150.0;  % 设计配平高度
-uacs_atmo.model                = 'const';% 'const' 常数海平面密度，或 'isa' 随高度
+%% 1.8 Envelope, trim point, atmosphere
+uacs_limits.bank_max_deg       = 45.0;   % maximum bank angle deg
+uacs_limits.pitch_max_deg      = 30.0;   % maximum pitch angle deg
+uacs_limits.V_max_mps          = 30.0;   % maximum airspeed m/s, must be reachable or the self-check rejects it
+uacs_limits.climb_rate_max_mps =  6.0;   % maximum climb rate m/s
+uacs_limits.h_max_m            = 400.0;  % maximum height m
+uacs_limits.nz_max             =  3.0;   % maximum load factor
+uacs_limits.nz_min             = -1.5;   % minimum load factor
+uacs_cruise.V_mps              = 25.0;   % design trim airspeed m/s
+uacs_cruise.h_m                = 150.0;  % design trim height m
+uacs_atmo.model                = 'const';% 'const' sea-level density, or 'isa' varying with altitude
 
-% ---- 1.9 仿真时长与节拍 ------------------------------------------------
-% 这两个数就是 Simulink 工具栏 StopTime 框里的内容：
-%   uacs_sim.t_end_s      -> 变量 sim_t_end，      受验模型与预置场景作业用
-%   uacs_sim.bench_run_s  -> 变量 sim_bench_t_end，交互台架 uacs_flight_bench 用
-% 想临时改一次，也可以直接在模型里把 StopTime 那个框改成数字，不必回来改这里。
-uacs_sim.t_end_s     = 60.0;     % 仿真时长 s，预置场景作业
-uacs_sim.bench_run_s = 20.0;     % 仿真时长 s，交互台架。0.0025 s 步长下每秒约 7 秒真实时间
-uacs_sim.Ts_ctrl_s   = 0.0025;   % 内环采样，也是定步长求解器步长
-uacs_sim.Ts_outer_s  = 0.0100;   % 姿态/空速/高度环采样
-uacs_sim.Ts_alloc_s  = 0.0100;   % 分配器采样
-uacs_sim.Ts_sensor_s = 0.0025;   % 传感器采样
+%% 1.9 Simulation duration and sample times
+% These two are what the Simulink toolbar StopTime field shows:
+%   uacs_sim.t_end_s      -> variable sim_t_end,      models under test and scenario jobs
+%   uacs_sim.bench_run_s  -> variable sim_bench_t_end, interactive bench uacs_flight_bench
+% A one-off run can also type a number straight into the StopTime field.
+uacs_sim.t_end_s     = 60.0;     % run length s, scenario jobs
+uacs_sim.bench_run_s = 20.0;     % bench run length s; about 7 s of wall clock per simulated second at 0.0025 s
+uacs_sim.Ts_ctrl_s   = 0.0025;   % inner loop sample time, also the fixed-step solver step
+uacs_sim.Ts_outer_s  = 0.0100;   % attitude, airspeed and height loop sample time
+uacs_sim.Ts_alloc_s  = 0.0100;   % allocator sample time
+uacs_sim.Ts_sensor_s = 0.0025;   % sensor sample time
 
-% ---- 1.10 扰动：常值风与阵风 ------------------------------------------
-% 画布上还有两个东西可以边跑边加：一个"侧风"滑杆，只加到东向分量上。
-uacs_dist.wind_ned_mps  = [0; 0; 0];  % 常值风，机体坐标 NED 三分量 [北 东 地] m/s
-uacs_dist.gust.on       = false;      % 阵风总开关
-uacs_dist.gust.amp_mps  = 3.0;        % 阵风幅度 m/s
-uacs_dist.gust.freq_hz  = 0.5;        % 阵风频率 Hz（模型里按 2*pi*f 用）
-uacs_dist.gust.dir_ned  = [1; 0; 0];  % 阵风方向，NED 三分量，会被归一化成单位向量使用
+%% 1.10 Disturbances: steady wind and gust
+% The bench canvas also has a crosswind slider, added to the east component only.
+uacs_dist.wind_ned_mps  = [0; 0; 0];  % steady wind, NED components [north east down] m/s
+uacs_dist.gust.on       = false;      % gust master switch
+uacs_dist.gust.amp_mps  = 3.0;        % gust amplitude m/s
+uacs_dist.gust.freq_hz  = 0.5;        % gust frequency Hz, used as 2*pi*f
+uacs_dist.gust.dir_ned  = [1; 0; 0];  % gust direction, NED; normalised to a unit vector before use
 
-% ---- 1.11 游戏手柄（辅助通道） ----------------------------------------
-% 手柄块 JoystickID 的可选值是 'None' 与 'Joystick1' 到 'Joystick16'。默认 'None'
-% 表示不碰硬件、输出恒零，所以没有手柄时台架照常跑。要用真手柄：改成 'Joystick1'，
-% 重跑 run/build_bench_models.m（模型里那个块的参数是构建时写死的），再在台架的
-% 操纵台上把"操纵源"拨到"手柄"。
-% pitch_sign 用来修俯仰方向。Pilot Joystick 的俯仰正负号与 FlightGear 的摇杆接口
-% 相反，与本台架的约定未必一致，拉杆方向反了就把它改成 -1。
+%% 1.11 Joystick (optional channel)
+% JoystickID accepts 'None' or 'Joystick1' to 'Joystick16'. 'None' touches no hardware
+% and outputs zero, so the bench runs without a stick. For a real stick set it to
+% 'Joystick1', rerun run/build_bench_models.m (the block parameter is written at build
+% time) and switch the bench stick source to the joystick. Set pitch_sign to -1 if the
+% pitch direction comes out reversed.
 uacs_joystick.id         = 'None';
 uacs_joystick.pitch_sign = 1.0;
 
-%% ==================== 机械部分（不要动） ====================
+%% Machinery (do not edit)
 
-% 上面每一组旋钮在这里打包，交给 params/uacs_apply_config.m。这个文件里从此不再有
-% 展平、比对、配平、线性化、增益与缓存。uacs_aero 也打包进去，但它在那边不参与覆盖，
-% 只用于核对，原因见第 1.3 节。
+% Pack the groups above and hand them to params/uacs_apply_config.m. uacs_aero is passed
+% along as well but is not applied there, see section 1.3.
 uacs = struct();
 uacs.mass = uacs_mass;
 uacs.wing = uacs_wing;

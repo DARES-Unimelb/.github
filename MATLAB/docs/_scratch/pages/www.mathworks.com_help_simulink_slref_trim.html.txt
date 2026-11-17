@@ -1,0 +1,716 @@
+URL: https://www.mathworks.com/help/simulink/slref/trim.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/trim.html
+
+ 
+
+ trim - Find trim point of dynamic system - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Modeling
+
+ Analyze and Remodel Design
+
+ Transform Models
+
+ Trimming and Linearization
+
+ trim
+
+On this page
+Syntax
+Description
+ExamplesFind Equilibrium Point
+Find Steady-State Points
+Find Equilibrium Point Near Operating Point
+
+Input Argumentssys
+x0
+u0
+y0
+ix
+iu
+iy
+dx0
+idx
+options
+t
+
+Output Argumentsx
+u
+y
+dx
+options
+
+More AboutTrim point
+
+Algorithms
+Version History
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+trim
+R2026b
+Find trim point of dynamic system
+collapse all in page
+
+The trim function provides only basic trimming functionality. For
+ full trimming functionality, use Simulink®
+ Control Design™ software. For more information, see Compute Steady-State Operating Points (Simulink Control Design).
+
+Syntax
+[x,u,y,dx] = trim(sys)
+[x,u,y,dx] = trim(sys,x0,u0,y0)
+[x,u,y,dx] = trim(sys,x0,u0,y0,ix,iu,iy)
+[x,u,y,dx] = trim(sys,x0,u0,y0,ix,iu,iy,dx0,idx)
+[x,u,y,dx,options] = trim(sys,x0,u0,y0,ix,iu,iy,dx0,idx,options)
+[x,u,y,dx,options] = trim(sys,x0,u0,y0,ix,iu,iy,dx0,idx,options,t)
+
+Description
+The trim function starts from an initial point and
+ searches using a sequential quadratic programming algorithm until it finds the nearest
+ trim point.
+ You must supply the initial point implicitly or explicitly. If the
+ trim function cannot find a trim point, the function returns
+ the point encountered in its search where the state derivatives are closest to zero in a
+ min-max sense. In other words, the function returns the point that minimizes the maximum
+ deviation from zero of the derivatives. The trim function can find
+ trim points that meet specific input, output, or state conditions, and the function can
+ find points where a system is changing in a specified manner, that is, points where the
+ system state derivatives equal specific nonzero values.
+
+Caution
+When you use the trim function to find a trim point near a
+ specified initial operating point, the trim function returns
+ only a local value. Other, more suitable trim points might exist. To find the most
+ suitable trim point for a particular application, as a best practice, try a number
+ of initial guesses for the initial state, input, and output values.
+
+[x,u,y,dx] = trim(sys)
+ finds the equilibrium point of the model specified by sys
+ nearest to the initial state, x0. Specifically, the
+ trim function finds the equilibrium point that minimizes
+ the maximum absolute value of [x-x0,u,y]. If
+ trim cannot find an equilibrium point near the system's
+ initial state, it returns the point at which the system is nearest to equilibrium.
+ Specifically, it returns the point that minimizes abs(dx), where
+ dx represents the derivative of the system. You can obtain
+ x0 using this command: [sizes,x0,xstr] =
+ sys([],[],[],0).
+
+example
+
+[x,u,y,dx] = trim(sys,x0,u0,y0)
+ finds the trim point nearest to the x0,
+ u0, y0, which is the point that minimizes
+ the maximum value of abs([x-x0; u-u0; y-y0]).
+
+[x,u,y,dx] = trim(sys,x0,u0,y0,ix,iu,iy)
+ finds the trim point closest to x0, u0,
+ y0 that satisfies a specified set of state, input, and/or
+ output conditions. The integer vectors ix,
+ iu, and iy select the values in
+ x0, u0, and y0
+ that must be satisfied. If the trim function cannot find an
+ equilibrium point that satisfies the specified set of conditions exactly, it returns
+ the nearest point that satisfies the conditions, namely, abs([x(ix)-x0(ix);
+ u(iu)-u0(iu); y(iy)-y0(iy)]).
+
+example
+
+[x,u,y,dx] = trim(sys,x0,u0,y0,ix,iu,iy,dx0,idx)
+ finds specific nonequilibrium points, that is, points at which the system's state
+ derivatives have some specified nonzero value. Here, dx0
+ specifies the state derivative values at the search's starting point and
+ idx selects the values in dx0 that the
+ search must satisfy exactly.
+
+example
+
+[x,u,y,dx,options] = trim(sys,x0,u0,y0,ix,iu,iy,dx0,idx,options)
+ specifies an array of optimization parameters that the trim
+ function passes to the optimization function that it uses to find trim points. The
+ optimization function, in turn, uses this array to control the optimization process
+ and to return information about the process. The trim function
+ returns the options array at the end of the search process. By
+ exposing the underlying optimization process in this way, the
+ trim function allows you to monitor and fine-tune the
+ search for trim points.
+
+[x,u,y,dx,options] = trim(sys,x0,u0,y0,ix,iu,iy,dx0,idx,options,t)
+ sets the time to t if the system is dependent on time.
+If you fix any of the state, input, or output values, the
+ trim function uses the unspecified free variables to derive
+ the solution that satisfies the specified constraints.
+
+Examples
+collapse all
+Find Equilibrium Point
+
+Open Live Script
+
+ Open the example model named EquilibriumPoints that models a linear state-space system by using a State-Space block.
+sys = &#34;EquilibriumPoints&#34;;
+open_system(sys)
+
+The State-Space block specifies these matrices:
+A = [-0.09 -0.01;1 0]
+
+B = [0 -7;0 -2]
+
+C = [0 2;1 -5]
+
+D = [-3 0; 1 0]
+
+To find an equilibrium point in the model, call the trim function and specify only the model name as an input argument.
+[x,u,y,dx,options] = trim(sys)
+
+x = 2×1
+
+ 0
+ 0
+
+u = 2×1
+
+ 0
+ 0
+
+y = 2×1
+
+ 0
+ 0
+
+dx = 2×1
+
+ 0
+ 0
+
+options = 1×18
+
+ 0 0.0001 0.0001 0.0000 0 0 1.0000 0 0 7.0000 2.0000 0 2.0000 500.0000 0 0.0000 0.1000 1.0000
+
+Find Steady-State Points
+
+Open Live Script
+
+ The Simulink® trim function uses a model to determine steady-state points of a dynamic system that satisfy specified input, output, and state conditions. 
+Open the example model named SteadyStatePoints.
+sys = &#34;SteadyStatePoints&#34;;
+open_system(sys)
+
+To find the values of the input and the states that result in a value of 1 for both output values, use the trim function. 
+Create variables named x and u to store values that represent initial guesses of the state variable values and input values, respectively. Then, create a variable named y to store the desired output value.
+x = [0; 0; 0];
+u = 0;
+y = [1; 1];
+
+Create index variables to specify which variables are fixed and which can vary. To specify that the state and input values can vary, assign an empty matrix ([]) to the index variables ix and iu. To specify that the output values are fixed, specify the value of the index variable iy as [1;2].
+ix = []; % Don't fix any of the states
+iu = []; % Don't fix the input
+iy = [1;2]; % Fix both output 1 and output 2
+
+To find the values of states and inputs that result in the desired output value, call the trim function. The values the trim function returns might differ due to rounding error.
+[x,u,y,dx] = trim(sys,x,u,y,ix,iu,iy)
+
+x = 3×1
+
+ -0.0000
+ 1.0000
+ 1.0000
+
+u = 
+2
+
+y = 2×1
+
+ 1.0000
+ 1.0000
+
+dx = 3×1
+10-15 ×
+
+ 0.1110
+ -0.0000
+ -0.1110
+
+Equilibrium point problems might not have a solution. In that case, the trim function first tries setting the derivatives to 0 and then returns a solution that minimizes the maximum deviation from the desired result.
+
+Find Equilibrium Point Near Operating Point
+
+Open Live Script
+
+ Open the example model named EquilibriumPoints that models a linear state-space system by using a State-Space block.
+sys = &#34;EquilibriumPoints&#34;;
+open_system(sys)
+
+The State-Space block specifies these matrices:
+A = [-0.09 -0.01;1 0]
+
+B = [0 -7;0 -2]
+
+C = [0 2;1 -5]
+
+D = [-3 0; 1 0]
+
+To find an equilibrium point near an operating point defined by state and input values, call the trim function and specify additional input arguments that contain the state and input values to define the operating point.
+x0 = [1;1];
+u0 = [1;1];
+[x,u,y,dx,options] = trim(sys,x0,u0)
+
+x = 2×1
+10-13 ×
+
+ -0.2337
+ -0.2353
+
+u = 2×1
+
+ 0.3333
+ -0.0000
+
+y = 2×1
+
+ -1.0000
+ 0.3333
+
+dx = 2×1
+10-13 ×
+
+ 0.8233
+ -0.0051
+
+options = 1×18
+
+ 0 0.0001 0.0001 0.0000 0 0 1.0000 1.0000 0 31.0000 6.0000 0 2.0000 500.0000 0 0.0000 0.1000 1.0000
+
+Check the options return argument to see the number of iterations required to identify the equilibrium point near the specified operating point.
+options(10)
+
+ans = 
+31
+
+To find an equilibrium point at which both output values are fixed, specify additional input arguments to indicate the target output value and that the output values are fixed.
+y = [1;1];
+iy = [1;2];
+[x,u,y,dx] = trim(sys,[],[],y,[],[],iy)
+
+x = 2×1
+
+ 0.0009
+ -0.3075
+
+u = 2×1
+
+ -0.5383
+ 0.0004
+
+y = 2×1
+
+ 1.0000
+ 1.0000
+
+dx = 2×1
+10-16 ×
+
+ 0.0043
+ 0.4196
+
+To find an equilibrium point with specified derivative values at which both outputs are fixed, specify additional input arguments for the derivative values, the target output value, and that the output values are fixed.
+y = [1;1];
+iy = [1;2];
+dx = [0;1];
+idx = [1;2];
+[x,u,y,dx,options] = trim(sys,[],[],y,[],[],iy,dx,idx)
+
+x = 2×1
+
+ 0.9752
+ -0.0827
+
+u = 2×1
+
+ -0.3884
+ -0.0124
+
+y = 2×1
+
+ 1.0000
+ 1.0000
+
+dx = 2×1
+
+ -0.0000
+ 1.0000
+
+options = 1×18
+
+ 0 0.0001 0.0001 0.0000 0 0 1.0000 0 0 13.0000 3.0000 0 2.0000 500.0000 0 0.0000 0.1000 1.0000
+
+Check the options return argument to see the number of iterations required to identify the equilibrium point near the specified operating point.
+options(10)
+
+ans = 
+13
+
+Input Arguments
+collapse all
+sys — Simulink model
+ 
+string | character vector
+
+Simulink model, specified as a string or character vector.
+
+Data Types: char | string
+
+x0 — Initial guesses for state variable values
+
+[] (default) | vector
+
+Initial guesses for state variable values, specified as a vector.
+
+u0 — Initial guesses for input values
+
+[] (default) | scalar | vector
+
+Initial guesses for input values, specified as a scalar or vector.
+
+y0 — Desired output value
+
+[] (default) | vector
+
+Desired output value, specified as a vector.
+
+ix — Index variable that specifies fixed states
+
+[] (default) | integer vector
+
+Index variable that specifies fixed states, specified as an integer
+ vector.
+To specify that the values can vary, specify an empty matrix
+ ([]).
+
+iu — Index variable that specifies fixed inputs
+ 
+[] (default) | integer vector
+
+Index variable that specifies fixed inputs, specified as an integer
+ vector.
+To specify that the values can vary, specify an empty matrix
+ ([]).
+
+iy — Index variable that specifies fixed outputs
+ 
+[] (default) | integer vector
+
+Index variable that specifies fixed outputs, specified as an integer
+ vector.
+To specify that the values can vary, specify an empty matrix
+ ([]).
+
+dx0 — State derivative values at start of search
+ 
+[] (default) | vector
+
+State derivative values at start of search, specified as a vector.
+
+idx — State derivative values that search must satisfy exactly
+
+[] (default) | vector
+
+State derivative values that search must satisfy exactly, specified as a
+ vector.
+
+options — Optimization parameters
+ 
+[] (default) | array
+
+Optimization parameters, specified as an array.
+Array elements 1, 2, 3, 4, and 10 are particularly useful for finding trim
+ points.
+
+This table describes how each element affects the search for a trim
+ point.
+No. | Default | Description | 
+1 | 0 | Display options. 0 specifies no display, 1 specifies
+ tabular output, and -1 suppresses warning messages. | 
+2 | 10–4 | Precision the computed trim point must attain to
+ terminate the search. | 
+3 | 10–4 | Precision the trim search goal function must attain to
+ terminate the search. | 
+4 | 10–6 | Precision the state derivatives must attain to terminate
+ the search. | 
+5 | N/A | Not used. | 
+6 | N/A | Not used. | 
+7 | N/A | Used internally. | 
+8 | N/A | Value of the trim search goal function (λ in goal
+ attainment). | 
+9 | N/A | Not used. | 
+10 | N/A | Number of iterations used to find a trim point. | 
+11 | N/A | Number of function gradient evaluations. | 
+12 | 0 | Not used. | 
+13 | 0 | Number of equality constraints. | 
+14 | 100*(Number of variables) | Maximum number of function evaluations to use to find a
+ trim point. | 
+15 | N/A | Not used. | 
+16 | 10–8 | Used
+ internally. | 
+17 | 0.1 | Used
+ internally. | 
+18 | N/A | Step length. | 
+
+t — Time of time-dependent system
+ 
+[] (default) | scalar
+
+Time of time-dependent system, specified as a scalar.
+
+Output Arguments
+collapse all
+x — Trim point
+
+vector
+
+Trim point, returned as a vector.
+
+u — Trim point
+
+vector
+
+Trim point, returned as a vector.
+
+y — Trim point
+
+vector
+
+Trim point, returned as a vector.
+
+dx — Derivative of system
+
+vector
+
+Derivative of system, returned as a vector.
+
+options — Optimization parameters
+
+array
+
+Optimization parameters, returned as an array.
+This table describes how each element affects the search for a trim
+ point.
+
+No. | Default | Description | 
+1 | 0 | Display options. 0 specifies no display, 1 specifies
+ tabular output, and -1 suppresses warning messages. | 
+2 | 10–4 | Precision the computed trim point must attain to
+ terminate the search. | 
+3 | 10–4 | Precision the trim search goal function must attain to
+ terminate the search. | 
+4 | 10–6 | Precision the state derivatives must attain to terminate
+ the search. | 
+5 | N/A | Not used. | 
+6 | N/A | Not used. | 
+7 | N/A | Used internally. | 
+8 | N/A | Value of the trim search goal function (λ in goal
+ attainment). | 
+9 | N/A | Not used. | 
+10 | N/A | Number of iterations used to find a trim point. | 
+11 | N/A | Number of function gradient evaluations. | 
+12 | 0 | Not used. | 
+13 | 0 | Number of equality constraints. | 
+14 | 100*(Number of variables) | Maximum number of function evaluations to use to find a
+ trim point. | 
+15 | N/A | Not used. | 
+16 | 10–8 | Used
+ internally. | 
+17 | 0.1 | Used
+ internally. | 
+18 | N/A | Step length. | 
+
+More About
+collapse all
+Trim point
+
+A trim point, also known as an equilibrium
+ point, is a point in the parameter space of a dynamic system at which the system is
+ in a steady state. For example, a trim point of an aircraft is a setting of its
+ controls that causes the aircraft to fly straight and level. Mathematically, a trim
+ point is a point where the system state derivatives equal zero.
+
+Algorithms
+The trim function uses a sequential quadratic programming
+ algorithm to find trim points. For a description of this algorithm, see Sequential Quadratic Programming (SQP) (Optimization Toolbox).
+
+Version History
+Introduced before R2006a
+
+See Also
+findop (Simulink Control Design)
+Topics
+Compute Steady-State Operating Points (Simulink Control Design)
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

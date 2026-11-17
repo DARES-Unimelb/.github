@@ -1,7 +1,5 @@
 function uacs_job_sim_v9only()
 % UACS_JOB_SIM_V9ONLY Job entry: the V9 crosswind case on its own.
-% V10 is skipped because it does not depend on the wind initial condition, and the full
-% v9+v10 job costs about three times as long.
 
 this = mfilename('fullpath');
 if isempty(this)

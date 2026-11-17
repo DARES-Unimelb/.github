@@ -1,0 +1,437 @@
+URL: https://www.mathworks.com/help/simulink/slref/new_system.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/new_system.html
+
+ 
+
+ new_system - Create Simulink model or library in memory - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulink Environment Fundamentals
+
+ Programmatic Model Editing
+
+ new_system
+
+On this page
+Syntax
+Description
+ExamplesCreate Model Based on Default Template
+Create Model Based on Non-Default Template
+Create Model Based on Another Model
+Create Empty Model Based on Simulink Default Model
+Create Model Based on Subsystem
+Create Empty Subsystem File
+Create Library
+Ensure Model Name Is Unique
+
+Input Argumentsname
+subsys
+template
+file
+
+Output Argumentshandle
+
+Version History
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+new_system
+R2026b
+Create Simulink model or library in memory
+collapse all in page
+
+Syntax
+handle = new_system
+
+handle = new_system(name)
+handle = new_system(name,FromTemplate=template)
+handle = new_system(name,FromFile=file)
+
+handle = new_system(name,&#34;Model&#34;)
+handle = new_system(name,Model=subsys)
+handle = new_system(name,&#34;Subsystem&#34;)
+handle = new_system(name,&#34;Library&#34;)
+handle = new_system(___&#34;ErrorIfShadowed&#34;)
+
+Description
+handle = new_system creates a model
+ named untitled (and then untitled1,
+ untitled2, and so on) based on your default model
+ template and returns the numeric handle of the new model.
+Select your default model template on the Simulink® start page or by using the
+ Simulink.defaultModelTemplate function.
+The new_system function does not open the new model. This
+ function creates the model in memory. To save the model, use
+ save_system.
+
+example
+
+handle = new_system(name)
+ creates the model with the specified name.
+To avoid shadowing, if name is empty, the
+ new_system function checks loaded models and files on
+ the path and creates a model with the next available name
+ untitled, untitled1,
+ untitled2, and so on.
+
+example
+
+handle = new_system(name,FromTemplate=template)
+ creates the model based on the specified template.
+
+example
+
+ handle = new_system(name,FromFile=file)
+ creates the model based on the specified model or template.
+
+example
+
+handle = new_system(name,&#34;Model&#34;)
+ creates an empty model based on the Simulink default model and returns the numeric handle of the new model. The
+ Simulink default model is also known as the root block diagram and has the
+ numeric handle 0. If name is empty, the
+ function creates a model or library named untitled,
+ untitled1, untitled2, and so
+ on.
+
+example
+
+handle = new_system(name,Model=subsys)
+ creates the model based on the subsystem subsys in a
+ currently loaded model.
+
+example
+
+ handle = new_system(name,&#34;Subsystem&#34;)
+ creates an empty subsystem file with the specified name. 
+
+example
+
+handle = new_system(name,&#34;Library&#34;)
+ creates an empty library with the specified name. 
+
+example
+
+ handle = new_system(___&#34;ErrorIfShadowed&#34;)
+ can be used with any of the inputs from the previous syntaxes and takes the same
+ action, but returns an error when the action creates something with the same
+ names as another model, MATLAB® file, or variable on the MATLAB path or in the workspace.
+
+example
+
+Examples
+collapse all
+Create Model Based on Default Template
+
+ Create two models in memory based on the default template.
+ Create the first model with the default name, and the second model with the name
+ myModel.
+
+ Create the model with the default name.
+h1 = new_system;
+
+Use the get_param function to get the name of the new
+ model.
+get_param(h1,&#34;Name&#34;)
+
+ans =
+
+ 'untitled'
+
+Create the model named myModel.
+h2 = new_system(&#34;myModel&#34;);
+
+Create Model Based on Non-Default Template
+
+ Suppose you have a custom template named
+ myTemplate on the MATLAB path.
+
+ Create a model named myModel based on the
+ template.
+h = new_system(&#34;myModel&#34;,FromTemplate=&#34;myTemplate&#34;);
+
+Create Model Based on Another Model
+
+ Suppose you have a model named myModel1 on
+ the MATLAB path.
+
+ Create a model named myModel2 based on
+ myModel1.
+h = new_system(&#34;myModel2&#34;,FromFile=&#34;myModel1&#34;);
+
+Create Empty Model Based on Simulink Default Model
+
+Create an empty model named myModel based on the
+ Simulink default model (root block diagram).
+h = new_system(&#34;myModel&#34;,&#34;Model&#34;);
+
+Create Model Based on Subsystem
+
+Suppose you have a loaded model named myModel1 that
+ contains a subsystem named mySubsystem. Create a new
+ model named myModel2 based on the subsystem.
+h = new_system(&#34;myModel2&#34;,Model=&#34;myModel1/mySubsystem&#34;);
+
+Create Empty Subsystem File
+
+Create an empty subsystem file with the name
+ mySubsystem.
+h = new_system(&#34;mySubsystem&#34;,&#34;Subsystem&#34;);
+
+Create Library
+
+Create a library named myLibrary.
+h = new_system(&#34;myLibrary&#34;,&#34;Library&#34;);
+
+Ensure Model Name Is Unique
+
+Create a variable with the name cycle.
+cycle = 3;
+
+Try to create a model that uses the same name as the variable using the
+ ErrorIfShadowed option.
+new_system(&#34;cycle&#34;,&#34;ErrorIfShadowed&#34;)
+
+The model 'cycle' cannot be created because this name is shadowing another name on the MATLAB path or in the workspace. Choose another name, or do not use the option
+'ErrorIfShadowed'
+
+Input Arguments
+collapse all
+name — Name of new model or library
+ 
+string | char
+
+Name of new model or library, specified as a string or character vector that:
+
+Has 150 or fewer characters
+
+Is not a MATLAB keyword
+
+Is not simulink
+
+Is unique among model names, variables, and MATLAB files on the MATLAB path and in the workspace
+
+Example: &#34;mymodel&#34;
+
+subsys — Subsystem to base new model on
+ 
+subsystem block path
+
+Subsystem to base the new model on, specified as the
+ Subsystem block path in a currently open model. Format
+ the path as a string or character vector.
+For information about getting block paths, see Get Handles and Paths.
+
+Example: &#34;myModel/mySubsystem&#34;
+Data Types: string | character vector
+
+template — Name of template to base new model on
+ 
+template name
+
+Name of the template to base the new model on, specified as a string or a
+ character vector. The template must be on the MATLAB path. Create a template in the Simulink Editor. In the Simulation tab, select Save > Template.
+Example: &#34;mytemplate&#34;,
+ &#34;mytemplate.sltx&#34;
+
+Data Types: string | character vector
+
+file — File path of model or template to base new model on 
+ 
+file path
+
+Path name of the model or template to base the new model on, specified as
+ a string or character vector. You can use an .mdl,
+ .slx, or .sltx file. Include the
+ extension and use a full or relative path.
+Example: &#34;Models/mymodel.slx&#34;,
+ &#34;mytemplate.sltx&#34;,
+ &#34;model.mdl&#34;
+
+Data Types: string | character vector
+
+Output Arguments
+collapse all
+handle — Handle of new model or library
+ 
+handle
+
+Numeric handle of new model or library, returned as a double.
+
+Data Types: double
+
+Version History
+Introduced before R2006a
+
+See Also
+open_system | save_system | Simulink.defaultModelTemplate
+Topics
+Get Handles and Paths
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

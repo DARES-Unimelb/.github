@@ -1,15 +1,15 @@
 function [lc, map] = lin_contract(lin)
 % LIN_CONTRACT Put the longitudinal and lateral sub-models into the frozen
-% architecture.md 5.2 ordering.
+% sub-model contract ordering.
 %
-%   architecture.md 5.2 fixes the sub-model states as
+%   The contract fixes the sub-model states as
 %     long [dV dalpha dq dtheta] x [dde dT]
 %     lat  [dbeta dp dr dphi]   x [dda ddr]
 %   linearize_at extracts its sub-matrices straight from the 12-state Jacobian,
-%   whose velocity states are the body components u and w, and v. A gain
-%   designed on [du dw] with Bryson weights meant for [dV dalpha] is wrong by a
-%   factor of V0 in the alpha channel, so the exact linear change of variables is
-%   applied here, once, and the applied transform is reported.
+%   whose velocity states are the body components u, w and v. A gain designed on
+%   [du dw] with Bryson weights meant for [dV dalpha] is wrong by a factor of V0 in
+%   the alpha channel, so the exact linear change of variables is applied here,
+%   once, and the applied transform is reported:
 %
 %   dV     =  cos(a0)*du + sin(a0)*dw
 %   dalpha = -sin(a0)*du/V0 + cos(a0)*dw/V0
@@ -60,14 +60,14 @@ if body_lat
 end
 
 % Absolute operating point of the two sub-models; the contract states are
-% deviations from these, so a caller subtracts them before using the gains.
+% deviations from these, so a caller subtracts them before using the gains
 lc.x_op_long = [V0; a0; x_star(5); x_star(8)];
 lc.x_op_lat = [0; x_star(4); x_star(6); x_star(7)];
 lc.u_op_long = lin.u_star([2 6]);
 lc.u_op_full = lin.u_star(:);
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function n = local_names(lin, field)
 if isfield(lin, field)
    n = lin.(field);

@@ -1,13 +1,12 @@
 #!/usr/bin/env node
-// BENCH_STICK_TABLES 把满杆矩阵的指标表转成报告用的 markdown 表。
+// BENCH_STICK_TABLES Turn the full stick metric table into a markdown report table.
 //
-// 用法
-//   node MATLAB/verify/bench_stick_tables.mjs
+//   node verify/bench_stick_tables.mjs
 //
-// 输入  results/bench_stick_metrics.csv   由 verify/bench_stick_report.m 生成，一段一行
-// 输出  docs/_work/part_data.md           报告第三部分的数据表
+// Input   results/bench_stick_metrics.csv   written by verify/bench_stick_report.m
+// Output  docs/report_sources/part_data.md
 //
-// 指标表的列名就是指标名，本脚本按列名取数，不按下标。
+// Columns are read by name, never by index.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -59,7 +58,7 @@ out.push('末段指最后 25 % 的时间窗。换向次数与主频取末 4 秒�
 out.push('饱和占比指该舵面顶到正负 25 度限位的样本占比，PID 油门那一列指油门顶到 1 的样本占比。');
 out.push('');
 
-// ---------------- 逐工况总表 ----------------
+// Per-case tables
 for (const fam of families) {
    const sel = rows.filter((r) => family(r.case_id) === fam);
    out.push(`## ${fam}：纵向与执行机构`);
@@ -86,7 +85,7 @@ for (const fam of families) {
    out.push('');
 }
 
-// ---------------- 横航向与跟踪 ----------------
+// Lateral and tracking
 out.push('## 横航向与跟踪');
 out.push('');
 out.push('| id | 控制器 | 工况 | 滚转指令 | 滚转末值 | 滚转范围 | p 范围 | r 范围 | 滚转末段误差 | 偏航率末值 | 空速均方根误差 |');
@@ -100,7 +99,7 @@ for (const r of rows) {
 }
 out.push('');
 
-// ---------------- 颤振与包线 ----------------
+// Chatter and envelope
 out.push('## 颤振与包线越界');
 out.push('');
 out.push('| id | 控制器 | 工况 | 升降舵换向 | 副翼换向 | 方向舵换向 | 油门换向 | 升降舵主频 | 油门主频 | q 主频 | 升降舵饱和 | 副翼饱和 | 油门顶满 | 滚转越界 | 俯仰越界 | 空速越界 | 迎角越界 |');
@@ -114,7 +113,7 @@ for (const r of rows) {
 }
 out.push('');
 
-// ---------------- 单轴交叉耦合 ----------------
+// Single-axis cross coupling
 out.push('## 单轴满杆时的交叉耦合');
 out.push('');
 out.push('指令轴以外的两个轴在这一段里的峰值响应，看的是一个轴打满时另外两个轴被带动多少。');
@@ -138,7 +137,7 @@ for (const r of rows.filter((x) => x.case_id >= 2 && x.case_id <= 7)) {
 }
 out.push('');
 
-// ---------------- 控制器对比 ----------------
+// Controller comparison
 out.push('## 同一个工况下两个控制器的对照');
 out.push('');
 out.push('| id | 工况 | 俯仰末段误差 PID | 俯仰末段误差 LQR | 空速末值 PID | 空速末值 LQR | 升降舵换向 PID | 升降舵换向 LQR | 高度变化率 PID | 高度变化率 LQR |');
@@ -155,7 +154,7 @@ for (const id of ids) {
 }
 out.push('');
 
-// ---------------- 汇总 ----------------
+// Summary
 const summarize = (sel, name) => {
    if (sel.length === 0) return null;
    const maxOf = (k) => Math.max(...sel.map((r) => Math.abs(r[k])));

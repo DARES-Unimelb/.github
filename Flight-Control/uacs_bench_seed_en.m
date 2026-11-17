@@ -1,17 +1,10 @@
 function uacs_bench_seed_en(mdl)
-% UACS_BENCH_SEED_EN 英文副本的操纵量初值推送，作用与 uacs_bench_seed 相同，路径表用英文块名。
+% UACS_BENCH_SEED_EN English-model copy of uacs_bench_seed, using English block names.
 %
-% 挂在 model/uacs_flight_bench_en.slx 的 PostLoadFcn 里。
+% Set as the PostLoadFcn of model/uacs_flight_bench_en.slx. Dashboard controls only drive
+% block parameters whose value is a literal, so the stick values have to be written in.
 %
-% 为什么另起一份而不是给 uacs_bench_seed 加参数：那个函数在本会话里被调用过，MATLAB 按名字
-% 缓存了它，改文件不生效。另起一个名字一定读当前内容。
-%
-% 为什么必须这一步：Dashboard 控件只驱动得了「值是字面量」的块参数。绑基础工作区变量时绑定
-% 能建起来、isValid 也返回真、控件的 setValue 也改得动那个变量，但仿真运行中改那个变量仿真
-% 完全不理。所以操纵量必须落成字面量，代价是初值没法由变量在运行时决定。
-%
-% 挂在 PostLoadFcn 而不是 InitFcn：InitFcn 每次按 Run 都跑，会把用户拖好的杆位重置回
-% uacs_go.m 的值。
+% mdl is passed explicitly: during PostLoadFcn the current system is not necessarily this model.
 
 if nargin < 1 || isempty(mdl)
    error('uacs_bench_seed_en:NoModel', '要显式传模型名，不能靠 bdroot');

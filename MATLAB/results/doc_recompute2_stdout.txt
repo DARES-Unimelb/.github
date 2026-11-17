@@ -1,0 +1,83 @@
+== 1. geometry and derived aerodynamics (my own implementation) ==
+S 1.993103 m2   cbar 0.586207 m   Vh 0.450627   Vv 0.172654
+CL_de 0.377953   Cm_alpha -2.075417   Cm_q -13.940689   Cm_de -0.566552
+CY_dr 0.594926   Cn_beta +0.129491   Cn_r -0.258981   Cn_dr -0.051358
+Cl_p -0.387500   Cl_da 0.041200
+|Cn_dr|/Cn_beta 0.3966
+
+== 2. propulsion invariants ==
+P_shaft_peak 2926.000 W   P_ideal full 1609.3000 W   T_static 93.71572 N
+static thrust/weight 0.95563
+  V     T_full      P_balance      FM_implied
+  0   93.715723   1609.300000  0.550000
+  5   84.651306   1609.300000  0.550000
+ 10   75.794410   1609.300000  0.550000
+ 15   67.391386   1609.300000  0.550000
+ 20   59.682199   1609.300000  0.550000
+ 25   52.836094   1609.300000  0.550000
+ 30   46.913851   1609.300000  0.550000
+ 35   41.877316   1609.300000  0.550000
+ 40   37.628255   1609.300000  0.550000
+ 45   34.047332   1609.300000  0.550000
+power balance spread 9.095e-13 W
+implied FM spread    3.331e-16
+V=0 throttle exponent 0.444444 (4/9 = 0.444444)
+half-power thrust ratio at V=0 0.629960525 vs 2^(-2/3) 0.629960525 diff 1.11e-16
+
+== 3. single-engine criterion |Cn_dr|/Cn_beta ==
+claim under test: enlarging the fin by itself makes single-engine control worse
+  config            Sv     chord   CY_dr    Cn_beta   Cn_dr      ratio    V_mc
+  0.34 m2, 0.35 chord, derived         0.34  0.35  0.3371  +0.07338  -0.011544  0.1573   63.52
+  0.55 m2, 0.35 chord, derived         0.55  0.35  0.5453  +0.11870  -0.030209  0.2545   39.26
+  0.60 m2, 0.50 chord, derived         0.60  0.50  0.5949  +0.12949  -0.051358  0.3966   30.11
+  0.55 m2, rudder area held at 0.34*0.35 0.55  0.22  0.5453  +0.11870  -0.018674  0.1573   49.94
+  0.90 m2, rudder area held at 0.34*0.35 0.90  0.13  0.8924  +0.19424  -0.030558  0.1573   39.04
+  0.34 m2, 0.35 chord, hand CY_dr=0.18 0.34  0.35  0.1800  +0.07338  -0.006164  0.0840   86.92
+  0.55 m2, 0.35 chord, hand CY_dr=0.18 0.55  0.35  0.1800  +0.11870  -0.009971  0.0840   68.34
+  0.60 m2, 0.50 chord, hand CY_dr=0.18 0.60  0.50  0.1800  +0.12949  -0.015539  0.1200   54.75
+algebra: with CY_dr derived, ratio = k_body*tau_rud*CL_alpha*Sv*chord/(0.75*S), so it is
+strictly proportional to Sv*chord; check 0.396618 vs 0.396618
+with CY_dr hand entered the ratio is 0.18*chord/0.75, independent of Sv.
+
+== 4. authority at cruise ==
+q 382.8125   CL 0.257060   CD 0.034649   L/D 7.4189
+T_req 26.4370 N   P_elec 1098.027 W   throttle 0.101929
+rudder 58.1330 Nm   aileron 46.6347 Nm   elevator 110.5665 Nm
+engine out 84.3442 Nm = 1.4509 x rudder   V_mc 30.1131 m/s
+diff thrust, nonlinear map 18.3461 Nm = 0.3156 x rudder
+diff thrust, retired linear law 17.1942 Nm = 0.2958 x rudder
+V_stall 10.9909 m/s   V_min 13.1890 m/s
+
+== 5. comparison against the frozen parameter table ==
+OK   Sv                         mine     0.600000   lead     0.600000   rel   0.000 %
+OK   Vh                         mine     0.450627   lead     0.450600   rel   0.006 %
+DIFF Vv                         mine     0.172654   lead     0.157800   rel   9.413 %
+OK   Cm_alpha                   mine    -2.075417   lead    -2.075400   rel   0.001 %
+OK   Cm_q                       mine   -13.940689   lead   -13.941000   rel   0.002 %
+DIFF Cm_de                      mine    -0.566552   lead    -0.529100   rel   7.078 %
+DIFF Cn_beta                    mine     0.129491   lead     0.090400   rel  43.242 %
+DIFF Cn_r                       mine    -0.258981   lead    -0.180800   rel  43.242 %
+DIFF Cn_dr                      mine    -0.051358   lead    -0.032000   rel  60.495 %
+OK   Cl_p                       mine    -0.387500   lead    -0.387500   rel   0.000 %
+OK   Cl_da                      mine     0.041200   lead     0.041200   rel   0.000 %
+OK   T_static                   mine    93.715723   lead    93.715700   rel   0.000 %
+OK   TWR                        mine     0.955634   lead     0.956000   rel   0.038 %
+OK   CL_cruise                  mine     0.257060   lead     0.257100   rel   0.016 %
+OK   CD_cruise                  mine     0.034649   lead     0.034650   rel   0.002 %
+OK   LD                         mine     7.418891   lead     7.420000   rel   0.015 %
+OK   q                          mine   382.812500   lead   383.000000   rel   0.049 %
+OK   T_req                      mine    26.436970   lead    26.440000   rel   0.011 %
+OK   P_elec                     mine  1098.026730   lead  1098.000000   rel   0.002 %
+OK   throttle                   mine     0.101929   lead     0.102000   rel   0.070 %
+DIFF V_stall                    mine    10.990857   lead    13.900000   rel  20.929 %
+DIFF V_min                      mine    13.189028   lead    16.700000   rel  21.024 %
+OK   rudder_Nm                  mine    58.132988   lead    58.130000   rel   0.005 %
+OK   aileron_Nm                 mine    46.634729   lead    46.630000   rel   0.010 %
+OK   elevator_Nm                mine   110.566529   lead   110.570000   rel   0.003 %
+DIFF diff_Nm                    mine    18.346121   lead    17.190000   rel   6.726 %
+OK   engine_out_Nm              mine    84.344151   lead    84.340000   rel   0.005 %
+OK   V_mc                       mine    30.113149   lead    30.110000   rel   0.010 %
+DIFF ratio_Cn_dr_over_Cn_beta   mine     0.396618   lead     0.355000   rel  11.723 %
+mismatches over 2 percent: 9 -> Vv, Cm_de, Cn_beta, Cn_r, Cn_dr, V_stall, V_min, diff_Nm, ratio_Cn_dr_over_Cn_beta
+
+RECOMPUTE2_DONE

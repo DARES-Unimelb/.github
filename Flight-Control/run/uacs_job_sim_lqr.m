@@ -1,5 +1,4 @@
-% UACS_JOB_SIM_LQR Job entry: LQR scenarios from the built model.
-% Owner: ash-sim (task-3). One thing only: simulate the LQR scenarios.
+% UACS_JOB_SIM_LQR Job entry: simulate the LQR scenarios from the built model.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_lqr');

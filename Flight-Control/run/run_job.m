@@ -8,16 +8,7 @@ function run_job(job_name, varargin)
 % A job is a script named uacs_job_<job_name>.m on the MATLAB path. The job runs
 % under matlab_lock_acquire, so two members never compute at once.
 %
-% Four protections, each added after a real failure:
-%  1. The job's console output is polled into results/job_<name>.log while it
-%     runs, so a job that dies mid-way leaves a trace instead of a one-line log.
-%  2. A heartbeat file is refreshed every heartbeat_s during the job. Liveness is
-%     judged on the heartbeat, not on the acquisition time, so a dead job is
-%     detected in minutes rather than at the end of a long stale timeout.
-%  3. The stale timeout is short enough that an abandoned lock cannot block the
-%     team for hours, which is exactly what happened once.
-%  4. The owner name is passed in explicitly and recorded, so a stuck lock can be
-%     traced to a member instead of reading "unknown".
+% Options: owner, stale_s (900), heartbeat_s (20), timeout_s (3600).
 %
 % Verdict markers are deliberately different in shape. Match on JOB DONE; never
 % treat the absence of JOB FAILED as success.
@@ -26,8 +17,7 @@ function run_job(job_name, varargin)
 %   !! JOB FAILED   <name>
 %   ?? JOB UNKNOWN  <name>      (the lock went stale while the job was running)
 %
-% To abort a stuck job from another member, delete results/_matlab_lock/. The
-% stale timeout will also do it on its own.
+% To abort a stuck job from another member, delete results/_matlab_lock/.
 
 ip = inputParser;
 ip.addParameter('owner', local_owner(), @(x) ischar(x) || isstring(x));
@@ -54,7 +44,6 @@ if ~exist(logdir, 'dir')
 end
 logfile = fullfile(logdir, ['job_' job_name '.log']);
 
-% The lock records the owner explicitly so a stuck lock is traceable.
 lock = matlab_lock_acquire('owner', owner, 'timeout_s', ip.Results.timeout_s, ...
     'stale_s', stale_s);
 cleanup_lock = onCleanup(@() matlab_lock_release(lock));
@@ -71,7 +60,7 @@ fprintf(fid, 'owner %s  pid %d  at %s  stale_s %.0f\n', ...
 fprintf('=== JOB START   %s\n', job_name);
 fprintf('log file %s\n', logfile);
 
-% Poll the console into the log so a hang is visible while it is happening.
+% Poll the console into the log so a hang is visible while it happens.
 diary_file = fullfile(logdir, ['job_' job_name '.diary']);
 diary off;
 if exist(diary_file, 'file')
@@ -81,8 +70,8 @@ diary(diary_file);
 diary on;
 cleanup_diary = onCleanup(@() local_diary_off());
 
-% Heartbeat: refreshed by a timer so a dead MATLAB stops refreshing it and the
-% next member's stale check fires quickly instead of waiting out a long timeout.
+% Heartbeat refreshed by a timer: a dead MATLAB stops refreshing it and the
+% next member's stale check fires instead of waiting out a long timeout.
 hb_file = fullfile(lock.dir, 'heartbeat.json');
 hb = local_heartbeat_start(hb_file, owner, ip.Results.heartbeat_s);
 cleanup_hb = onCleanup(@() local_heartbeat_stop(hb));
@@ -105,14 +94,14 @@ local_heartbeat_stop(hb);
 local_flush_diary(diary_file, fid, job_name, elapsed, ok, err, stale_hit);
 end
 
-%% ================= local helpers =================
+%% Local helpers
 function local_diary_off()
 diary off;
 end
 
 function local_flush_diary(diary_file, fid, job_name, elapsed, ok, err, stale_hit)
-% Copy whatever the console captured into the persistent log, then write the
-% verdict marker. diary must be off before the file is read back.
+% Copy the captured console into the log, then write the verdict marker.
+% diary must be off before the file is read back.
 diary off;
 if exist(diary_file, 'file')
     try
@@ -140,8 +129,6 @@ end
 end
 
 function hb = local_heartbeat_start(f, owner, period_s)
-% A timer refreshes the heartbeat file. If MATLAB dies or blocks, the file stops
-% moving and the next member's stale check can act on it.
 hb = struct('file', f, 'owner', owner, 'timer', []);
 try
     hb.timer = timer('ExecutionMode', 'fixedSpacing', 'Period', period_s, ...

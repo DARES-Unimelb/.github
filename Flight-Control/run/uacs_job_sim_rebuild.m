@@ -1,18 +1,11 @@
 % UACS_JOB_SIM_REBUILD Job entry: rebuild the three models after a control change.
 %
-% Run with:  addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run'); run_job('sim_rebuild')
+% Run with:  addpath('<repo>/run'); run_job('sim_rebuild')
 % Success is the marker === JOB DONE in results/job_sim_rebuild.log.
 %
-% Why this exists as its own job: the PID design pushes new base workspace
-% variables, and a model that is only in memory is not a deliverable, so the
-% .slx files have to be regenerated and the block census rewritten before any
-% scenario can see the change. A build that also simulates is the shape that hung
-% the shared session on 2026-10-08, so this job builds only.
-%
-% It reads the gains from results/plant_baseline.mat and results/gains_baseline.mat
-% when they are current, and recomputes them from plant/ and control/ otherwise.
-% V11 reads results/sim_build_census.mat back from disk against the .slx files,
-% which build_uacs_models rewrites in the same run.
+% Builds only, no simulation. Reads the gains from results/plant_baseline.mat and
+% results/gains_baseline.mat when they are current, and recomputes them from plant/ and
+% control/ otherwise.
 
 this = mfilename('fullpath');
 if isempty(this)
@@ -36,8 +29,8 @@ for k = 1:numel(rep.models)
    fprintf('  %-18s top %3d total %3d lines %3d in %d out %d\n', m.name, ...
       m.top_count, m.total_count, m.line_count, m.inports, m.outports);
 end
-% The polarity the models now carry, one line per loop, so a sign that did not
-% reach the .slx is visible in the job log rather than only in a simulation.
+% Print the polarity the models carry, one line per loop, so a sign that did not reach
+% the .slx shows up in the job log.
 loops = {'p', 'q', 'r', 'phi', 'theta', 'V', 'h'};
 for k = 1:numel(loops)
    fprintf('  polarity sim_pid_%s_pol = %+d\n', loops{k}, ...

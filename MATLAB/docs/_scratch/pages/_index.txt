@@ -1,0 +1,4 @@
+404	4420	pages\www.mathworks.com_help_slcontrol_ug_compute-steady-state-operating-points.html.txt	https://www.mathworks.com/help/slcontrol/ug/compute-steady-state-operating-points.html
+404	4420	pages\www.mathworks.com_help_slcontrol_ug_compute-steady-state-operating-points-for-simulink-models.html.txt	https://www.mathworks.com/help/slcontrol/ug/compute-steady-state-operating-points-for-simulink-models.html
+404	4420	pages\www.mathworks.com_help_slcontrol_ug_compute-steady-state-operating-point-for-simulink-model.html.txt	https://www.mathworks.com/help/slcontrol/ug/compute-steady-state-operating-point-for-simulink-model.html
+404	4420	pages\www.mathworks.com_help_slcontrol_ug_linearize-nonlinear-simulink-model.html.txt	https://www.mathworks.com/help/slcontrol/ug/linearize-nonlinear-simulink-model.html

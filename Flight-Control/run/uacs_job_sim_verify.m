@@ -1,12 +1,8 @@
 % UACS_JOB_SIM_VERIFY Job entry: run the Simulink acceptance cases.
-% Owner: ash-sim (task-3). Reads the saved results and the .slx files from disk;
-% it does not regenerate anything, so it is an independent check.
-%
-% V13 does push the design variables into the base workspace and run the LINEAR
-% simulation, because the values the model reads only exist after a push and the
-% consistency check has to compare them against the design fields. It never runs the
-% model and never rewrites a design file, so the trajectories it judges are still the
-% ones the scenario jobs produced.
+% Reads the saved results and the .slx files from disk and regenerates nothing, so it is an
+% independent check. V13 does push the design variables into the base workspace and run the
+% linear simulation, because the values the model reads only exist after a push, but it
+% never runs the model and never rewrites a design file.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_verify');

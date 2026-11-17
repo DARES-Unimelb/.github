@@ -1,10 +1,7 @@
 function x0 = sim_plant_x0()
-% SIM_PLANT_X0 Initial state of the plant, read from the base workspace.
+% SIM_PLANT_X0 12x1 initial plant state, read from the base workspace
 %
-% Order of preference, so a scenario always says what it starts from:
-%   sim_x0     the scenario's own initial state, when it sets one
-%   trim.x_star the trim state, so an open-loop run starts in equilibrium
-% Anything else is an error: a silent zero start would drop the aircraft.
+%   x0   sim_x0 when set, else trim.x_star; errors when neither exists
 
 if evalin('base', 'exist(''sim_x0'', ''var'')') == 1
    x0 = evalin('base', 'sim_x0');

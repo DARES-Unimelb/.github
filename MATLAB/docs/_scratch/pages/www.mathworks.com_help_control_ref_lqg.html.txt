@@ -1,0 +1,485 @@
+URL: https://www.mathworks.com/help/control/ref/lqg.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/control/ref/ss.lqg.html
+
+ 
+
+ lqg - Linear-Quadratic-Gaussian (LQG) design - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Control Systems
+
+ Control System Toolbox
+
+ Control System Design and Tuning
+
+ State-Space Control Design and Estimation
+
+ State-Space Control Design
+
+ lqg
+
+On this page
+Syntax
+Description
+Examples
+Tips
+Algorithms
+Version History
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+lqg
+R2026b
+Linear-Quadratic-Gaussian (LQG) design
+
+Syntax
+reg = lqg(sys,QXU,QWV)
+
+reg = lqg(sys,QXU,QWV,QI)
+
+reg = lqg(sys,QXU,QWV,QI,'1dof')
+
+reg = lqg(sys,QXU,QWV,QI,'2dof')
+
+reg = lqg(___,'current')
+
+[reg,info] = lqg(___)
+
+Description
+reg = lqg(sys,QXU,QWV) computes an optimal
+linear-quadratic-Gaussian (LQG) regulator reg given
+a state-space model sys of the plant and weighting
+matrices QXU and QWV. The dynamic
+regulator reg uses the measurements y to
+generate a control signal u that regulates y around
+the zero value. Use positive feedback to connect this regulator to
+the plant output y.
+
+The LQG regulator minimizes the cost function
+
+J=E{limτ→∞1τ∫0τ[xT,uT]Qxu[xu]dt}
+
+subject to the plant equations
+dx/dt=Ax+Bu+wy=Cx+Du+v
+
+where the process noise w and measurement
+noise v are Gaussian white noises with covariance:
+E([wv]⋅[w'v'])=QWV
+
+reg = lqg(sys,QXU,QWV,QI) uses the setpoint
+command r and measurements y to
+generate the control signal u. reg has
+integral action to ensure that y tracks the command r.
+
+The LQG servo-controller minimizes
+the cost function
+
+J=E{limτ→∞1τ∫0τ([xT,uT]Qxu[xu]+xiTQixi) dt}
+
+where xi is
+the integral of the tracking error r - y.
+For MIMO systems, r, y, and xi must
+have the same length. 
+reg = lqg(sys,QXU,QWV,QI,'1dof') computes
+a one-degree-of-freedom servo controller that takes e = r - y rather
+than [r ; y] as input.
+reg = lqg(sys,QXU,QWV,QI,'2dof') is equivalent
+to LQG(sys,QXU,QWV,QI) and produces the two-degree-of-freedom
+servo-controller shown previously.
+reg = lqg(___,'current') uses the &#34;current&#34; Kalman estimator, which
+ uses x[n|n] as the state estimate
+ when computing an LQG regulator for a discrete-time system.
+[reg,info] = lqg(___) returns the controller and estimator gain
+ matrices in the structure info for any of the previous syntaxes. You can
+ use the controller and estimator gains to, for example, implement the controller in observer
+ form. For more information, see Algorithms.
+
+Examples
+Linear-Quadratic-Gaussian (LQG) Regulator
+and Servo Controller Design
+This example shows how to design a linear-quadratic-Gaussian (LQG) regulator, a
+ one-degree-of-freedom LQG servo controller, and a two-degree-of-freedom LQG servo controller
+ for the following system.
+
+The plant has three states (x), two control inputs
+ (u), three random inputs (w), one output
+ (y), measurement noise for the output (v), and the
+ following state and measurement equations.
+
+dxdt=Ax+Bu+wy=Cx+Du+v
+
+where
+
+A=[010001100]  B=[0.3101−0.30.9]C=[1.91.31] D=[0.53−0.61]
+
+The system has the following noise covariance data:
+
+Qn=E(wwT)=[420210001]Rn=E(vvT)=0.7
+
+For the regulator, use the following cost function to define
+the tradeoff between regulation performance and control effort:
+
+J(u)=∫0∞(0.1xTx+uT[1002]u)dt
+
+For the servo controllers, use the following cost function to
+define the tradeoff between tracker performance and control effort:
+
+J(u)=∫0∞(0.1xTx+xi2+uT[1002]u)dt
+
+To design the LQG controllers for this system:
+Create the state-space system by typing the following in the MATLAB Command
+ Window:
+A = [0 1 0;0 0 1;1 0 0]; 
+B = [0.3 1;0 1;-0.3 0.9];
+C = [1.9 1.3 1]; 
+D = [0.53 -0.61];
+sys = ss(A,B,C,D);
+
+Define the noise covariance data and the weighting matrices by typing the following
+ commands:
+nx = 3; %Number of states
+ny = 1; %Number of outputs
+Qn = [4 2 0; 2 1 0; 0 0 1];
+Rn = 0.7;
+R = [1 0;0 2]
+QXU = blkdiag(0.1*eye(nx),R);
+QWV = blkdiag(Qn,Rn);
+QI = eye(ny);
+
+Form the LQG regulator by typing the following
+ command:
+KLQG = lqg(sys,QXU,QWV)
+
+This
+ command returns the following LQG
+ regulator:A = 
+ x1_e x2_e x3_e
+ x1_e -6.212 -3.814 -4.136
+ x2_e -4.038 -3.196 -1.791
+ x3_e -1.418 -1.973 -1.766
+ 
+B = 
+ y1
+ x1_e 2.365
+ x2_e 1.432
+ x3_e 0.7684
+ 
+C = 
+ x1_e x2_e x3_e
+ u1 -0.02904 0.0008272 0.0303
+ u2 -0.7147 -0.7115 -0.7132
+ 
+D = 
+ y1
+ u1 0
+ u2 0
+ 
+Input groups: 
+ Name Channels
+ Measurement 1 
+ 
+Output groups: 
+ Name Channels 
+ Controls 1,2 
+ 
+Continuous-time model.
+
+Form the one-degree-of-freedom LQG servo controller by typing the following
+ command:
+KLQG1 = lqg(sys,QXU,QWV,QI,'1dof')
+
+This
+ command returns the following LQG servo
+ controller:A = 
+ x1_e x2_e x3_e xi1
+ x1_e -7.626 -5.068 -4.891 0.9018
+ x2_e -5.108 -4.146 -2.362 0.6762
+ x3_e -2.121 -2.604 -2.141 0.4088
+ xi1 0 0 0 0
+ 
+B = 
+ e1
+ x1_e -2.365
+ x2_e -1.432
+ x3_e -0.7684
+ xi1 1
+ 
+C = 
+ x1_e x2_e x3_e xi1
+ u1 -0.5388 -0.4173 -0.2481 0.5578
+ u2 -1.492 -1.388 -1.131 0.5869
+ 
+D = 
+ e1
+ u1 0
+ u2 0
+ 
+Input groups: 
+ Name Channels 
+ Error 1 
+ 
+Output groups: 
+ Name Channels
+ Controls 1,2 
+ 
+Continuous-time model.
+
+Form the two-degree-of-freedom LQG servo controller by typing the following
+ command:
+KLQG2 = lqg(sys,QXU,QWV,QI,'2dof')
+
+This
+ command returns the following LQG servo
+ controller:A = 
+ x1_e x2_e x3_e xi1
+ x1_e -7.626 -5.068 -4.891 0.9018
+ x2_e -5.108 -4.146 -2.362 0.6762
+ x3_e -2.121 -2.604 -2.141 0.4088
+ xi1 0 0 0 0
+ 
+B = 
+ r1 y1
+ x1_e 0 2.365
+ x2_e 0 1.432
+ x3_e 0 0.7684
+ xi1 1 -1
+ 
+C = 
+ x1_e x2_e x3_e xi1
+ u1 -0.5388 -0.4173 -0.2481 0.5578
+ u2 -1.492 -1.388 -1.131 0.5869
+ 
+D = 
+ r1 y1
+ u1 0 0
+ u2 0 0
+ 
+Input groups: 
+ Name Channels
+ Setpoint 1 
+ Measurement 2 
+ 
+Output groups: 
+ Name Channels 
+ Controls 1,2 
+ 
+Continuous-time model.
+
+Tips
+lqg can be used for both continuous- and discrete-time plants. In
+ discrete time, lqg uses
+ x[n|n-1] as its state estimate
+ by default. To use x[n|n] as the
+ state estimate and compute the optimal LQG controller, use the
+ 'current' input argument. For details on the state estimators, see
+ kalman.
+
+To compute the LQG regulator, lqg uses the commands lqr and kalman. To compute the servo-controller,
+ lqg uses the commands lqi and kalman. 
+
+When you want more flexibility for designing regulators, you can use the lqr, kalman, and lqgreg commands. When you want more flexibility for designing servo
+ controllers, you can use the lqi, kalman, and lqgtrack commands. For more information on
+ using these commands and how to decide when to use them, see Linear-Quadratic-Gaussian (LQG) Design for Regulation and Linear-Quadratic-Gaussian (LQG) Design of Servo Controller with Integral Action.
+
+Algorithms
+The controller equations are:
+For continuous time:
+dxe=Axe+Bu+L(y−Cxe−Du)u=−Kxxe−Kixi
+
+For discrete time:
+x[n+1|n]=Ax[n|n−1]+Bu[n]+L(y[n]−Cx[n|n−1]−Du[n])
+
+Delayed estimator:
+u[n]=−Kxx[n|n−1]−Kixi[n]
+
+Current estimator:
+u[n]=−Kxx[n|n]−Kixi[n]−Kww[n|n]=−Kxx[n|n−1]−Kixi[n]−(KxMx+KwMw)yinn[n]
+
+yinn[n]=y[n]−Cx[n|n−1]−Du[n]
+
+Here, 
+A, B, C, and
+ D are the state-space matrices of the LQG regulator,
+ reg.
+
+xi is the integral of the tracking error
+ r - y.
+
+Kx,
+ Kw,
+ Ki, L,
+ Mx, and
+ Mw are the controller and estimator gain
+ matrices returned in info.
+
+Version History
+Introduced before R2006a
+
+See Also
+lqr | lqi | kalman | lqry | ss | care | dare
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

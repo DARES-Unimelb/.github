@@ -1,9 +1,9 @@
 function file = sim_plot_lqr(traj, root)
-% SIM_PLOT_LQR One figure per LQR scenario, saved as PNG, closed by handle.
+% SIM_PLOT_LQR Write one PNG per LQR scenario and return the first file path
 %
-% The LQR model logs a reference in deviation coordinates rather than a pilot
-% command vector, so it gets its own panels instead of the manual model's.
-% Line widths 1 or 2, compact tiles, only this figure is closed.
+%   traj   scenario structs with fields t, x, u_dev, xi, act and name
+%   root   project root; figures are written to <root>/results
+%   file   path of the first figure, empty when traj is empty
 
 files = {};
 for k = 1:numel(traj)

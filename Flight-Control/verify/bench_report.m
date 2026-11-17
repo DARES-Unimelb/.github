@@ -1,15 +1,12 @@
 function rep = bench_report(ws)
-% BENCH_REPORT 读一次台架飞行的信号记录，打一张表，写一份 results/bench_report.txt。
+% BENCH_REPORT Read one bench run's signal logging and write the table to
+% results/bench_report.txt.
 %
-% 用法
-%   bench_report             读基础工作区里的 logsout
-%   bench_report(name)       name 是记录所在的变量名，默认就是 'logsout'
+%   bench_report           read the base workspace
+%   bench_report(name)     read the variable called name, default 'logsout'
 %
-% 台架模型里 inst_log / att_log / rate_log / act_log 四路信号默认开着记录，所以在界面上按
-% 一次 Run 之后直接跑这个函数就有数。它只读工作区与模型参数，不改模型。
-%
-% 打出来的每一节对应画布上的一条图或一块表，末尾给几句结论。结论那一段是给目测用的：
-% 速度停住、迎角到顶、跟踪不上，这些现象是设计使然还是真出问题，看数比看表针准。
+% inst_log, att_log, rate_log and act_log are logged by default, so one Run in the
+% model is enough. Workspace and model parameters are only read, never written.
 
 if nargin < 1 || isempty(ws)
    ws = '';
@@ -19,8 +16,7 @@ if ~isempty(ws)
       '基础工作区里没有变量 %s', ws);
    ls = evalin('base', ws);
 else
-   % 两种落法都认。先取 out：模型把输出写成 out 时它是本轮的新数据；logsout 可能是更早留下
-   % 的陈旧副本，先取它会让自动报表描述上一轮，那就比没有报表更坏。
+   % Prefer out: a leftover logsout may describe an earlier run
    ls = [];
    if evalin('base', 'exist(''out'', ''var'')') == 1
       o = evalin('base', 'out');
@@ -70,7 +66,7 @@ al = inst.v(:, 3);
 local_row(fid, '迎角 alpha', al, 'deg');
 res = local_par('sim_alpha_stall_abs', NaN);
 if isfinite(res)
-   % 门限是弧度：模型里它是跟 |alpha| 的弧度值比的。
+   % The threshold is in rad: the model compares it against |alpha| in rad
    fprintf(fid, '  失速迎角门限               %8.3f rad（%.2f deg）\n', res, res * 180 / pi);
 end
 if size(inst.v, 2) >= 6
@@ -135,11 +131,10 @@ rep.alpha_max = max(al);
 fprintf('\n刚才这份表也写进了 %s\n', rep.file);
 end
 
-% ------------------------------------------------------------------------
+% Local helpers
 function s = local_get(ls, name)
-% 按名字取一路记录。取不到就返回空，后面的表少一节而不是整个函数报错。
-% 记录元素通常是 Simulink.SimulationData.Signal，数据在 .Values 里；元素直接是 timeseries
-% 时也认，省得为了换个来源改表。
+% Look a signal up by name; return empty when it is absent so one missing section
+% does not abort the table
 s = [];
 try
    el = ls.get(name);
@@ -163,7 +158,7 @@ s = struct('t', tv, 'v', dv);
 end
 
 function val = local_par(name, dflt)
-% 从基础工作区取一个参数，取不到就用默认值。报告要能在参数不在场时也打完。
+% Read a parameter from the base workspace; the default stands in when it is absent
 val = dflt;
 try
    val = evalin('base', name);
@@ -181,7 +176,7 @@ fprintf(fid, '  %-22s 最小 %9.3f  最大 %9.3f  末值 %9.3f  %s\n', ...
 end
 
 function local_pair(fid, name, cmd, act)
-% 偏差给两个：全程最大与末段最大。开头那段是阶跃瞬态，只看全程最大值容易被它顶掉。
+% Two deviations: the whole run, and the last quarter without the step transient
 n = numel(cmd);
 k = max(1, n - round(0.25 * n)):n;
 fprintf(fid, ['  %-12s 指令末值 %8.2f  实际末值 %8.2f  最大偏差 %8.2f' ...

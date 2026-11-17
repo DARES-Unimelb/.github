@@ -42,7 +42,7 @@ end
 fprintf('plant_baseline: params %s rev %d (%s), MATLAB %s, %s\n', ...
    P.meta.version, P.meta.revision, P.meta.date, version('-release'), stamp);
 
-% ---- trim at the three operating points --------------------------------
+%% Trim at the three operating points
 trim = trim_cruise(P, P.op.cruise);
 trim_climb = trim_cruise(P, P.op.climb);
 trim_slow = trim_cruise(P, P.op.slow);
@@ -52,10 +52,10 @@ save(fullfile(res_dir, 'plant_stage1_trim.mat'), 'P', 'trim', 'trim_climb', 'tri
 fprintf('stage 1 saved: three trims, cruise alpha %.4f deg, de %.4f deg\n', ...
    trim.alpha_deg, trim.de_deg);
 
-% ---- linearisation at the cruise trim ----------------------------------
+%% Linearisation at the cruise trim
 [lin, lin_info] = linearize_at(P, trim);
 
-% ---- Jacobian step-size study ------------------------------------------
+%% Jacobian step-size study
 steps = [1e-4 1e-5 1e-6 1e-7];
 step_tab = zeros(numel(steps), 4);
 for k = 1:numel(steps)
@@ -69,12 +69,12 @@ end
 save(fullfile(res_dir, 'plant_stage2_lin.mat'), 'lin', 'lin_info', 'step_tab', 'steps');
 fprintf('stage 2 saved: linearisation and step study, %d eom evaluations\n', lin_info.n_eval);
 
-% ---- linearisation at the climb and slow trims -------------------------
+%% Linearisation at the climb and slow trims
 lin_climb = linearize_at(P, trim_climb, struct('verbose', false));
 lin_slow = linearize_at(P, trim_slow, struct('verbose', false));
 fprintf('stage 2b saved: climb and slow linearised\n');
 
-% ---- trim envelope: lowest speed trimable inside 80 percent of travel --
+%% Trim envelope: lowest speed trimable inside 80 percent of travel
 de_limit_deg = 0.8 * P.act.elevator.max_deg;
 V_scan = 16:1:40;
 sw_de = nan(size(V_scan));
@@ -118,7 +118,7 @@ sweep = struct('V_scan', V_scan, 'de_deg', sw_de, 'throttle', sw_th, 'ok', sw_ok
 fprintf('stage 3: trim envelope scanned, V_trim_min %.4f m/s (limit %.1f deg, P.limits.V_min_mps %.4f)\n', ...
    V_trim_min, de_limit_deg, P.limits.V_min_mps);
 
-% ---- mode bookkeeping --------------------------------------------------
+%% Mode bookkeeping
 eig_A = eig(lin.A);
 eig_join = [eig(lin.A_long); eig(lin.A_lat); 0; 0; 0; 0];
 join_err = 0;
@@ -134,7 +134,7 @@ i_dr = find(strcmp({lin.modes_lat.name}, 'dutch_roll'), 1);
 i_ro = find(strcmp({lin.modes_lat.name}, 'roll_subsidence'), 1);
 i_spi = find(strcmp({lin.modes_lat.name}, 'spiral'), 1);
 
-% ---- acceptance criteria ----------------------------------------------
+%% Acceptance criteria
 crit = struct();
 crit.V2_residual = trim.check_residual;
 crit.V2_alpha_frozen = trim.check_alpha;
@@ -153,12 +153,8 @@ crit.V3_zero_eigs = n_zero_A;
 crit.V3_mode_join_err = join_err;
 crit.V4_window_rad_s = [2 20];
 crit.V4_sp_tau_limit_s = 0.1;
-% The short period can be overdamped, and then it has no oscillatory natural
-% frequency to compare against a window and no meaningful damping ratio. At rev 10
-% it IS overdamped: two real poles at -53.49 and -24.36 rad/s. Judging a real pair by
-% a frequency window made a healthy aircraft fail, so the criterion branches on the
-% mode type first. An overdamped short period is judged by its time constants, which
-% must both be fast; an oscillatory one by the frequency window and damping.
+% An overdamped short period has no oscillatory frequency or damping ratio, so
+% judge it by its time constants and an oscillatory one by the window and damping
 sp = lin.modes_long(i_sp);
 crit.V4_sp_overdamped = ~sp.is_oscillatory;
 crit.V4_sp_freq_rad_s = sp.freq_nat_rad_s;
@@ -173,8 +169,7 @@ crit.V4_sp_freq_damped_ok = sp.freq_damped_rad_s >= crit.V4_window_rad_s(1) ...
    && sp.freq_damped_rad_s <= crit.V4_window_rad_s(2);
 crit.V4_sp_freq_damped_rad_s = sp.freq_damped_rad_s;
 crit.V4_sp_zeta_ok = sp.damping > 0.3;
-% For an overdamped pair the binding criterion is the SLOWER time constant, so the
-% pair {0.018695, 0.041045} s is judged on 0.041045 s against the 0.1 s limit.
+% For an overdamped pair the binding criterion is the SLOWER time constant
 crit.V4_sp_tau_ok = sp.tau_s < crit.V4_sp_tau_limit_s;
 if crit.V4_sp_overdamped
    crit.V4_sp_ok = crit.V4_sp_tau_ok;
@@ -209,11 +204,10 @@ if i_ph > 0
    crit.phugoid_damping = lin.modes_long(i_ph).damping;
 end
 
-% ---- cross-check against the sizing analytic approximations ------------
-% The analytic formulas in sizing_summary are tail-dominated single-derivative
-% estimates; the measured values come from the full submatrix. The job reports
-% the difference instead of picking one, and keeps working if that file is
-% unavailable or mid-edit.
+%% Cross-check against the sizing analytic approximations
+% Real derivatives are tail-dominated single-derivative estimates, so the job
+% reports the difference instead of picking one, and keeps working if that file
+% is unavailable or mid-edit
 sz_ok = true;
 try
    addpath(fullfile(root, 'sizing'), '-begin');
@@ -233,9 +227,9 @@ if sz_ok
    crit.sz_roll_rel_diff = (crit.V4_roll_tau_s - crit.sz_roll_tau_s) / crit.sz_roll_tau_s;
 end
 
-% ---- dT channel versus the throttle channels ---------------------------
+%% dT channel versus the throttle channels
 % B(:,6) must equal (B(:,4)+B(:,5)) / (2*dT/dthrottle): the additive thrust
-% command is split over the two motors, so one N of dT is half a newton each.
+% command is split over the two motors, so one N of dT is half a newton each
 h_th = 1e-6;
 dT_dth = (prop_thrust_from_throttle(P, trim.throttle + h_th, trim.V_mps) ...
         - prop_thrust_from_throttle(P, trim.throttle - h_th, trim.V_mps)) / (2 * h_th);
@@ -261,8 +255,8 @@ plant_meta.idx_long_u = lin.idx_long_u;
 plant_meta.idx_lat_x = lin.idx_lat_x;
 plant_meta.idx_lat_u = lin.idx_lat_u;
 plant_meta.alphadot_law = 'Cm_alphadot evaluated with alpha_dot = q';
-% The string for the constant model is deliberately unchanged from rev 9, so a
-% default run still produces a byte identical plant_baseline.mat.
+% The constant-model string is kept as is so a default run still produces a
+% byte identical plant_baseline.mat
 plant_meta.density_law = 'constant P.env.rho_sl, no density altitude';
 if isfield(P.atmo, 'model') && strcmp(P.atmo.model, 'isa')
    if ~isfield(P.atmo, 'h_from_state') || P.atmo.h_from_state
@@ -278,7 +272,7 @@ save(fullfile(res_dir, 'plant_baseline.mat'), ...
    'P', 'trim', 'trim_climb', 'trim_slow', 'lin', 'lin_climb', 'lin_slow', ...
    'lin_info', 'crit', 'plant_meta', 'sweep', 'sz', 'sz_ok');
 
-% ---- trim report -------------------------------------------------------
+%% Trim report
 fid = fopen(fullfile(res_dir, 'plant_trim_report.txt'), 'w');
 fprintf(fid, 'UACS twin-engine plant baseline: trim report\n');
 fprintf(fid, 'generated %s, MATLAB %s\n', stamp, version('-release'));
@@ -349,8 +343,7 @@ fprintf(fid, '\n  V2 (cruise): residual %s, alpha frozen window %s, alpha revise
    pass_text(crit.V2_alpha_revised), pass_text(crit.V2_de));
 fprintf(fid, '  overall: frozen window %s, revised window %s\n', ...
    pass_text(crit.V2_all_frozen), pass_text(crit.V2_all_revised));
-% Lift coefficient implied by the alpha windows, and the flight condition each
-% edge demands: this is what makes the frozen window a geometric statement.
+% Lift coefficient implied by each alpha window edge
 cl_lo_frozen = P.aero.CL0 + P.aero.CL_alpha * deg2rad(trim.window_alpha_frozen_deg(1));
 cl_hi_frozen = P.aero.CL0 + P.aero.CL_alpha * deg2rad(trim.window_alpha_frozen_deg(2));
 cl_lo_rev = P.aero.CL0 + P.aero.CL_alpha * deg2rad(trim.window_alpha_revised_deg(1));
@@ -382,7 +375,7 @@ else
 end
 fclose(fid);
 
-% ---- modes report ------------------------------------------------------
+%% Modes report
 fid = fopen(fullfile(res_dir, 'plant_modes_report.txt'), 'w');
 fprintf(fid, 'UACS twin-engine plant baseline: linearisation and modes report\n');
 fprintf(fid, 'generated %s, MATLAB %s\n', stamp, version('-release'));

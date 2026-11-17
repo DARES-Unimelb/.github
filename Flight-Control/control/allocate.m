@@ -9,7 +9,7 @@ function [da, de, dr, dth_l, dth_r, info] = allocate(P, M_cmd, T_cmd)
 %   outputs are the five actuator commands in the frozen order
 %   (da, de, dr rad, dth_l, dth_r in 0..1); the sixth plant input dT is
 %   realised as the common mode of the two throttles and is reported in
-%   info.dT_cmd / info.dT_ach.
+%   info.dT_cmd / info.dT_ach
 %
 % Priority, applied in this order
 %   1. elevator    pitch has no second effector, so de is solved first and
@@ -18,20 +18,17 @@ function [da, de, dr, dth_l, dth_r, info] = allocate(P, M_cmd, T_cmd)
 %   3. differential thrust  supplement, weighted by its moment authority
 %                  relative to the rudder so it is used only as a last resort
 %
-% The allocator is static and linear about the design point: the aerodynamic
-% effectiveness matrix uses the control derivatives of P.aero at the cruise
-% dynamic pressure, and the thrust inversion uses P.op.cruise.V_mps. The
-% resulting moment error against the linearised plant is reported by
-% run_control_design.m, which is where V7 is checked.
-%
-% info carries the request, the achievement, the saturation flags and the
-% limits actually used, so a caller can log request against achievement.
+%   The allocator is static and linear about the design point: the effectiveness
+%   matrix uses the P.aero control derivatives at the cruise dynamic pressure,
+%   and the thrust inversion uses P.op.cruise.V_mps
+%   info carries the request, the achievement, the saturation flags and the
+%   limits actually used, so a caller can log request against achievement
 
 M_cmd = M_cmd(:);
 assert(numel(M_cmd) == 3, 'allocate: M_cmd must be 3x1');
 assert(isscalar(T_cmd), 'allocate: T_cmd must be scalar');
 
-% ---------------- limits, weights and effectiveness, all from P ----------------
+%% Limits, weights and effectiveness, all from P
 da_lim = deg2rad(P.act.aileron.max_deg);
 de_lim = deg2rad(P.act.elevator.max_deg);
 dr_lim = deg2rad(P.act.rudder.max_deg);
@@ -53,18 +50,11 @@ G = [Sb * P.aero.Cl_da, 0,                   Sb * P.aero.Cl_dr, 0; ...
      0,                 Sc * P.aero.Cm_de,  0,                 0; ...
      Sb * P.aero.Cn_da, 0,                   Sb * P.aero.Cn_dr, y_arm];
 
-% ---------------- common throttle from the total thrust command ----------------
+%% Common throttle from the total thrust command
 % The propulsion map is params/prop_thrust_from_throttle.m, the single
 % authoritative one; this file carries no second thrust law. Throttle is a
-% fraction of peak shaft power, so inverting it is a monotone solve.
-%
-% Cost control, because the plant map solves for an induced velocity internally:
-%   fast path  the requested thrust and speed repeat the previous call, so the
-%              whole throttle/thrust block comes from a cache and no solve runs
-%              at all. A constant thrust command, the normal case in a run, is
-%              free after the first call.
-%   slow path  only a changed thrust command or speed pays for the solve, and
-%              the differential split is solved only when it is non-zero.
+% fraction of peak shaft power, so inverting it is a monotone solve. The result
+% is cached on (speed, thrust), so a repeated request runs no solve at all.
 T_static = P.prop.T_static_max;
 T_want = 0.5 * T_cmd;
 [cache, hit] = local_throttle_cache(P, V_a, T_want);
@@ -76,11 +66,11 @@ dT_lim = cache.dT_lim;
 tc_raw = cache.tc_unclamped;
 info_cache_hit = hit;
 
-% ---------------- 1. pitch: elevator alone ----------------
+%% 1. Pitch: elevator alone
 de_raw = M_cmd(2) / G(2, 2);
 de = min(max(de_raw, -de_lim), de_lim);
 
-% ---------------- 2 and 3. roll/yaw, aileron and rudder first ----------------
+%% 2 and 3. Roll/yaw, aileron and rudder first
 M_ry = M_cmd([1 3]) - G([1 3], 2) * de;
 v_lim = [da_lim; dr_lim; dT_lim];
 % priority weight: differential thrust costs as much as the rudder is stronger
@@ -116,17 +106,17 @@ da = min(max(v(1), -da_lim), da_lim);
 dr = min(max(v(2), -dr_lim), dr_lim);
 dT = min(max(v(3), -dT_lim), dT_lim);
 
-% ---------------- throttles, then the hard clamp ----------------
+%% Throttles, then the hard clamp
 dth_half = local_dth_for_dT(P, V_a, tc, dT, d_eff);
 dth_l = tc - dth_half;
 dth_r = tc + dth_half;
 dth_l = min(max(dth_l, tc_min), tc_max);
 dth_r = min(max(dth_r, tc_min), tc_max);
 
-% ---------------- achievement ----------------
+%% Achievement
 % dT_ach is what the two throttles really produce through the authoritative map,
 % so a caller can see the difference between request and achievement; the
-% residual is the nonlinearity of the map, not an error of the linear solve.
+% residual is the nonlinearity of the map, not an error of the linear solve
 T_l = local_thrust(P, V_a, dth_l);
 T_r = local_thrust(P, V_a, dth_r);
 dT_ach = T_r - T_l;
@@ -143,7 +133,7 @@ info.M_err_norm = norm(M_ach - M_cmd);
 info.M_err_rel = norm(M_ach - M_cmd) / max(norm(M_cmd), eps);
 info.T_err = T_ach - T_cmd;
 info.err_pitch_Nm = M_ach(2) - M_cmd(2);
-info.v_cmd = [v(1); de_raw; v(2); v(3)];    % solved values, before clamping
+info.v_cmd = [v(1); de_raw; v(2); v(3)];
 info.v_ach = [da; de; dr; dT_ach];
 info.limits = struct('da', da_lim, 'de', de_lim, 'dr', dr_lim, ...
    'dT', dT_lim, 'tc_min', tc_min, 'tc_max', tc_max, 'd_cap', d_cap, ...
@@ -173,16 +163,15 @@ info.rate_limit_deg_s = [P.act.aileron.rate_deg_s; P.act.elevator.rate_deg_s; ..
 info.throttle_rate_per_s = P.prop.esc.rate_per_s;
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function T = local_thrust(P, V, dth)
-% The authoritative per-motor thrust map, called not re-derived.
+% The authoritative per-motor thrust map, called not re-derived
 T = prop_thrust_from_throttle(P, dth, V);
 end
 
 function [c, hit] = local_throttle_cache(P, V, T_want)
-% Throttle, differential authority and headroom for one (speed, thrust) request.
-% Repeated identical requests are served from the previous answer, so a constant
-% thrust command costs nothing after the first call.
+% Throttle, differential authority and headroom for one (speed, thrust) request;
+% repeated identical requests are served from the previous answer
 persistent last
 if isempty(last)
    last = struct('V', NaN, 'T', NaN, 'tc', NaN, 'tc_unclamped', NaN, ...
@@ -201,11 +190,10 @@ T_at_min = local_thrust(P, V, tc_min);
 T_at_max = local_thrust(P, V, tc_max);
 th = local_throttle_for_thrust(P, T_want, V, T_at_min, T_at_max);
 tc = min(max(th, tc_min), tc_max);
-% Differential authority: the structural cap P.prop.differential_limit is an
-% absolute throttle split, and the usable split is whatever throttle headroom
-% the operating point has, because the total thrust must not change and neither
-% motor may leave the ESC window. Same d_effective as sizing/sizing_summary.m,
-% but followed from the commanded throttle; the job cross-checks the two.
+% Differential authority: P.prop.differential_limit is an absolute throttle split
+% and the usable split is whatever throttle headroom the operating point has,
+% because the total thrust must not change and neither motor may leave the ESC
+% window
 d_cap = P.prop.differential_limit;
 d_headroom = min(tc - tc_min, tc_max - tc);
 d_eff = min(d_cap, d_headroom);
@@ -218,10 +206,8 @@ hit = false;
 end
 
 function th = local_throttle_for_thrust(P, T_want, V, T_at_min, T_at_max)
-% Throttle that makes one motor produce T_want at speed V. The map is monotone
-% increasing in throttle, so bisection is enough; the bracket is the ESC window.
-% 40 halvings is already at the double-precision limit for a unit bracket, so
-% more iterations would only buy rounding noise.
+% Throttle that makes one motor produce T_want at speed V; the map is monotone
+% increasing in throttle, so bisection is enough and the bracket is the ESC window
 lo = P.prop.esc.min_throttle;
 hi = P.prop.esc.max_throttle;
 if T_want <= T_at_min
@@ -244,10 +230,9 @@ th = 0.5 * (lo + hi);
 end
 
 function dh = local_dth_for_dT(P, V, tc, dT, d_eff)
-% Half the throttle split that produces the wanted thrust difference T_r - T_l.
-% T(tc + d) - T(tc - d) is monotone in d on [0, d_eff], so guarded false
-% position converges without a derivative, which the map does not have at idle.
-% A zero differential request returns immediately, which is the common case.
+% Half the throttle split that produces the wanted thrust difference T_r - T_l;
+% T(tc + d) - T(tc - d) is monotone in d on [0, d_eff], so guarded false position
+% converges without a derivative, which the map does not have at idle
 if abs(dT) < 1e-12 || d_eff <= 0
    dh = 0;
    return;

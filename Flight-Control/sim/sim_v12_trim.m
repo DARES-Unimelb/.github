@@ -1,15 +1,8 @@
 function tr = sim_v12_trim(P)
-% SIM_V12_TRIM Cruise trim for the V12 cross check, from the current parameters.
+% SIM_V12_TRIM Cruise trim for the V12 cross check, computed from P
 %
-% sim_load_design would also serve, but it designs PID and LQR gains on the way,
-% and V12 is about the plant: it should not fail, or change its starting point,
-% because a control design module is being edited. trim_cruise is the
-% authoritative plant trim and it is the only input the cross check needs.
-%
-% A stored trim is deliberately not used. results/plant_baseline.mat is tied to
-% the parameter revision it was computed under, and a stale initial state would
-% put both models somewhere other than the design point without either of them
-% reporting it.
+%   P    parameter struct
+%   tr   trim_cruise output; errors unless it converged with a residual below 1e-6
 
 tr = trim_cruise(P, P.op.cruise);
 assert(tr.exitflag > 0, 'sim_v12_trim:Converged', ...

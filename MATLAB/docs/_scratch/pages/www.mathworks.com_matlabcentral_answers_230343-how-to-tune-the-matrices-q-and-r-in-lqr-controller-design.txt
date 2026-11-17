@@ -1,0 +1,447 @@
+URL: https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design
+STATUS: 200
+FINAL: https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design
+
+
+
+ How to tune the matrices Q and R in LQR controller design - MATLAB Answers - MATLAB Central
+
+ Skip to content
+
+ MATLAB Answers
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ MATLAB Answers
+
+ File Exchange
+
+ Cody
+
+ AI Chat Playground
+
+ Discussions
+
+ Contests
+
+ Blogs
+
+ Post
+
+ MATLAB Answers
+
+ Ask a question
+
+ Discussions
+
+ Start a Discussion
+
+ Praise Someone
+
+ Write an Article
+
+ Create a Poll
+
+ File Exchange
+
+ Submit Code or Toolbox
+
+ Cody
+
+ Create a Cody Problem
+
+ More
+
+ Communities
+
+ Treasure Hunt
+
+ People
+
+ Community Advisors
+
+ Virtual Badges
+
+ About
+
+ Home
+ Ask
+ Answer
+ Browse
+ MATLAB FAQs
+ MoreContributors
+Recent Activity
+Flagged Content
+Manage Spam
+Help
+
+ How to tune the matrices Q and R in LQR controller design
+
+ Aishwarya Apte
+
+ 18 Jul 2015
+
+ 2 Answers
+
+ Answer Accepted
+
+ Updated 19 Oct 2025
+
+ 49 Views (30 days)
+
+ Sign in to answer this question.
+
+ Share
+
+ Sign in to follow activity
+
+ Sign in to answer this question.
+
+ Share
+
+ Sign in to follow activity
+
+ You are now following this question
+
+ You will see updates in your followed content feed.
+
+ You may receive emails, depending on your communication preferences.
+
+ An Error Occurred
+
+ Unable to complete the action because of changes made to the page. Reload the page to see its updated state.
+
+ Close
+
+ Show older comments
+
+ 0 votes
+
+ Vote
+0
+
+Share
+
+ Translate
+
+ Share a link to this question
+
+ https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design
+
+ Cancel
+ Copy to Clipboard
+
+ While controlling two variables using LQR controller, [I am] not able to properly tune Q and R. What is best way to tune them?
+
+ 1 Comment
+
+ Show -1 older comments
+ Hide -1 older comments
+
+ hawi aboma
+
+ on 23 Aug 2021
+
+Share
+
+ Translate
+
+ Share a link to this comment
+
+ https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design#comment_1701444
+
+ Cancel
+ Copy to Clipboard
+
+ hello, how to tuning lqr parameter (Q,R) ?please if any one have solution please send to me via email or comment
+
+ Sign in to comment.
+
+ Sign in to answer this question.
+
+ Share
+
+ Sign in to follow activity
+
+ Accepted Answer
+
+ Fanjie
+
+ on 23 Jul 2024
+
+ 1 vote
+
+ Vote
+1
+
+Share
+
+ Translate
+
+ Share a link to this answer
+
+ https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design#answer_1489371
+
+ Cancel
+ Copy to Clipboard
+
+ Bryson rule：
+
+ 2 Comments
+
+ Show None
+ Hide None
+
+ 杨
+
+ on 18 Oct 2025
+
+Share
+
+ Translate
+
+ Share a link to this comment
+
+ https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design#comment_3343203
+
+ Cancel
+ Copy to Clipboard
+
+ which book this is ?
+
+ Sam Chak
+
+ on 19 Oct 2025
+
+Share
+
+ Translate
+
+ Share a link to this comment
+
+ https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design#comment_3343246
+
+ Cancel
+ Copy to Clipboard
+
+ Hi @杨
+This information did not come from a book. Rather, it is from Prof. João Hespanha's lecture notes on LQR controller design.
+https://web.ece.ucsb.edu/~hespanha/
+
+ Sign in to comment.
+
+ More Answers (1)
+
+ Raj
+
+ on 12 Feb 2019
+
+ 2 votes
+
+ Vote
+2
+
+Share
+
+ Translate
+
+ Share a link to this answer
+
+ https://www.mathworks.com/matlabcentral/answers/230343-how-to-tune-the-matrices-q-and-r-in-lqr-controller-design#answer_360612
+
+ Cancel
+ Copy to Clipboard
+
+ Hi,
+There is no fixed rule or formal method to estimate and tune the weight matrices Q and R. It is an iterative process wherein you will have to see your plant time response wiith respect to desired performance criteria and adjust the weights accordingly.
+However a good way to start the process is by using Bryson's rule wherein weights of Q matrix determine the error permitted in each output state and weights of R matrix determine to control effort. Keep a track of the cost function for each selection of Q & R and keep it to minimum possible.
+Example: You can take following matrices as initial estimate for a 8x8 system (i.e. 8 output states) with 4 control inputs when you want to control only the last four states;
+Q = A* diag(0 0 0 0 1 1 1 1)
+R = B* diag(1 1 1 1)
+where A & B are scalar factors.
+
+ 0 Comments
+
+ Show -2 older comments
+ Hide -2 older comments
+
+ Sign in to comment.
+
+ Sign in to answer this question.
+
+ Categories
+
+ Control Systems
+
+ Control System Toolbox
+
+ Control System Design and Tuning
+
+ State-Space Control Design and Estimation
+
+ Find more on State-Space Control Design and Estimation in Help Center and File Exchange
+
+ Products
+
+ Control System Toolbox
+
+ Tags
+
+ lqr controller
+
+ See Also
+
+ Asked:
+
+ Aishwarya Apte
+
+on 18 Jul 2015
+
+ Commented:
+
+ Sam Chak
+
+on 19 Oct 2025
+
+ Accepted:
+
+ Fanjie
+
+ Community Treasure Hunt
+
+ Find the treasures in MATLAB Central and discover how the community can help you!
+
+ Start Hunting!
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+（简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+América Latina (Español)
+
+Canada (English)
+
+United States (English)
+
+ Europe
+
+Belgium (English)
+
+Denmark (English)
+
+Deutschland (Deutsch)
+
+España (Español)
+
+Finland (English)
+
+France (Français)
+
+Ireland (English)
+
+Italia (Italiano)
+
+Luxembourg (English)
+
+Netherlands (English)
+
+Norway (English)
+
+Österreich (Deutsch)
+
+Portugal (English)
+
+Sweden (English)
+
+ Switzerland
+ 
+Deutsch
+
+ English
+
+ Français
+
+United Kingdom (English)
+
+ Asia Pacific
+
+Australia (English)
+
+India (English)
+
+New Zealand (English)
+
+ 中国
+ 
+简体中文
+
+ English
+
+日本 (日本語)
+
+한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Terms of Use
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+

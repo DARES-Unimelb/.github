@@ -1,0 +1,14 @@
+=== JOB START   sim_build_models
+owner ash-sim  pid 6676  at 2026-10-10 09:38:20  stale_s 900
+!! JOB FAILED   sim_build_models  (26.3 s)
+   Simulink:Commands:InvSimulinkObjectName | Invalid Simulink object name: 'uacs_manual_pid/pid_phi/In1'.
+   at sim_clear_model line 16
+   at sim_add_pid line 25
+   at sim_build_manual_pid line 76
+   at build_uacs_models line 84
+   at uacs_job_sim_build_models line 15
+   at run_job line 95
+   at LiveEditorEvaluationHelperEmatlab_mcp_server line 4
+   at mcpEval line 48
+   at fevalMatlab line 0
+   at fevalJSON line 0

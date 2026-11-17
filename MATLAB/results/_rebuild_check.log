@@ -1,0 +1,8 @@
+sim_pid_p_pol = +1   Kp +0.760746  Ki +0  Kd +0
+sim_pid_q_pol = -1   Kp -0.863454  Ki +0  Kd +0
+sim_pid_r_pol = -1   Kp -1.08062  Ki +0  Kd +0
+sim_pid_phi_pol = +1   Kp +5.93829  Ki +0  Kd +0.0989714
+sim_pid_theta_pol = +1   Kp +4.19845  Ki +0.748481  Kd +0
+sim_pid_V_pol = +1   Kp +16.9593  Ki +12.0937  Kd +30.2343
+sim_pid_h_pol = +1   Kp +0.0160922  Ki +0  Kd +0
+V Kp_abs = 16.9593, Dnum_abs = [2015.62 2015.62]

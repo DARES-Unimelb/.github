@@ -1,5 +1,4 @@
 % UACS_JOB_SIM_SCENARIOS Job entry: V10 step-size independence and V9 crosswind.
-% Owner: ash-sim (task-3). One thing only: the multi-run acceptance scenarios.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_scenarios');

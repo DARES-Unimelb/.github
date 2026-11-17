@@ -1,29 +1,16 @@
 function info = sim_build_bench(P, opts)
-% SIM_BUILD_BENCH 建并保存 model/uacs_flight_bench.slx，交互式飞行台架。
+% SIM_BUILD_BENCH Build and save model/uacs_flight_bench.slx, the interactive flight bench
 %
 %   info = sim_build_bench(P, opts)
+%   opts.name         model name, default 'uacs_flight_bench'
+%   opts.joystick_id  Pilot Joystick JoystickID, default 'None'
+%   opts.stop_time    model StopTime, default 'sim_bench_t_end'
+%   opts.reload_fcn   PreLoadFcn, run when the model is opened
+%   opts.ensure_fcn   InitFcn, fills in missing variables only
 %
-% 顶层只有四类东西，从左到右分成四条带，每条带用一个区域框圈起来
-%   操纵台        八个 Dashboard 控件。它们没有端口，不连一根线，拖动即改指令。
-%   控制律与对象  驾驶员/制导与模式/PID控制器/LQR控制器/控制器选择/混合与分配/
-%                 六自由度对象/导航与测量/大气与风扰动，九个子系统，主线一条。
-%   仪表          十二块圆形仪表、一块失速灯、三块状态读数、三条画布内示波器
-%
-% 与旧版台架的区别有两条是结构性的
-%   一、PID 与 LQR 各自是一个子系统。旧版台架上只有 PID，LQR 在另一个模型里；
-%       现在两个都在，并联同跑，画布上一个旋转开关瞬时切换。
-%   二、级联的七个误差和、三个限幅器、混合与分配全部收进子系统。旧版这些散在
-%       画布上，接线横穿整个图。
-%
-% 这个生成器只建台架。受验模型 model/uacs_manual_pid.slx 与 model/uacs_lqr.slx 仍由
-% sim_build_manual_pid 与 sim_build_lqr 建，结构未动，所以 V11 的块普查与 V13 的块路径
-% 对照不受影响。两边的控制律都是同一批函数与同一批设计变量，台架里飞的就是受验的
-% 那个控制器。
-%
-% opts.joystick_id  手柄块 JoystickID，默认 'None'。
-% opts.stop_time    模型 StopTime 参数，默认 'sim_bench_t_end'。
-% opts.reload_fcn   PreLoadFcn，打开模型时初始化基础工作区。
-% opts.ensure_fcn   InitFcn，只补缺失变量，按 Run 不重跑整条参数链。
+% Nine subsystems sit on one signal path between the cockpit and the instruments,
+% all of them built by the sim_bench_* functions. The cockpit controls have no
+% ports and are not wired: they act through parameter bindings
 
 if nargin < 2
    opts = struct();
@@ -49,7 +36,7 @@ file = fullfile(sim_root(), 'model', [mdl '.slx']);
 sim_new_model(mdl, file);
 set_param(mdl, 'StopTime', opts.stop_time);
 
-% ---------------- 子系统 ----------------
+%% Subsystems
 sim_bench_pilot(mdl, struct('joystick_id', opts.joystick_id));
 sim_bench_guidance(mdl);
 sim_bench_pid(mdl);
@@ -60,7 +47,7 @@ sim_add_plant_subsystem(mdl, '六自由度对象', [1960 40 2130 240]);
 sim_bench_nav(mdl);
 sim_bench_wind(mdl);
 
-% ---------------- 主线 ----------------
+%% Signal path
 sim_add_block(mdl, 'x', 'simulink/Sinks/Out1', [2200 120 2230 134], 'Port', '1');
 sim_add_block(mdl, 'cmd', 'simulink/Sinks/Out1', [860 240 890 254], 'Port', '2');
 sim_connect(mdl, '驾驶员/1', '制导与模式/1', '驾驶员/1', 'cmd/1');
@@ -73,13 +60,9 @@ sim_connect(mdl, '混合与分配/1', '六自由度对象/1', ...
    '大气与风扰动/1', '六自由度对象/2');
 sim_connect(mdl, '六自由度对象/1', '导航与测量/1', '六自由度对象/1', 'x/1');
 
-% ---------------- 操纵量落成字面量 ----------------
-% 必须在 sim_bench_cockpit 之前：控件绑的是这些块的 Value 参数，而"值是表达式"的参数绑
-% 不上。绑变量的那条路看着能建起来，但仿真运行中改变量仿真不理，实测见
-% verify/bench_live_check.m 的 A 与 B 两个分支。
-%
-% 初值仍然由 uacs_go.m 说了算：这里写一次，打开模型时 PreLoadFcn 里的 uacs_bench_seed
-% 再推一次，两处用的是同一张 uacs_bench_seed_list。
+%% Land the stick values as literals
+% must run before sim_bench_cockpit: a binding targets the Value parameter, and a
+% parameter whose value is an expression cannot be bound
 pairs = uacs_bench_seed_list();
 for k = 1:size(pairs, 1)
    blk = [mdl '/' pairs{k, 1}];
@@ -93,7 +76,7 @@ end
 fprintf('操纵量已落成字面量 %d 个\n', size(pairs, 1));
 
 sim_bench_cockpit(mdl, opts);
-% ---------------- 画布上的说明 ----------------
+%% Canvas notes
 sim_hmi('note', mdl, 'head_cockpit', [40 20 520 60], '操纵台：拖动控件即改指令，仿真运行中也是活的', 'header');
 sim_hmi('note', mdl, 'head_chain', [840 0 1700 34], '控制律与对象：九个子系统，主线一条', 'header');
 sim_hmi('note', mdl, 'head_inst', [840 630 1700 668], '仪表与示波器：仪表绑信号，状态读数与兜底示波器接实线', 'header');
@@ -166,15 +149,14 @@ sim_hmi('note', mdl, 'note_joy', [840 2190 2000 2340], sprintf([ ...
    '重跑 run/build_bench_models.m，然后把操纵台的"操纵源"拨到"手柄"。\n\n' ...
    '手柄的俯仰方向如果反了，把 uacs_go.m 里的 uacs_joystick.pitch_sign 改成 -1。']), opts.joystick_id);
 
-% ---------------- 回调 ----------------
-% PreLoadFcn 在打开模型时初始化基础工作区，所以双击 .slx 就能用。InitFcn 故意用轻的
-% 那个：反复按 Run 不能每次都重跑整条参数链和它几分钟的打印。
-% 操纵量初值的推送在 PostLoadFcn，不在 PreLoadFcn，理由见上面那一段。
+%% Callbacks
+% PreLoadFcn initialises the base workspace on open, so a double click on the .slx works
+% InitFcn uses the light callback, so pressing Run repeatedly does not rerun everything
 if ~isempty(opts.reload_fcn)
-   % uacs_go 留在 PreLoadFcn：它把参数推到基础工作区，下面 PostLoadFcn 那一步要用。
+   % uacs_go stays in PreLoadFcn: it pushes the parameters the PostLoadFcn step needs
    set_param(mdl, 'PreLoadFcn', opts.reload_fcn);
-   % 操纵量初值推到 PostLoadFcn。PreLoadFcn 执行时块还没有建出来，getSimulinkBlockHandle
-   % 一条路径都找不到，还会为每条路径发一次"递归加载模型"的警告，实测推入 0 个块。
+   % the stick seed goes to PostLoadFcn: during PreLoadFcn the blocks do not exist yet,
+   % so getSimulinkBlockHandle finds no path at all
    set_param(mdl, 'PostLoadFcn', sprintf('uacs_bench_seed(''%s'')', mdl));
 end
 if ~isempty(opts.ensure_fcn)
@@ -182,19 +164,19 @@ if ~isempty(opts.ensure_fcn)
 elseif ~isempty(opts.reload_fcn)
    set_param(mdl, 'InitFcn', opts.reload_fcn);
 end
-% 每跑完一次自动留数据：StopFcn 把这一轮的 logsout 存成 results/bench_last_run.mat 并打一份
-% 带通道名字的表。用户在界面上按 Run，不必记得敲任何命令。
+% StopFcn saves this run's logsout to results/bench_last_run.mat and prints a named table
 set_param(mdl, 'StopFcn', sprintf('uacs_bench_record(''%s'')', mdl));
 
-% ---------------- 建完就自查 ----------------
-% 九个子系统必须都在。少了任何一个，模型要么编译不过，要么静默少一条回路。
+%% Self check after the build
+% all nine subsystems must exist, or the model fails to compile or loses a loop silently
 need = {'驾驶员', '制导与模式', 'PID控制器', 'LQR控制器', '控制器选择', ...
    '混合与分配', '六自由度对象', '导航与测量', '大气与风扰动'};
 for k = 1:numel(need)
    assert(getSimulinkBlockHandle([mdl '/' need{k}]) > 0, 'sim_build_bench:MissingBlock', ...
       '顶层少了子系统 %s', need{k});
 end
-% 八个操纵控件、三块状态读数与三条画布内示波器也必须都在，缺了就是绑定那一步悄悄没生效。
+% the eight controls, three readouts and five canvas scopes must exist as well;
+% a missing one means the binding step silently failed
 n_ctl = numel(find_system(mdl, 'SearchDepth', 1, 'BlockType', 'KnobBlock')) + ...
    numel(find_system(mdl, 'SearchDepth', 1, 'BlockType', 'SliderBlock')) + ...
    numel(find_system(mdl, 'SearchDepth', 1, 'BlockType', 'ToggleSwitchBlock')) + ...
@@ -206,15 +188,13 @@ n_scope = numel(find_system(mdl, 'SearchDepth', 1, 'BlockType', 'DashboardScope'
 assert(n_scope == 5, 'sim_build_bench:BadScope', '画布内示波器应为 5 条，实际 %d 条', n_scope);
 n_fb = numel(find_system(mdl, 'SearchDepth', 1, 'BlockType', 'Scope'));
 assert(n_fb == 1, 'sim_build_bench:BadFallback', '兜底示波器应为 1 条，实际 %d 条', n_fb);
-% 两条指令向量的宽度检查不在这里做。set_param 发 SimulationCommand='update' 不是同步的，
-% 那一刻 CompiledPortWidths 还是空的，读出来 Outport 是 0 值逗号列表，报
-% MATLAB:index:expected_one_output_from_intermediate_indexing。放到 bench_check 里，
-% 跑过一次 sim 之后再查。
+% the command vector widths are not checked here: set_param with
+% SimulationCommand='update' is not synchronous, so CompiledPortWidths would still
+% be empty
 
-% ---------------- 套回画布布局 ----------------
-% 用户在界面上摆过的位置由 sim/uacs_bench_layout_list.m 记着，建完再套回去。不套的话这次
-% 重建就把他摆好的操纵台冲回生成脚本里的坐标了。新建的块在数据里没有记录，留在上面写的
-% 位置上。
+%% Restore the canvas layout
+% restores the positions the user moved blocks to; a block with no record keeps the
+% position set above
 lay = uacs_bench_layout_apply(mdl);
 fprintf('画布布局：套回 %d 个块，数据里有而模型里没有的 %d 个；注释套回 %d 条，缺 %d 条\n', ...
    lay.applied, lay.missing, lay.notes_applied, lay.notes_missing);

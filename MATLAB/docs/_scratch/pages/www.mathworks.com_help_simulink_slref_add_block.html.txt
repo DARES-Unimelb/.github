@@ -1,0 +1,502 @@
+URL: https://www.mathworks.com/help/simulink/slref/add_block.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/add_block.html
+
+ 
+
+ add_block - Add block to model - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulink Environment Fundamentals
+
+ Programmatic Model Editing
+
+ add_block
+
+On this page
+Syntax
+Description
+ExamplesAdd Block to Model from Library
+Add Block from Another Model
+Add Block and Set Parameters
+Add Blocks for Ports
+
+Input Argumentssrc
+dest
+
+Name-Value ArgumentsMakeNameUnique
+CopyOption
+CreateNewPort
+
+Output Argumentsh
+
+Tips
+Version HistoryBlocks have a minimum size of 5-by-5 pixels
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+add_block
+R2026b
+Add block to model
+collapse all in page
+
+Syntax
+h = add_block(src,dest)
+h = add_block(___,Name=Value)
+
+Description
+h = add_block(src,dest)
+ adds a copy of the specified source block to the specified destination. The new
+ block is added at the same position in the block diagram as the source block appears
+ in its parent block diagram.
+The destination model must be loaded.
+
+example
+
+h = add_block(___,Name=Value)
+ specifies additional options using one or more Name=Value pair
+ arguments.
+
+example
+
+Examples
+collapse all
+Add Block to Model from Library
+
+ Suppose you have a model named myModel.
+ Add a Circular Gauge block from the Customizable Blocks library
+ to the model. Name the new block myBlock. Ensure the name is
+ unique. For example, if a block with the name myBlock already
+ exists, name the block myBlock1 instead.
+
+ Look up the path of the library block. Start by opening the library that
+ contains the block.
+You can do so using the quick insert menu. Open the quick insert menu by
+ double-clicking the model canvas. Then, enter the block name. Use your arrow
+ keys to navigate to the desired search result. In the details pane on the
+ right, click the name of the library.
+
+In the library that opens, select the Circular Gauge
+ block.
+Get the block path by entering this command in the MATLAB® Command window.
+libBlockPath = gcb
+
+libBlockPath =
+ 'simulink_hmi_customizable_blocks/Circular Gauge'
+
+Add the block to myModel with the name
+ myBlock. To ensure the name is unique, set
+ MakeNameUnique to &#34;on&#34;.
+add_block(libBlockPath,&#34;myModel/myBlock,&#34;MakeNameUnique=&#34;on&#34;)
+
+Add Block from Another Model
+
+ Suppose you have a model named myModel
+ containing a block named myBlock.
+
+ Create a copy of the block. Name the copy
+ myBlock1.
+add_block(&#34;myModel/myBlock&#34;,&#34;myModel/myBlock1&#34;);
+
+Add Block and Set Parameters
+
+ Suppose you have a model named
+ myModel.
+
+ Add a Constant block to the model with a value of
+ 0.1. Name the new block myBlock
+ and ensure the name is unique.
+add_block(&#34;simulink/Sources/Constant&#34;,&#34;myModel/myBlock&#34;,MakeNameUnique=&#34;on&#34;,Value=&#34;0.1&#34;);
+
+Add Blocks for Ports
+
+Open Live Script
+
+ How you add a block for a port depends on your goal. You can add a block for a new or existing port. You can also duplicate a block that corresponds with an input port.
+Add Blocks for New Ports
+Create and open a model named PortBlockCreation.
+mdl = &#34;PortBlockCreation&#34;;
+new_system(mdl);
+open_system(mdl);
+
+To create ports identified by port number, add In1 and Out1 blocks. By default, adding an In1 or Out1 block creates a port.
+add_block(&#34;simulink/Ports & Subsystems/In1&#34;,...
+ &#34;PortBlockCreation/In1&#34;)
+add_block(&#34;simulink/Ports & Subsystems/Out1&#34;,...
+ &#34;PortBlockCreation/Out1&#34;)
+
+To create ports identified by port name, add In Bus Element and Out Bus Element blocks. By default, new In Bus Element and Out Bus Element blocks correspond with ports named InBus and OutBus, respectively. These ports also have a port number. Optionally, specify a custom name for the port with the PortName block parameter.
+add_block(&#34;simulink/Ports & Subsystems/In Bus Element&#34;,...
+ &#34;PortBlockCreation/InBusElement&#34;)
+add_block(&#34;simulink/Ports & Subsystems/Out Bus Element&#34;,...
+ &#34;PortBlockCreation/OutBusElement&#34;)
+
+To create a port when you add an In Bus Element or Out Bus Element block, set CreateNewPort to &#34;on&#34;.
+add_block(&#34;simulink/Ports & Subsystems/In Bus Element&#34;,...
+ &#34;PortBlockCreation/InBusElement1&#34;,CreateNewPort=&#34;on&#34;)
+add_block(&#34;simulink/Ports & Subsystems/Out Bus Element&#34;,...
+ &#34;PortBlockCreation/OutBusElement1&#34;,CreateNewPort=&#34;on&#34;)
+
+When you do not set CreateNewPort to &#34;on&#34;, the behavior varies.
+Suppose you have ports named InBus and OutBus. The added block corresponds with one of these ports. If you specify a port name when you add the block, the software renames the InBus or OutBus port to use the specified port name.
+
+Suppose you have only custom-named ports. The added block corresponds with a new port. If you specify a port name when you add the block, the new port uses the specified port name.
+
+Add Blocks for New Port Elements
+In Bus Element and Out Bus Element blocks let you select multiple elements from an input port and connect multiple elements to an output port.
+To add an element to an In Bus Element block, copy an existing block that corresponds with the port and specify a unique name for the new element.
+add_block(&#34;PortBlockCreation/InBusElement&#34;,...
+ &#34;PortBlockCreation/InBusElement2&#34;,Element=&#34;signal2&#34;)
+
+To add an element to an Out Bus Element block, copy an existing block that corresponds with the port. Optionally, specify a unique element name.
+add_block(&#34;PortBlockCreation/OutBusElement&#34;,...
+ &#34;PortBlockCreation/OutBusElement2&#34;)
+
+Duplicate Blocks for Input Ports
+Multiple blocks in a block diagram can use the same input from an input port. Duplicating a block that corresponds with an input port can simplify line routing.
+To duplicate an In1 block, copy the block from the block diagram and set CopyOption to &#34;duplicate&#34;.
+add_block(&#34;PortBlockCreation/In1&#34;,...
+ &#34;PortBlockCreation/In1Dup&#34;,CopyOption=&#34;duplicate&#34;)
+
+To duplicate an In Bus Element block, copy the block.
+add_block(&#34;PortBlockCreation/InBusElement&#34;,...
+ &#34;PortBlockCreation/InBusElementDup&#34;)
+
+The duplicate blocks use the same port number as the original blocks. For name-based ports, the block selects the same element from the same port as the original block.
+
+Input Arguments
+collapse all
+src — Block to add
+ 
+block path
+
+Path of block to add, specified as a string or character vector. The block
+ can be a library block, or a block in a model. The block you add has the
+ same parameter values as the source block you specify.
+To get the path of a block from a built-in library, take these
+ steps:
+
+Open the library from which you want to add the block.
+You can do so using the quick insert menu. Open the quick insert
+ menu by double-clicking the model canvas. Then, enter the block
+ name. Use your arrow keys to navigate to the desired search result.
+ In the details pane on the right, click the name of the library. The
+ library opens.
+
+Select the library block you want to add.
+
+Get the block path by entering this command in the MATLAB Command window.
+gcb
+
+For more information about getting block paths, see Get Handles and Paths.
+To create a block with a certain block type, specify the block type as
+ 'built-in/blocktype',
+ where blocktype is the
+ programmatic block name. To get the value of the
+ BlockType parameter for a block, see Common Block Properties.
+ Blocks added using
+ 'built-in/blocktype' can
+ have different configurations than library blocks.
+Multiple library blocks have SubSystem as the
+ BlockType. When you specify the source block as
+ &#34;built-in/SubSystem&#34;, the new block represents a
+ subsystem with one input and one output. For other subsystems and masked
+ blocks, use the library block path instead of the
+ BlockType value.
+Example: &#34;simulink/Math Operations/Gain&#34;
+Example: &#34;built-in/Gain&#34;
+Example: &#34;myModel/myOriginalBlock&#34;
+Data Types: string | character vector
+
+dest — Path of the new block
+ 
+block path
+
+Path of the new block, specified as a string.
+For information about getting block paths, see Get Handles and Paths.
+
+Example: &#34;myModel/myNewBlock&#34;
+Data Types: string | character vector
+
+Name-Value Arguments
+collapse all
+Specify optional pairs of arguments as
+ Name1=Value1,...,NameN=ValueN, where Name is
+ the argument name and Value is the corresponding value.
+ Name-value arguments must appear after other arguments, but the order of the
+ pairs does not matter.
+ 
+Example: add_block(&#34;simulink/Math
+ Operations/Gain&#34;,&#34;myModel/myNewBlock&#34;,Gain=&#34;5&#34;) adds a
+ Gain block named myBlock with a gain value of
+ 5.
+
+For the add_block function, specify block parameter and
+ property values as name-value arguments. For information about block parameters and
+ properties, see Programmatically Specify Block Parameters and Properties.
+MakeNameUnique — Unique block name
+ 
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to add a block with a unique name, specified as &#34;off&#34; or
+ &#34;on&#34;. When the option is turned on and the
+ specified block name exists, the software appends a number to the end of
+ the block name or increments the number at the end of the block
+ name.
+Example: add_block(&#34;simulink/Math
+ Operations/Gain&#34;,&#34;myModel/myNewBlock&#34;,MakeNameUnique=&#34;on&#34;)
+
+Data Types: string | character vector
+
+CopyOption — Copy option
+ 
+&#34;&#34; (default) | &#34;nolink&#34; | &#34;duplicate&#34;
+
+Copy option, specified as &#34;&#34;,
+ &#34;nolink&#34;, or
+ &#34;duplicate&#34;.
+&#34;nolink&#34; — The new block does not link to
+ the custom library that contains the source block.
+
+&#34;duplicate&#34; — The new block duplicates an
+ input port block and has the same port number as the source
+ block. To branch a signal from an input port without creating a
+ port or adding lines, duplicate the block that corresponds with
+ the input port. For more information, see Create Duplicate Inport Blocks.
+
+Example: add_block(&#34;myLibrary/CustomBlock&#34;,&#34;myModel/CustomBlock&#34;,CopyOption=&#34;nolink&#34;)
+Example: add_block(&#34;myModel/mySubsystem/Inport&#34;,&#34;myModel/mySubsystem/InportDup&#34;,CopyOption=&#34;duplicate&#34;)
+Data Types: string | character vector
+
+CreateNewPort — New bus element port
+ 
+&#34;off&#34; (default) | &#34;on&#34;
+
+Option to add a block for a new bus element port, specified as &#34;off&#34;
+ or &#34;on&#34;. The source block must be an In Bus
+ Element or Out Bus Element block.
+When you turn the option on, you can optionally specify the name of the new port with
+ the PortName parameter. By default, the name of the
+ new port is a combination of the port name from the copied block and a
+ number. If the port name from the copied block already ends in a number,
+ the number is incremented for uniqueness.
+
+Setting CreateNewPort to &#34;off&#34;
+ does not prevent port creation. For example, the first In Bus
+ Element or Out Bus Element block that you add
+ to your model creates a port. Adding a block and specifying a unique
+ port name with PortName can also create a
+ port.
+When you set CreateNewPort to
+ &#34;off&#34;, you allow the added block to correspond
+ with an existing port. For example, when you copy an In Bus
+ Element or Out Bus Element block from your
+ model, you can have the new block represent a new element of the port by
+ specifying the element name with the Element
+ parameter.
+For more information on how to author bus element ports
+ programmatically, see Programmatically Create Bus Element Ports.
+Example: add_block(&#34;simulink/Ports & Subsystems/In Bus
+ Element&#34;,&#34;myModel/InBusElement1&#34;,CreateNewPort=&#34;on&#34;)
+Data Types: string | character vector
+
+Output Arguments
+collapse all
+h — New block
+ 
+handle
+
+New block, returned as a handle.
+
+Tips
+To prevent overlapping blocks, specify the position of the new block using the
+ Position block property. For more information, see Programmatically Specify Block Parameters and Properties.
+
+Version History
+Introduced before R2006aexpand all
+R2027a: Blocks have a minimum size of 5-by-5 pixels
+
+All blocks in a model must have a size of at least 5-by-5 pixels. Simulink® adjusts block coordinates so that the width and height are at least 5
+ pixels in these situations:
+The coordinates you specify for the Position parameter
+ result in a width or height smaller than 5 pixels.
+
+You open or load a model created in a previous release that contains one
+ or more blocks with smaller dimensions.
+
+For more information, see Programmatically Specify Block Parameters and Properties.
+
+See Also
+delete_block | get_param | set_param
+Topics
+Get Handles and Paths
+Create and Edit Annotations Programmatically
+Programmatically Create Bus Element Ports
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

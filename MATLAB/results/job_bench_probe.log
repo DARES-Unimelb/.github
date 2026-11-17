@@ -1,0 +1,10 @@
+=== JOB START   bench_probe
+owner unknown  pid 24728  at 2026-10-11 20:19:02  stale_s 900
+!! JOB FAILED   bench_probe  (32.4 s)
+   MATLAB:cellRefFromNonCell | Brace indexing is not supported for variables of this type.
+   at uacs_job_bench_probe line 100
+   at run_job line 95
+   at LiveEditorEvaluationHelperEmatlab_mcp_server line 2
+   at mcpEval line 48
+   at fevalMatlab line 0
+   at fevalJSON line 0

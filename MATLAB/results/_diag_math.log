@@ -1,0 +1,67 @@
+rev 10 mass 17.000 V_min NaN V_max 30.0 (params direct, no self check)
+trim V 25.00 alpha -0.3033 deg theta -0.3033 deg de -0.8115 deg throttle 0.4301
+lat poles [-94.558 -11.9-8.0713i -11.9+8.0713i -0.10471]
+long poles [-53.49 -24.363 -0.095322-0.42087i -0.095322+0.42087i]
+Gp zeros [-11.4124-6.81729i -11.4124+6.81729i -0.00167048]
+Gq zeros [-6.39308 -0.210428 -3.32777e-15]
+Gr zeros [-96.3396 0.820468-0.460666i 0.820468+0.460666i]
+GV zeros [-53.3892 -24.4725 -0.0848282]
+design_pid OK in 77.8 s
+p      Kp    +0.023202009 Ki            +8.4 Kd    +0.019335007 Tf  0.00200 pol +1 stable 1
+       bw     11.4794 target  12.0000 ratio   0.9566 pm  180.039 gm      Inf rise    0.2003 os   6.96 settle    0.6073
+       worst  -1.6554e-03 art_share  0.000e+00 tried   2090 stable   1778 score   0.1052
+       integral zero at 362.0376 rad/s from the search, which is 30.170 of the 12.000 rad/s target
+       pole -1.65535e-03 +0.00000e+00 i  share 3.430e-08
+       pole -7.08595e+00 +1.19292e+01 i  share 1.384e-02
+       pole -7.08595e+00 -1.19292e+01 i  share 1.384e-02
+       pole -1.06431e+01 +6.09908e+00 i  share 4.128e-03
+q      Kp    -0.019914426 Ki            -5.6 Kd              -0 Tf  0.00200 pol -1 stable 1
+       bw     16.6551 target   8.0000 ratio   2.0819 pm  180.062 gm      Inf rise    0.1521 os  11.88 settle    8.7289
+       worst  -2.4448e-01 art_share  0.000e+00 tried   2090 stable   2090 score   0.0963
+       integral zero at 281.2032 rad/s from the search, which is 35.150 of the 8.000 rad/s target
+       pole -2.44476e-01 +0.00000e+00 i  share 1.189e-03
+       pole -3.68850e+00 +0.00000e+00 i  share 6.452e-02
+       pole -1.59188e+01 +2.14860e+01 i  share 3.510e-01
+       pole -1.59188e+01 -2.14860e+01 i  share 3.510e-01
+r      Kp      -23.212082 Ki            -2.5 Kd              -0 Tf  0.01000 pol -1 stable 0
+       bw    261.0416 target   5.0000 ratio  52.2083 pm  180.006 gm      Inf rise       NaN os    NaN settle       NaN
+       worst  +7.2248e-01 art_share  4.985e-01 tried   2090 stable   1478 score   4.1032
+       integral zero at 0.1077 rad/s from the search, which is 0.022 of the 5.000 rad/s target
+       pole +7.22482e-01 +5.82449e-01 i  share 8.097e-04
+       pole +7.22482e-01 -5.82449e-01 i  share 8.097e-04
+       pole -1.07750e-01 +0.00000e+00 i  share 2.850e-07
+       pole -2.29831e+01 +1.70169e+02 i  share 4.985e-01
+phi    Kp      +2.0062591 Ki            +0.3 Kd              +0 Tf  0.01000 pol +1 stable 1
+       bw      2.6383 target   3.0000 ratio   0.8794 pm  180.000 gm      Inf rise    0.7538 os   5.92 settle    9.6461
+       worst  -1.6265e-01 art_share  0.000e+00 tried    301 stable    128 score   0.0739
+       integral zero at 0.1495 rad/s from the search, which is 0.050 of the 3.000 rad/s target
+       pole -1.62650e-01 +0.00000e+00 i  share 1.620e-03
+       pole -2.26763e+00 +0.00000e+00 i  share 3.208e-01
+       pole -6.68284e+00 +1.09915e+01 i  share 1.267e-01
+       pole -6.68284e+00 -1.09915e+01 i  share 1.267e-01
+theta  Kp      +1.8322879 Ki           +0.25 Kd              +0 Tf  0.01000 pol +1 stable 1
+       bw      2.4237 target   2.5000 ratio   0.9695 pm  180.000 gm      Inf rise    0.8315 os   5.90 settle   11.3444
+       worst  -1.5811e-01 art_share  0.000e+00 tried    301 stable    301 score   0.0700
+       integral zero at 0.1364 rad/s from the search, which is 0.055 of the 2.500 rad/s target
+       pole -1.58105e-01 +0.00000e+00 i  share 6.255e-03
+       pole -1.92503e-01 +0.00000e+00 i  share 5.657e-03
+       pole -2.25929e+00 +1.31934e+00 i  share 3.482e-01
+       pole -2.25929e+00 -1.31934e+00 i  share 3.482e-01
+V      Kp       +3.754987 Ki           +0.44 Kd              +0 Tf  0.01000 pol +1 stable 1
+       bw      0.0099 target   0.8000 ratio   0.0124 pm  185.433 gm      Inf rise  217.2280 os   0.00 settle  383.6996
+       worst  -9.6993e-03 art_share  0.000e+00 tried    301 stable    187 score   0.3907
+       integral zero at 0.1172 rad/s from the search, which is 0.146 of the 0.800 rad/s target
+       pole -9.69927e-03 +0.00000e+00 i  share 1.748e-02
+       pole -2.02556e-01 +4.34758e-01 i  share 2.390e-01
+       pole -2.02556e-01 -4.34758e-01 i  share 2.390e-01
+       pole -1.64406e+01 +0.00000e+00 i  share 4.996e-01
+h      Kp   +0.0014879965 Ki           +0.14 Kd              +0 Tf  0.01000 pol +1 stable 0
+       bw      2.0755 target   0.4000 ratio   5.1888 pm  202.407 gm      Inf rise       NaN os    NaN settle       NaN
+       worst  +5.3933e-01 art_share  1.895e-01 tried    301 stable    301 score   4.1869
+       integral zero at 94.0862 rad/s from the search, which is 235.216 of the 0.400 rad/s target
+       pole +5.39326e-01 +1.47764e+00 i  share 3.087e-01
+       pole +5.39326e-01 -1.47764e+00 i  share 3.087e-01
+       pole -1.36518e-01 +0.00000e+00 i  share 3.802e-05
+       pole -2.10295e-01 +0.00000e+00 i  share 6.606e-05
+separation phi/p 0.230 theta/q 0.146 V/q 0.001 h/theta 0.856 h/V 209.544 limit 0.50 ok 0
+polarity [1 -1 -1 1 1 1 1]

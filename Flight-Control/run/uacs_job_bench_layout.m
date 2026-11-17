@@ -1,17 +1,19 @@
 % UACS_JOB_BENCH_LAYOUT Job entry: export the bench canvas layout and scope diagnostics.
 %
-% Run with:  addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run'); run_job('bench_layout')
-% Output: results/job_bench_layout.log        状态与失败原因
-%         results/bench_layout.txt            诊断件
-%         sim/uacs_bench_layout_list.m        画布布局数据，自动生成，重建时套回
+% Run with:  addpath('<repo>/run'); run_job('bench_layout')
+% Output: results/job_bench_layout.log        status and failure reason
+%         results/bench_layout.txt            diagnostics
+%         sim/uacs_bench_layout_list.m        canvas layout data, regenerated on rebuild
 %
-% 为什么要有这个作业：台架模型由 sim_build_bench 整份重建，重建会先删掉旧文件。用户在画布
-% 上手工摆过的位置只存在于盘上那个 .slx 里，必须先抽成数据，重建时再套回去。
+% The bench model is rebuilt wholesale by sim_build_bench, which deletes the old file
+% first, so the positions a user arranged by hand have to be exported to data and restored
+% on rebuild.
 %
-% 本作业只读模型，不保存。脚本里不写局部函数：带局部函数的作业脚本会被 MATLAB 按函数缓存，
-% 改了盘上的文件之后 evalin 仍可能跑到旧文本（实测踩过一次）。
+% Reads the model only, never saves it. No local functions in this script: MATLAB caches a
+% script that defines local functions by name and can keep running the old text after the
+% file on disk changes.
 %
-% 下面这段参数转储是内联的，就是为了不引入局部函数。
+% The parameter dump below is inlined for that reason.
 
 this = mfilename('fullpath');
 if isempty(this)
@@ -111,14 +113,14 @@ for k = 1:numel(top)
       get_param(top{k}, 'BlockType'), mat2str(get_param(top{k}, 'Position')));
 end
 
-% ---------------- 布局导出 ----------------
+%% Layout export
 blocks = find_system(mdl, 'Type', 'Block');
 bp = cell(numel(blocks), 2);
 for k = 1:numel(blocks)
    bp{k, 1} = strrep(blocks{k}, [mdl '/'], '');
    bp{k, 2} = get_param(blocks{k}, 'Position');
 end
-% FindAll 为 on 时 find_system 返回句柄数组，不是路径元胞，所以按数组下标取。
+% With FindAll on, find_system returns a handle array, not a cell of paths.
 notes = find_system(mdl, 'FindAll', 'on', 'Type', 'annotation');
 np = cell(numel(notes), 2);
 for k = 1:numel(notes)
@@ -162,8 +164,8 @@ fclose(f);
 fprintf(fid, '\n[布局导出]\n  块 %d 个，注释 %d 条，写入 %s\n', size(bp, 1), size(np, 1), out);
 fclose(fid);
 fprintf('诊断件 %s\n布局数据 %s（块 %d，注释 %d）\n', out_txt, out, size(bp, 1), size(np, 1));
-% 只关自己加载的那一次。用户可能在界面上开着同一个模型，关掉会让他看不见窗口；有未保存
-% 改动时更不能关，那会把他的摆位丢掉。
+% Close only the copy this job loaded: the user may have the same model open in the UI, and
+% closing it would discard unsaved layout changes.
 if was_open
    fprintf('模型本来就在界面上开着，保持打开\n');
 elseif strcmp(get_param(mdl, 'Dirty'), 'off')

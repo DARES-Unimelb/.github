@@ -1,18 +1,14 @@
 % UACS_JOB_ATMO_REGRESS Before and after comparison of the rev 9 and rev 10 plant.
 %
-% Job for run_job('atmo_regress'), see MATLAB/run/run_job.m. The rev 9 baseline is
-% the copy results/atmo_before_plant_baseline.mat, taken before the density and
-% wind frame edits; the rev 10 baseline is results/plant_baseline.mat, written by
-% run_job('plant_baseline') after them. Both were produced by the same
-% plant/uacs_job_plant_baseline.m, so a difference between them is a difference
-% the edits made and nothing else.
+% Job for run_job('atmo_regress'). The rev 9 baseline is the copy
+% results/atmo_before_plant_baseline.mat, taken before the density and wind frame edits;
+% the rev 10 baseline is results/plant_baseline.mat. Both came from the same plant baseline
+% job, so a difference between them is a difference the edits made and nothing else.
 %
-% Compares the three trims, the linearisation, the modes, the resolved limits, the
-% envelope numbers and every numeric leaf of P, then writes
-% results/atmo_regress_report.txt.
+% Compares the three trims, the linearisation, the modes, the resolved limits, the envelope
+% numbers and every numeric leaf of P, then writes results/atmo_regress_report.txt.
 %
-% Manual run: run_job('atmo_regress','owner','ash-atmo') with MATLAB/run on the
-% path and this directory on the path.
+% Manual run: run_job('atmo_regress', 'owner', 'ash-atmo') with run/ on the MATLAB path.
 
 here = fileparts(mfilename('fullpath'));
 if isempty(here)
@@ -49,7 +45,7 @@ R = struct();
 R.rev_before = Sa.P.meta.revision;
 R.rev_after = Sb.P.meta.revision;
 
-%% ---------------- trims ----------------
+%% Trims
 fprintf(fid, '\n[trims]\n');
 fprintf(fid, '  %-8s %-16s %18s %18s %12s\n', 'point', 'quantity', 'rev 9', 'rev 10', 'difference');
 trim_names = {'cruise', 'climb', 'slow'};
@@ -76,7 +72,7 @@ for k = 1:numel(trim_vars)
       R.trim.(trim_names{k}).residual_max);
 end
 
-%% ---------------- limits and envelope ----------------
+%% Limits and envelope
 fprintf(fid, '\n[limits and envelope]\n');
 lim = {'V_stall_mps', 'V_min_stall_mps', 'V_min_trim_mps', 'V_min_mps', ...
    'V_max_mps', 'V_top_thrust_limited_mps'};
@@ -88,8 +84,8 @@ for j = 1:numel(lim)
    fprintf(fid, '  %-24s rev 9 %14.9f   rev 10 %14.9f   difference %10.3e\n', ...
       lim{j}, a, b, abs(a - b));
 end
-% Single engine control speed and the ratio that sets it, recomputed from each
-% parameter set the way init_uacs_twin does.
+% Single engine control speed and the ratio that sets it, recomputed per parameter set the
+% way init_uacs_twin does.
 Cn_dr_full_a = abs(Sa.P.aero.Cn_dr) * deg2rad(Sa.P.act.rudder.max_deg);
 Cn_dr_full_b = abs(Sb.P.aero.Cn_dr) * deg2rad(Sb.P.act.rudder.max_deg);
 V_mc_a = sqrt(2 * Sa.P.prop.T_static_max * Sa.P.prop.y_motor / ...
@@ -107,14 +103,14 @@ R.SM_before = SM_a;
 R.SM_after = SM_b;
 fprintf(fid, '  %-24s rev 9 %14.9f   rev 10 %14.9f   difference %10.3e\n', ...
    'static margin (fraction)', SM_a, SM_b, abs(SM_a - SM_b));
-% Trim envelope scan of the job itself.
+% Trim envelope scan.
 R.V_trim_min_before = Sa.sweep.V_trim_min_mps;
 R.V_trim_min_after = Sb.sweep.V_trim_min_mps;
 fprintf(fid, '  %-24s rev 9 %14.9f   rev 10 %14.9f   difference %10.3e\n', ...
    'sweep V_trim_min_mps', Sa.sweep.V_trim_min_mps, Sb.sweep.V_trim_min_mps, ...
    abs(Sa.sweep.V_trim_min_mps - Sb.sweep.V_trim_min_mps));
 
-%% ---------------- linearisation and modes ----------------
+%% Linearisation and modes
 fprintf(fid, '\n[linearisation and modes]\n');
 R.A_max = max(abs(Sa.lin.A(:) - Sb.lin.A(:)));
 R.B_max = max(abs(Sa.lin.B(:) - Sb.lin.B(:)));
@@ -137,13 +133,13 @@ for j = 1:numel(Sa.lin.modes_lat)
       a.name, real(a.lambda), imag(a.lambda), real(b.lambda), imag(b.lambda), abs(a.lambda - b.lambda));
 end
 
-%% ---------------- every numeric leaf of P ----------------
+%% Every numeric leaf of P
 fprintf(fid, '\n[parameter struct]\n');
 diffs = local_diff(Sa.P, Sb.P, 'P', {});
 R.n_param_diffs = numel(diffs);
 R.changed_paths = cellfun(@(c) c{1}, diffs, 'UniformOutput', false);
-% The only fields allowed to differ are the revision number and the fields the
-% density and wind work added. Anything else is a design number that moved.
+% Only the revision number and the fields the density and wind work added may differ;
+% anything else is a design number that moved.
 expected = {'P.meta.revision', 'P.env.T_sl', 'P.env.p_sl', 'P.env.L_isa', ...
    'P.env.R_air', 'P.env.gamma_air', 'P.env.h_trop_m', 'P.atmo.model', ...
    'P.atmo.h_from_state'};
@@ -157,7 +153,7 @@ for k = 1:numel(diffs)
 end
 R.param_diffs = diffs;
 
-%% ---------------- verdict ----------------
+%% Verdict
 tol_exact = 0;
 names = fieldnames(R.trim);
 R.max_trim_diff = 0;
@@ -210,12 +206,10 @@ if ~R.pass
    error('atmo_regress:Failed', 'a rev 9 number moved, see results/atmo_regress_report.txt');
 end
 
-%% ================= local functions =================
+%% Local functions
 function out = local_diff(a, b, path, out)
-% Collect every leaf that differs between two structs, recursively, so a moved
-% design number cannot hide in a field nobody printed. out is returned as well as
-% taken in, because a cell array grown inside a function does not reach the
-% caller otherwise.
+% Collect every leaf that differs between two structs, recursively. out is returned as well
+% as taken in: a cell array grown inside a function does not reach the caller otherwise.
 if isstruct(a) && isstruct(b)
    fa = fieldnames(a);
    fb = fieldnames(b);

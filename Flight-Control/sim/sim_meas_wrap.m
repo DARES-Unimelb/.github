@@ -1,10 +1,14 @@
 function [V, alpha, beta, qbar] = sim_meas_wrap(P, x)
-% SIM_MEAS_WRAP Air data of the state, from plant/flow_state.m when present.
+% SIM_MEAS_WRAP Air data of the state, from plant/flow_state.m when present
 %
-% The controller models and the placeholder plant both need air data, so the
-% dependency is resolved in one place. The local branch is the same definition
-% as flow_state: V the norm of the body velocity, alpha = atan2(w, u),
-% beta = asin(v/V), qbar = 0.5*rho*V^2 with the constant density of P.env.
+%   P                        parameter struct, default P from the base workspace
+%   x                        12x1 state
+%   V, alpha, beta, qbar     airspeed m/s, angle of attack rad, sideslip rad,
+%                            dynamic pressure Pa
+%
+% The local branch uses the same definitions as flow_state: V the norm of the body
+% velocity, alpha = atan2(w, u), beta = asin(v/V), qbar = 0.5*rho*V^2 with the
+% constant density P.env.rho_sl
 
 if nargin < 1 || isempty(P)
    P = evalin('base', 'P');

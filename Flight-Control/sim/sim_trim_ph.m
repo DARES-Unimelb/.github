@@ -1,13 +1,9 @@
 function trim = sim_trim_ph(P)
-% SIM_TRIM_PH Approximate cruise trim used only when the plant deliverable fails.
+% SIM_TRIM_PH Closed-form cruise trim on the placeholder aerodynamics
 %
-% Solves the three longitudinal equilibrium conditions at the design point in
-% closed form on the placeholder aerodynamics: lift equals weight, the pitching
-% moment including the thrust line offset is zero, and thrust equals drag.
-% The lateral channel is left at zero bank, zero sideslip and zero rudder.
-%
-% Recorded in the results as trim_source = 'placeholder', so a run that used it
-% can never be read as a run at the delivered trim.
+%   P      parameter struct
+%   trim   x_star, u_star, residual, and trim.source = 'placeholder'; the
+%          lateral channel stays at zero bank, zero sideslip and zero rudder
 
 op = P.op.cruise;
 V = op.V_mps;
@@ -47,8 +43,7 @@ trim.note = 'closed-form trim on the placeholder aerodynamics, no optimiser';
 end
 
 function res = eom_6dof_ph_residual(P, x, u)
-% Residual of the placeholder plant at the trim point, in the same shape the
-% delivered trim_cruise reports: the six force and moment equations.
+% six force and moment equations of the placeholder plant at the trim point
 dx = sim_plant_rhs_ph(0, x, u, P);
 res = [dx(1:3); dx(4:6)];
 end

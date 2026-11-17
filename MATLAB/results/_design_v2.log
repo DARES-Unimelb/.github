@@ -1,0 +1,19 @@
+rev 10 mass 17.000
+trim V 25.00 alpha -0.3033 de -0.8115 throttle 0.4301
+p      Kp     +0.77134704 Ki              +0 Kd              +0 Tf  0.01000 pol +1 stable 1 score 0.1059
+       bw   468.3259 target 12.0000 pm   184.92 gm      Inf rise    0.0028 os 3141.46 settle       NaN dc  0.01625
+       worst  -5.2240e-02 art  0.000e+00 tried    172 stable    172 [5.4 s]
+       Ki = 0 by design on a rate loop: the plant is type 1 in this channel so a second pole at the origin makes the loop unstable, and damping is what the loop is for, not holding a steady rate
+q      Kp     +0.60049616 Ki              +0 Kd              +0 Tf  0.01000 pol +1 stable 1 score 11.9967
+       bw 75295.1083 target  8.0000 pm   180.02 gm      Inf rise    0.0000 os     Inf settle       NaN dc  0.00000
+       worst  -1.0211e-01 art  0.000e+00 tried    172 stable    158 [3.6 s]
+       Ki = 0 by design on a rate loop: the plant is type 1 in this channel so a second pole at the origin makes the loop unstable, and damping is what the loop is for, not holding a steady rate
+r      FAILED design_pid:noStableTuning | no stable proportional gain found for a rate loop with target 5.0000 rad/s [1.9 s]
+phi    FAILED MATLAB:nonExistentField | Unrecognized field name "p". [0.0 s]
+theta  FAILED MATLAB:nonExistentField | Unrecognized field name "q". [0.1 s]
+V      Kp       +6.373958 Ki      +6.4653072 Kd              +0 Tf  0.01000 pol +1 stable 1 score 0.2038
+       bw     1.0879 target  0.8000 pm   180.00 gm      Inf rise    2.0778 os    2.74 settle   49.2570 dc  1.00000
+       worst  -5.6759e-02 art  0.000e+00 tried    516 stable    294 [8.9 s]
+       integral zero at 1.0143 rad/s from the search, which is 1.268 of the 0.800 rad/s target
+h      FAILED MATLAB:nonExistentField | Unrecognized field name "theta". [0.0 s]
+TOTAL 20.2 s

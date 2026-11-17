@@ -1,0 +1,34 @@
+=== 1. state and input ordering ===
+long states : u, w, q, theta
+long inputs : de, dT
+A_long row 3 = [0.22366825 -718.12499 -68.096157 0]
+  so A_long(3,1)=dqdot/du +0.223668, A_long(3,2)=dqdot/dw -718.124992,
+     A_long(3,3)=dqdot/dq -68.096157, A_long(3,4)=dqdot/dtheta +0.000000
+B_long(:,1)  = [-0.25424292 -1.007097 -216.19688 0]  [d/du for u w q theta]
+
+=== 2. the published q controller and its partial with respect to q ===
+gains_pid.q.Kp = -0.863454, sign = -1
+model wiring: err = q_c - q, de = Kp*err
+  de = (-0.863454)*(q_c - q)
+  d(de)/dq = -Kp = +0.863454   <-- the sign that decides the verdict
+closed-loop dqdot/dq = A_long(3,3) + B_long(3,1)*d(de)/dq
+                     = -68.096157 + (-216.196878)*(+0.863454) = -254.772235
+verdict: STABLE  (the lead computed +118.5799 by using d(de)/dq = Kp instead of -Kp)
+
+=== 3. the B_long row 1 and row 2 discrepancy, as a basis transform ===
+alpha0 = -0.005293 rad, V0 = 25.000000 m/s
+raw body frame (linearize_at)      du/de = -0.387497   dw/de = -25.175727
+contract frame (computed from body) dV/de = -0.254243   dalpha/de = -1.007097
+contract frame (lin_contract gives) dV/de = -0.254243   dalpha/de = -1.007097
+agreement: dV 0.000e+00, dalpha 2.220e-16
+the lead compared -0.254243 / -1.007097 against -0.387497 / -25.1757:
+  -0.254243 is dV/de  (contract), -0.387497 is du/de  (body)
+  -1.007097 is dalpha/de (contract), -25.1757 is dw/de (body)
+  row 2 ratio 24.998314 against V0 = 25.000000: the V0 factor is the whole difference
+
+=== 4. nonlinear finite difference, independent of linearize_at ===
+trim qdot at u_star = -2.507143e-16 (must be ~0)
+nonlinear dqdot/dq   = -68.096157   linearisation A_long(3,3) = -68.096157   ratio 1.000000
+nonlinear dqdot/dw   = -28.725781   linearisation A_long(3,2) = -718.124992   ratio 0.040001
+nonlinear dqdot/dde  = -216.196878   linearisation B_long(3,1) = -216.196878   ratio 1.000000
+nonlinear closed-loop dqdot/dq = -68.096157 + (-216.196878)*(+0.863454) = -254.772235

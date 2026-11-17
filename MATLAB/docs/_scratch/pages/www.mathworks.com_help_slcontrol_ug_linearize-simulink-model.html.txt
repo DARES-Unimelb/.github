@@ -1,0 +1,298 @@
+URL: https://www.mathworks.com/help/slcontrol/ug/linearize-simulink-model.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/slcontrol/ug/linearize-simulink-model.html
+
+ 
+
+ Linearize Simulink Model at Model Operating Point - MATLAB & Simulink
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Control Systems
+
+ Simulink
+ Control Design
+
+ Linearization
+
+ Linearization Basics
+
+ Simulink
+ Control Design
+
+ Get Started with Simulink
+ Control Design
+
+ Linearize Simulink Model at Model Operating Point
+
+On this page
+Linearize Simulink Model Using Model Linearizer
+Linearize Simulink Model at Command Line
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+Linearize Simulink Model at Model Operating Point
+R2026b
+If you do not specify an operating point when linearizing a Simulink® model, the software uses the operating point specified in the model by default.
+ The model operating point consists of the initial state and input signal values stored in the
+ model.
+For information on linearizing models at different operating points, see Linearize at Trimmed Operating Point and
+ Linearize at Simulation Snapshot.
+Linearize Simulink Model Using Model Linearizer
+
+ This example shows how to linearize a Simulink model at the operating point specified in the model using the Model
+ Linearizer.
+
+ Open Simulink model.
+openExample(&#34;watertank&#34;)
+
+The Water-Tank System block represents the plant in this control
+ system and includes all of the system nonlinearities.
+To specify the portion of the model to linearize, first open the Linearization tab. To do so, in the Simulink window, in the Apps gallery, click
+ Linearization Manager.
+To specify an analysis point for a signal, click the signal in the model. Then, on
+ the Linearization tab, in the Insert Analysis
+ Points gallery, select the type of analysis point.
+Configure the output signal of the PID Controller block as an
+ Input Perturbation.
+
+Configure the output signal of the Water-Tank System block as an
+ Open-loop Output. An open-loop output point is an
+ output measurement followed by a loop opening, which removes the effects of the
+ feedback signal on the linearization without changing the model operating
+ point.
+
+When you add linear analysis points, the software adds markers at their respective
+ locations in the model. For more information on the different types of analysis points,
+ see Specify Portion of Model to Linearize.
+
+For more information on defining analysis points in a Simulink model, see Specify Portion of Model to Linearize in Simulink Model. Alternatively, if you do not want to introduce
+ changes to the Simulink model, you can define analysis points using the Model
+ Linearizer. For more information, see Specify Portion of Model to Linearize in Model Linearizer.
+To open Model Linearizer for the model, in the Simulink model window, in the Apps gallery, click
+ Model Linearizer.
+
+To use the analysis points you defined in the Simulink model as linearization I/Os, on the Linear Analysis
+ tab, in the Analysis I/Os drop-down list, leave Model
+ I/Os selected.
+For this example, use the model operating point for linearization. In the
+ Operating Point drop-down list, leave Model Initial
+ Condition selected.
+To linearize the system and generate a response plot for analysis, in the
+ Linearize section, click a response. For this example, to
+ generate a Bode plot for the resulting linear model, click 
+ Bode.
+The software adds the linearized model, linsys1, to the
+ Linear Analysis Workspace and generates a Bode plot for the
+ model. linsys1 is the linear model from the specified input to the
+ specified output, computed at the default model operating point.
+
+For more information on analyzing linear models, see Analyze Results Using Model Linearizer Response Plots.
+You can also export the linearized model to the MATLAB® workspace. To do so, in the data browser, in the Linear Analysis
+ Workspace right-click linsys1 and select
+ Export to MATLAB Workspace.
+
+Linearize Simulink Model at Command Line
+Open Script
+
+This example shows how to linearize a Simulink® model at the model operating point using the linearize command.
+
+Open Simulink model.
+mdl = 'watertank';
+open_system(mdl)
+
+For this system, the Water-Tank System block contains all the nonlinear dynamics. To specify the portion of the model to linearize, create an array of linearization I/O objects using the linio command.
+Create an input perturbation analysis point at the output of the PID Controller block.
+io(1) = linio('watertank/PID Controller',1,'input');
+
+Create an open-loop output analysis point at the output of the Water-Tank System block. An open-loop output point is an output measurement followed by a loop opening, which removes the effects of the feedback signal on the linearization without changing the model operating point.
+io(2) = linio('watertank/Water-Tank System',1,'openoutput');
+
+For information on the different types of analysis points, see Specify Portion of Model to Linearize.
+Linearize the model at the model operating point using the specified analysis points.
+linsys1 = linearize(mdl,io);
+
+linsys1 is the linear model from the specified input to the specified output, computed at the default model operating point.
+You can then analyze the response of the linearized model. For example, plot its Bode response.
+bode(linsys1)
+
+For more information on analyzing linear models, see Linear Analysis.
+
+ See Also
+
+ Model Linearizer | linearize
+
+ Topics
+Linearize at Trimmed Operating Point
+Linearize at Simulation Snapshot
+Linearize at Triggered Simulation Events
+Linearize Plant
+Compute Open-Loop Response
+Visualize Bode Response of Simulink Model During Simulation
+
+ External Websites
+Why Pade Approximations Are Great
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

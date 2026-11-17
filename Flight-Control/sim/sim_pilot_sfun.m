@@ -1,16 +1,14 @@
 function sim_pilot_sfun(block)
-% SIM_PILOT_SFUN Level-2 MATLAB S-Function: RC stick to reference commands.
+% SIM_PILOT_SFUN Level-2 MATLAB S-Function: RC stick to reference commands
 %
-% Ports
 %   in  1  stick 4x1  [roll pitch yaw throttle]
 %   out 1  cmd   5x1  [phi_c theta_c r_c V_c h_c]
 %
-% Thin block wrapper around control/pilot_to_command.m, so the stick shaping,
-% the ramp limits and the altitude integration all live in the delivered
-% function and not in the model. The sample time is P.sim.Ts_outer.
+% Wraps sim_pilot_wrap, so the stick shaping and the ramp limits live in that
+% function and not in the model; the sample time is sim_ts_outer from the base
+% workspace
 %
-% cmd is packed in the frozen order above; the same order is used by the
-% Outport cmd of uacs_manual_pid and by the scenario scripts.
+% cmd is packed in the frozen order above, which the scenario scripts rely on
 
 setup(block);
 end

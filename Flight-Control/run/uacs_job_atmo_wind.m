@@ -1,7 +1,6 @@
 % UACS_JOB_ATMO_WIND Wind frame term and density altitude, plant level evidence.
 %
-% Job for run_job('atmo_wind'), see MATLAB/run/run_job.m. Seven stages, every
-% number measured:
+% Job for run_job('atmo_wind'). Seven stages, every number measured:
 %   A  plant/atmo_isa.m against the Aerospace Blockset ISA Atmosphere Model block
 %   B  the density path through plant/flow_state.m
 %   C  the wind frame term in sim/sim_plant_rhs.m against Newton's law written in
@@ -9,14 +8,13 @@
 %   D  trim with the density model switched on
 %   E  what the V12 ISA configuration reads for each way of wiring the reference
 %      model's ISA block input
-%   F  the single engine control speed and the speed envelope at 150 m, which are
-%      safety numbers and are sea level numbers everywhere else in the project
+%   F  the single engine control speed and the speed envelope at 150 m
 %   G  plant/wind_trim.m: the crab trim under a steady wind, as an equilibrium of
 %      the plant, against the analytic heading, and bit exact at zero wind
 %
 % Writes results/atmo_wind_report.txt and results/atmo_wind_check.mat.
-% Manual run: run_job('atmo_wind','owner','ash-atmo') with MATLAB/run,
-% MATLAB/plant, MATLAB/params and MATLAB/sim on the path.
+% Manual run: run_job('atmo_wind', 'owner', 'ash-atmo') with run/, plant/, params/
+% and sim/ on the MATLAB path.
 
 here = fileparts(mfilename('fullpath'));
 if isempty(here)
@@ -47,13 +45,12 @@ fprintf(fid, 'density model P.atmo.model = ''%s'', h_from_state %d, h_ref %.3f m
    P.atmo.model, P.atmo.h_from_state, P.atmo.h_ref);
 fprintf(fid, 'wind applied at the model boundary, dx(1:3) carries the omega x (R*W) term\n');
 
-%% ---------------- A. ISA against the Aerospace Blockset block ----------------
+%% A. ISA against the Aerospace Blockset block
 fprintf('\n[atmo_wind] A: atmo_isa against the ISA Atmosphere Model block\n');
 fprintf(fid, '\n[A  atmo_isa against the Aerospace Blockset ISA Atmosphere Model block]\n');
 A = struct();
-% The altitude list is the one the V12 calibration actually measured the block at,
-% read back from its result file; hardcoding 0/150/1000 broke once when that list
-% grew into a sweep.
+% The altitude list is read back from the V12 calibration result file rather than
+% hardcoded.
 calib_file = fullfile(res_dir, 'sim_v12_calib.mat');
 A.block_source = calib_file;
 if exist(calib_file, 'file') == 2
@@ -87,11 +84,10 @@ if exist(calib_file, 'file') == 2
    A.exact_all = isequal(rho_m, A.rho_block) && isequal(T_m, A.T_block) ...
       && isequal(p_m, A.p_block) && isequal(a_m, A.a_block);
    A.n_exact_rho = sum(rho_m == A.rho_block);
-   % Split at sea level. The reference block saturates its altitude input at 0 m,
-   % so below sea level it holds the sea level state while plant/atmo_isa.m keeps
-   % extending the lapse rate. The flight envelope is at or above 0 m, so the part
-   % the two models actually share is the upper segment, and the lower segment is
-   % reported in full rather than averaged away.
+   % Split at sea level: the reference block saturates its altitude input at 0 m, so below
+   % sea level it holds the sea level state while plant/atmo_isa.m keeps extending the
+   % lapse rate. The envelope is at or above 0 m, so the upper segment is the one the two
+   % models share.
    A.mask_ge0 = A.h_block >= 0;
    A.mask_lt0 = ~A.mask_ge0;
    A.n_ge0 = sum(A.mask_ge0);
@@ -107,8 +103,8 @@ if exist(calib_file, 'file') == 2
       A.rel_rho_lt0 = rel(rho_m(A.mask_lt0), A.rho_block(A.mask_lt0));
       A.n_exact_rho_lt0 = sum(rho_m(A.mask_lt0) == A.rho_block(A.mask_lt0));
       A.block_values_lt0 = unique(A.rho_block(A.mask_lt0));
-      % Saturation is proved, not assumed: every negative altitude has to come back
-      % as exactly the sea level density the block tabulates at h = 0.
+      % Every negative altitude has to come back as exactly the sea level density the block
+      % tabulates at h = 0.
       A.clamp_test = all(A.block_values_lt0 == P.env.rho_sl);
       A.h_lt0_range = [min(A.h_block(A.mask_lt0)), max(A.h_block(A.mask_lt0))];
    else
@@ -168,7 +164,7 @@ end
 fprintf(fid, '  density falls with altitude %d, +10 K lowers it %d, 12 km is refused %d\n', ...
    A.monotone, A.dT_effect, A.trop_guard);
 
-%% ---------------- B. density path through flow_state ----------------
+%% B. Density path through flow_state
 fprintf('[atmo_wind] B: density path through flow_state\n');
 fprintf(fid, '\n[B  density path through plant/flow_state.m]\n');
 tr = trim_cruise(P, P.op.cruise);
@@ -208,13 +204,13 @@ fprintf(fid, '  V %.12f alpha %.12f beta %.12f do not depend on the density mode
 fprintf(fid, '  qbar ratio %.15f against density ratio %.15f -> %s\n', ...
    B.qbar_ratio, B.density_ratio, pass_text(B.pass));
 
-%% ---------------- C. the wind frame term ----------------
+%% C. The wind frame term
 fprintf('[atmo_wind] C: wind frame term in sim_plant_rhs\n');
 fprintf(fid, '\n[C  wind frame term in sim/sim_plant_rhs.m]\n');
 W5 = [0; 5.0; 0];
 u_trim = tr.u_star(:);
 
-% C1 one state with both a body rate and a wind: the identity, term by term.
+% C1 One state with both a body rate and a wind: the identity, term by term.
 xc = x0;
 xc(4:6) = [0.06; -0.04; 0.03];
 dx_sim = sim_plant_rhs(0, xc, u_trim, W5, P);
@@ -305,7 +301,7 @@ fprintf(fid, '    east position gain %.9f m against %.9f m predicted\n', ...
    C3.east_gain, C3.east_expected);
 fprintf(fid, '  -> %s\n', pass_text(C3.pass));
 
-%% ---------------- D. trim with the density model on ----------------
+%% D. Trim with the density model on
 fprintf('[atmo_wind] D: trim at 150 m with ISA density\n');
 fprintf(fid, '\n[D  trim with the density model switched on]\n');
 tr_isa = trim_cruise(P_isa, P.op.cruise);
@@ -354,16 +350,16 @@ fprintf(fid, '  trim.rho reports %.15f (isa) and %.15f (const), the densities ac
    tr_isa.rho, tr.rho, D.trim_rho_is_isa && D.const_trim_rho_is_rho_sl);
 fprintf(fid, '  -> %s\n', pass_text(D.pass));
 
-%% ---------------- E. what the V12 ISA configuration will read ----------------
+%% E. What the V12 ISA configuration will read
 fprintf('[atmo_wind] E: V12 ISA configuration projection\n');
 fprintf(fid, '\n[E  V12 ISA configuration, projected from our own plant]\n');
 t_e = (0:P.sim.Ts_ctrl:9.0)';
 U_e = local_doublet(u_trim, t_e);
 rhs = @(t, x, u, W, PP) sim_plant_rhs(t, x, u, W, PP);
 X_e_const = local_ode4(@(t, x, u) rhs(t, x, u, zeros(3, 1), P), t_e, x0, U_e);
-% Frozen density at the trim altitude: exactly what uacs_plant_ref.slx does today,
-% its ISA block input being a constant 150 m. The override goes through the aero
-% path only, because P.env.rho_sl still feeds the thrust map in both models.
+% Frozen density at the trim altitude: what uacs_plant_ref.slx does, its ISA block
+% input being a constant 150 m. The override goes through the aero path only, because
+% P.env.rho_sl still feeds the thrust map in both models.
 P_z150 = P;
 P_z150.atmo.model = 'isa';
 P_z150.atmo.h_from_state = false;
@@ -400,7 +396,7 @@ fprintf(fid, [ '  reading: the residual between the two density laws is what the
    '  lands at the integrator level, the same order as const_density.\n'], ...
    E.rel_z150_to_isa_feedback);
 
-%% ---------------- F. V_mc and the envelope at the ISA density ----------------
+%% F. V_mc and the envelope at the ISA density
 fprintf('[atmo_wind] F: V_mc and the speed envelope at 150 m ISA\n');
 fprintf(fid, '\n[F  single engine control speed and envelope at the ISA density]\n');
 F = struct();
@@ -409,9 +405,8 @@ F.rho_sl = rho_c;
 F.rho_isa = rho_i;
 Cn_dr_full = abs(P.aero.Cn_dr) * deg2rad(P.act.rudder.max_deg);
 y_motor = P.prop.y_motor;
-% Static thrust from the momentum relation T = (P_shaft*FM*sqrt(2*rho*A))^(2/3),
-% which goes as rho^(1/3). The exponent is measured here, not assumed: the 2/3
-% that belongs to shaft power is easy to mistake for the density exponent.
+% Static thrust from the momentum relation T = (P_shaft*FM*sqrt(2*rho*A))^(2/3), which
+% goes as rho^(1/3). The exponent is measured here, not assumed.
 F.T_static_sl = (P.prop.P_shaft_peak * P.prop.power.figure_of_merit ...
    * sqrt(2 * rho_c * P.prop.disk_area))^(2/3);
 F.T_static_isa = (P.prop.P_shaft_peak * P.prop.power.figure_of_merit ...
@@ -472,7 +467,7 @@ F.pass = F.exponent_measured > 0.32 && F.exponent_measured < 0.35 ...
    && F.V_max_reachable_physical;
 fprintf(fid, '  -> %s\n', pass_text(F.pass));
 
-%% ---------------- G. wind trim ----------------
+%% G. Wind trim
 fprintf('[atmo_wind] G: wind trim\n');
 fprintf(fid, '\n[G  plant/wind_trim.m: crab trim under a steady wind]\n');
 G = struct();
@@ -563,7 +558,7 @@ G.pass = G.zero_wind_bit_identical && G.max_res_f < 1e-12 && G.max_res_m < 1e-12
    && G.traj_drift_ok;
 fprintf(fid, '  -> %s\n', pass_text(G.pass));
 
-%% ---------------- write ----------------
+%% Write
 fprintf('[atmo_wind] A %s, B %s, C1 %s, C2 %s, C3 %s, D %s, F %s, G %s\n', ...
    pass_text(A.pass), pass_text(B.pass), pass_text(C1.pass), pass_text(C2.pass), ...
    pass_text(C3.pass), pass_text(D.pass), pass_text(F.pass), pass_text(G.pass));
@@ -592,11 +587,10 @@ if ~verdict
    error('atmo_wind:Failed', 'at least one stage failed, see results/atmo_wind_report.txt');
 end
 
-%% ================= local functions =================
+%% Local functions
 function V_min = local_vmin_trim(P, V_lo)
 % Lowest speed trimmable inside the elevator travel budget, by the same bisection
-% init_uacs_twin runs: trim demand falls monotonically with speed across this band,
-% so bisection is safe. Solved with the real trim solver, not a closed form.
+% init_uacs_twin runs. Solved with the real trim solver, not a closed form.
 V_hi = P.op.cruise.V_mps;
 for k = 1:40
    V_mid = 0.5 * (V_lo + V_hi);
@@ -627,10 +621,9 @@ frac = abs(tr.de_deg) / P.act.elevator.max_deg;
 end
 
 function [V_top, reachable] = local_top_speed(P, rho, n_motors)
-% Thrust limited level flight ceiling at density rho: the scan init_uacs_twin
-% runs, with the drag built at the same density. The thrust comes from the
-% authoritative map, whose own density is P.env.rho_sl, so passing a P with that
-% field changed is what asks for the available thrust at altitude.
+% Thrust limited level flight ceiling at density rho. The thrust comes from the
+% authoritative map, whose own density is P.env.rho_sl, so passing a P with that field
+% changed is what asks for the available thrust at altitude.
 V_scan = (P.limits.V_min_mps:0.5:P.limits.V_max_mps + 15)';
 CL = P.mass.m * P.env.g ./ (0.5 * rho * V_scan.^2 * P.geom.S);
 CD = P.aero.CD0 + P.aero.k_induced .* CL.^2;

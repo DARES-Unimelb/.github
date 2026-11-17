@@ -1,5 +1,5 @@
-% _DIAG_PID_LOOPS Temporary diagnostic for the design_pid stability search.
-% Prints closed-loop pole structure of every loop the design must close.
+% _DIAG_PID_LOOPS Print the closed-loop pole structure of every loop design_pid
+% must close.
 init_uacs_twin('quiet', true);
 trim = trim_cruise(P, P.op.cruise);
 lin = linearize_at(P, trim, struct('step', 1e-6, 'verbose', false));

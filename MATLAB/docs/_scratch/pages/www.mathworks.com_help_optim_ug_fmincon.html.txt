@@ -1,0 +1,2894 @@
+URL: https://www.mathworks.com/help/optim/ug/fmincon.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/optim/ug/fmincon.html
+
+ 
+
+ fmincon - Solve constrained nonlinear multivariable minimization problem - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Mathematics and Optimization
+
+ Optimization Toolbox
+
+ Nonlinear Optimization
+
+ Solver-Based Nonlinear Optimization
+
+ fmincon
+
+On this page
+Syntax
+Description
+ExamplesLinear Inequality Constraint
+Linear Inequality and Equality Constraint
+Minimize with Bound Constraints
+Nonlinear Constraints
+Nondefault Options
+Include Gradient
+Use a Problem Structure
+Obtain the Objective Function Value
+Examine Solution Using Extra Outputs
+Obtain All Outputs
+
+Input Argumentsfun
+x0
+A
+b
+Aeq
+beq
+lb
+ub
+nonlcon
+options
+problem
+
+Output Argumentsx
+fval
+exitflag
+output
+lambda
+grad
+hessian
+
+Limitations
+More AboutHessian as an Input
+Hessian Multiply Function
+Enhanced Exit Messages
+Local Minimum Found That Satisfies the Constraints
+Initial Point Is a Local Minimum That Satisfies the Constraints
+Local Minimum Possible, Constraints Satisfied
+fmincon Converged to an Infeasible Point
+Solver Stopped Prematurely
+Problem Appears Unbounded
+Feasible Point with Lower Objective Function Value Found
+Definitions for Exit Messages
+local minimum
+tolerance
+ConstraintTolerance
+Constraint Violation
+Feasible Directions
+first-order optimality measure
+OptimalityTolerance
+Predicted Change in Objective Function
+Output or Plot Function
+MaxIterations
+MaxFunctionEvaluations
+Objective Function Limit
+MaxSQPIter
+Relative Changes in All Elements of X
+Size of the Current Step
+StepTolerance
+Constraint Violation Locally Stationary
+Norm of Search Direction
+Gradient Calculation Is Undefined
+Feasibility Mode
+
+AlgorithmsChoosing the Algorithm
+Interior-Point Optimization
+SQP and SQP-Legacy Optimization
+Active-Set Optimization
+Trust-Region-Reflective Optimization
+
+Alternative FunctionalityApp
+
+References
+Extended Capabilities
+Version HistoryMaxTime option added for fmincon and quadprog
+Enhanced control over parallel execution with UseParallel argument
+CheckGradients option removed
+Test Before Generating Code
+Single-precision code generation
+CheckGradients option will be removed
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+fmincon
+R2026b
+Solve constrained nonlinear multivariable minimization problem
+collapse all in page
+
+Syntax
+x = fmincon(fun,x0,A,b)
+x = fmincon(fun,x0,A,b,Aeq,beq)
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub)
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon)
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options)
+x = fmincon(problem)
+[x,fval]
+= fmincon(___)
+[x,fval,exitflag,output]
+= fmincon(___)
+[x,fval,exitflag,output,lambda,grad,hessian]
+= fmincon(___)
+
+Description
+Nonlinear programming solver.
+
+Finds the minimum of a problem specified by
+minxf(x) such that {ineqnonlin(x)≤0eqnonlin(x)=0A⋅x≤bAeq⋅x=beqlb≤x≤ub,
+
+b and beq are vectors, A and
+ Aeq are matrices,
+ ineqnonlin(x) and
+ eqnonlin(x) are functions that return vectors,
+ and f(x) is a function that returns a scalar.
+ f(x),
+ ineqnonlin(x), and
+ eqnonlin(x) can be nonlinear functions.
+x, lb, and ub can be passed as
+ vectors or matrices; see Matrix Arguments.
+
+x = fmincon(fun,x0,A,b) starts
+at x0 and attempts to find a minimizer x of
+the function described in fun subject to the linear
+inequalities A*x ≤ b. x0 can
+be a scalar, vector, or matrix.
+
+Note
+Passing Extra Parameters explains
+how to pass extra parameters to the objective function and nonlinear
+constraint functions, if necessary.
+
+example
+
+x = fmincon(fun,x0,A,b,Aeq,beq) minimizes fun subject
+to the linear equalities Aeq*x = beq and A*x ≤ b. If no inequalities
+exist, set A = [] and b = [].
+
+example
+
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub) defines
+a set of lower and upper bounds on the design variables in x,
+so that the solution is always in the range lb ≤ x ≤ ub.
+If no equalities exist, set Aeq = [] and beq
+= []. If x(i) is unbounded below, set lb(i)
+= -Inf, and if x(i) is unbounded above,
+set ub(i) = Inf.
+
+Note
+If the specified input bounds for a problem are inconsistent,
+ fmincon throws an error. In this case, output
+ x is x0 and
+ fval is [].
+For the default &#34;interior-point&#34; algorithm,
+ fmincon sets components of x0
+ that violate the bounds lb ≤ x ≤ ub,
+ or are equal to a bound, to the interior of the bound region. For the
+ &#34;trust-region-reflective&#34; algorithm,
+ fmincon sets violating components to the interior
+ of the bound region. For other algorithms, fmincon sets
+ violating components to the closest bound. Components that respect the
+ bounds are not changed. See Iterations Can Violate Constraints.
+
+example
+
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon)
+ subjects the minimization to the nonlinear inequalities
+ ineqnonlin(x) or equalities eqnonlin(x)
+ defined in nonlcon. fmincon optimizes such
+ that ineqnonlin(x) ≤ 0 and
+ eqnonlin(x) = 0. If no bounds exist, set
+ lb = [] and/or ub = [].
+
+example
+
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options) minimizes
+with the optimization options specified in options.
+Use optimoptions to set these
+options. If there are no nonlinear inequality or equality constraints,
+set nonlcon = [].
+
+example
+
+x = fmincon(problem) finds the
+ minimum for problem, a structure described in problem.
+
+example
+
+[x,fval]
+= fmincon(___), for any syntax, returns the
+value of the objective function fun at the solution x.
+
+example
+
+[x,fval,exitflag,output]
+= fmincon(___) additionally returns a value exitflag that
+describes the exit condition of fmincon, and a
+structure output with information about the optimization
+process.
+
+example
+
+[x,fval,exitflag,output,lambda,grad,hessian]
+= fmincon(___) additionally returns:
+lambda — Structure with
+fields containing the Lagrange multipliers at the solution x.
+
+grad — Gradient of fun at
+the solution x.
+
+hessian — Hessian of fun at
+the solution x. See fmincon Hessian.
+
+example
+
+Examples
+collapse all
+Linear Inequality Constraint
+
+Open Live Script
+
+ Find the minimum value of Rosenbrock's function when there is a linear inequality constraint. 
+Set the objective function fun to be Rosenbrock's function. Rosenbrock's function is well-known to be difficult to minimize. It has its minimum objective value of 0 at the point (1,1). For more information, see Constrained Nonlinear Problem Using Optimize Live Editor Task or Solver. 
+fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+
+Find the minimum value starting from the point [-1,2], constrained to have x(1)+2x(2)≤1. Express this constraint in the form Ax <= b by taking A = [1,2] and b = 1. Notice that this constraint means that the solution will not be at the unconstrained solution (1,1), because at that point x(1)+2x(2)=3>1.
+x0 = [-1,2];
+A = [1,2];
+b = 1;
+x = fmincon(fun,x0,A,b)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.5022 0.2489
+
+Linear Inequality and Equality Constraint
+
+Open Live Script
+
+ Find the minimum value of Rosenbrock's function when there are both a linear inequality constraint and a linear equality constraint. 
+Set the objective function fun to be Rosenbrock's function. 
+fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+
+Find the minimum value starting from the point [0.5,0], constrained to have x(1)+2x(2)≤1 and 2x(1)+x(2)=1. 
+Express the linear inequality constraint in the form A*x <= b by taking A = [1,2] and b = 1.
+
+Express the linear equality constraint in the form Aeq*x = beq by taking Aeq = [2,1] and beq = 1. 
+
+x0 = [0.5,0];
+A = [1,2];
+b = 1;
+Aeq = [2,1];
+beq = 1;
+x = fmincon(fun,x0,A,b,Aeq,beq)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.4149 0.1701
+
+Minimize with Bound Constraints
+
+Open Live Script
+
+ Find the minimum of an objective function in the presence of bound constraints.
+The objective function is a simple algebraic function of two variables.
+fun = @(x)1+x(1)/(1+x(2)) - 3*x(1)*x(2) + x(2)*(1+x(1));
+
+Look in the region where x has positive values, x(1) ≤ 1, and x(2) ≤ 2.
+lb = [0,0];
+ub = [1,2];
+
+The problem has no linear constraints, so set those arguments to [].
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+
+Try an initial point in the middle of the region.
+x0 = (lb + ub)/2;
+
+Solve the problem.
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 1.0000 2.0000
+
+A different initial point can lead to a different solution.
+x0 = x0/5;
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+10-6 ×
+
+ 0.4000 0.4000
+
+To determine which solution is better, see Obtain the Objective Function Value.
+
+Nonlinear Constraints
+
+Open Live Script
+
+ Find the minimum of a function subject to nonlinear constraints
+Find the point where Rosenbrock's function is minimized within a circle, also subject to bound constraints.
+fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2; 
+
+Look within the region 0≤x(1)≤0.5, 0.2≤x(2)≤0.8.
+lb = [0,0.2];
+ub = [0.5,0.8]; 
+
+Also look within the circle centered at [1/3,1/3] with radius 1/3. Use this code for the nonlinear constraint function.
+function [ineqnonlin,eqnonlin] = circlecon(x)
+ineqnonlin = (x(1)-1/3)^2 + (x(2)-1/3)^2 - (1/3)^2;
+eqnonlin = [];
+end
+
+There are no linear constraints, so set those arguments to [].
+A = [];
+b = [];
+Aeq = [];
+beq = []; 
+
+Choose an initial point satisfying all the constraints.
+x0 = [1/4,1/4]; 
+
+Solve the problem.
+nonlcon = @circlecon;
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon) 
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.5000 0.2500
+
+Nondefault Options
+
+Open Live Script
+
+ Set options to view iterations as they occur and to use a different algorithm. 
+To observe the fmincon solution process, set the Display option to &#34;iter&#34;. Also, try the &#34;sqp&#34; algorithm, which is sometimes faster or more accurate than the default &#34;interior-point&#34; algorithm. 
+options = optimoptions(&#34;fmincon&#34;,Display=&#34;iter&#34;,Algorithm=&#34;sqp&#34;);
+
+Find the minimum of Rosenbrock's function on the unit disk, ||x||2≤1. First create a function that represents the nonlinear constraint.
+function [ineqnonlin,eqnonlin] = unitdisk(x)
+ineqnonlin = x(1)^2 + x(2)^2 - 1;
+eqnonlin = [];
+end
+
+Create the remaining problem specifications. Then run fmincon. 
+fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+lb = [];
+ub = [];
+nonlcon = @unitdisk;
+x0 = [0,0];
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options)
+
+ Iter Func-count Fval Feasibility Step Length Norm of First-order Wall-Clock Time 
+ step optimality
+ 0 3 1.000000e+00 0.000e+00 1.000e+00 0.000e+00 2.000e+00 0.049229 sec 
+ 1 12 8.913011e-01 0.000e+00 1.176e-01 2.353e-01 1.107e+01 0.070784 sec 
+ 2 22 8.047847e-01 0.000e+00 8.235e-02 1.900e-01 1.330e+01 0.102914 sec 
+ 3 28 4.197517e-01 0.000e+00 3.430e-01 1.217e-01 6.172e+00 0.105580 sec 
+ 4 31 2.733703e-01 0.000e+00 1.000e+00 5.254e-02 5.705e-01 0.107935 sec 
+ 5 34 2.397111e-01 0.000e+00 1.000e+00 7.498e-02 3.164e+00 0.110793 sec 
+ 6 37 2.036002e-01 0.000e+00 1.000e+00 5.960e-02 3.106e+00 0.112048 sec 
+ 7 40 1.164353e-01 0.000e+00 1.000e+00 1.459e-01 1.059e+00 0.113469 sec 
+ 8 43 1.161753e-01 0.000e+00 1.000e+00 1.754e-01 7.383e+00 0.114619 sec 
+ 9 46 5.901601e-02 0.000e+00 1.000e+00 1.547e-02 7.278e-01 0.115766 sec 
+ 10 49 4.533081e-02 2.898e-03 1.000e+00 5.393e-02 1.252e-01 0.116840 sec 
+ 11 52 4.567454e-02 2.225e-06 1.000e+00 1.492e-03 1.679e-03 0.117886 sec 
+ 12 55 4.567481e-02 4.406e-12 1.000e+00 2.095e-06 1.502e-05 0.119084 sec 
+ 13 58 4.567481e-02 0.000e+00 1.000e+00 2.203e-12 1.406e-05 0.120243 sec 
+
+Local minimum possible. Constraints satisfied.
+
+fmincon stopped because the size of the current step is less than
+the value of the step size tolerance and constraints are 
+satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.7864 0.6177
+
+For iterative display details, see Iterative Display.
+
+Include Gradient
+
+Open Live Script
+
+ Include gradient evaluation in the objective function for faster or more reliable computations.
+Include the gradient evaluation as a conditionalized output in the objective function file. For details, see Including Gradients and Hessians. The objective function is Rosenbrock's function,
+
+f(x)=100(x2-x12)2+(1-x1)2,
+
+which has gradient
+
+∇f(x)=[-400(x2-x12)x1-2(1-x1)200(x2-x12)].
+
+This code creates the rosenbrockwithgrad function, which implements the objective function with gradient.
+function [f,g] = rosenbrockwithgrad(x)
+% Calculate objective f
+f = 100*(x(2) - x(1)^2)^2 + (1-x(1))^2;
+
+if nargout > 1 % gradient required
+ g = [-400*(x(2)-x(1)^2)*x(1)-2*(1-x(1));
+ 200*(x(2)-x(1)^2)];
+end
+end
+
+Create options to use the objective function gradient.
+options = optimoptions(&#34;fmincon&#34;,SpecifyObjectiveGradient=true); 
+
+Create the other inputs for the problem. Then call fmincon.
+fun = @rosenbrockwithgrad;
+x0 = [-1,2];
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+lb = [-2,-2];
+ub = [2,2];
+nonlcon = [];
+x = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options) 
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 1.0000 1.0000
+
+Use a Problem Structure
+
+Open Live Script
+
+ Solve the same problem as in Nondefault Options using a problem structure instead of separate arguments.
+Create the options and a problem structure. See problem for the field names and required fields.
+options = optimoptions(&#34;fmincon&#34;,Display=&#34;iter&#34;,Algorithm=&#34;sqp&#34;);
+problem.options = options;
+problem.solver = &#34;fmincon&#34;;
+problem.objective = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+problem.x0 = [0,0];
+
+This code creates the nonlinear constraint function unitdisk.
+function [ineqnonlin,eqnonlin] = unitdisk(x)
+ineqnonlin = x(1)^2 + x(2)^2 - 1;
+eqnonlin = [];
+end
+
+Specify unitdisk as the nonlinear constraint function in problem.
+problem.nonlcon = @unitdisk;
+
+Solve the problem.
+x = fmincon(problem)
+
+ Iter Func-count Fval Feasibility Step Length Norm of First-order Wall-Clock Time 
+ step optimality
+ 0 3 1.000000e+00 0.000e+00 1.000e+00 0.000e+00 2.000e+00 0.078753 sec 
+ 1 12 8.913011e-01 0.000e+00 1.176e-01 2.353e-01 1.107e+01 0.132202 sec 
+ 2 22 8.047847e-01 0.000e+00 8.235e-02 1.900e-01 1.330e+01 0.143494 sec 
+ 3 28 4.197517e-01 0.000e+00 3.430e-01 1.217e-01 6.172e+00 0.150688 sec 
+ 4 31 2.733703e-01 0.000e+00 1.000e+00 5.254e-02 5.705e-01 0.158073 sec 
+ 5 34 2.397111e-01 0.000e+00 1.000e+00 7.498e-02 3.164e+00 0.167413 sec 
+ 6 37 2.036002e-01 0.000e+00 1.000e+00 5.960e-02 3.106e+00 0.170668 sec 
+ 7 40 1.164353e-01 0.000e+00 1.000e+00 1.459e-01 1.059e+00 0.173672 sec 
+ 8 43 1.161753e-01 0.000e+00 1.000e+00 1.754e-01 7.383e+00 0.176078 sec 
+ 9 46 5.901601e-02 0.000e+00 1.000e+00 1.547e-02 7.278e-01 0.179585 sec 
+ 10 49 4.533081e-02 2.898e-03 1.000e+00 5.393e-02 1.252e-01 0.182517 sec 
+ 11 52 4.567454e-02 2.225e-06 1.000e+00 1.492e-03 1.679e-03 0.185136 sec 
+ 12 55 4.567481e-02 4.406e-12 1.000e+00 2.095e-06 1.502e-05 0.189169 sec 
+ 13 58 4.567481e-02 0.000e+00 1.000e+00 2.442e-09 1.287e-05 0.191497 sec 
+
+Local minimum possible. Constraints satisfied.
+
+fmincon stopped because the size of the current step is less than
+the value of the step size tolerance and constraints are 
+satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.7864 0.6177
+
+The iterative display and solution are the same as in Nondefault Options.
+
+Obtain the Objective Function Value
+
+Open Live Script
+
+ Call fmincon with the fval output to obtain the value of the objective function at the solution.
+The Minimize with Bound Constraints example shows two solutions. Which is better? Run the example requesting the fval output as well as the solution.
+fun = @(x)1+x(1)./(1+x(2)) - 3*x(1).*x(2) + x(2).*(1+x(1));
+lb = [0,0];
+ub = [1,2];
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+x0 = (lb + ub)/2;
+[x,fval] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 1.0000 2.0000
+
+fval = 
+-0.6667
+
+Run the problem using a different starting point x0.
+x0 = x0/5;
+[x2,fval2] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x2 = 1×2
+10-6 ×
+
+ 0.4000 0.4000
+
+fval2 = 
+1.0000
+
+This solution has an objective function value fval2 = 1, which is higher than the first value fval = –0.6667. The first solution x has a lower local minimum objective function value.
+
+Examine Solution Using Extra Outputs
+
+Open Live Script
+
+ To easily examine the quality of a solution, request the exitflag and output outputs.
+Set up the problem of minimizing Rosenbrock's function on the unit disk, ||x||2≤1. First create a function that represents the nonlinear constraint.
+function [ineqnonlin,eqnonlin] = unitdisk(x)
+ineqnonlin = x(1)^2 + x(2)^2 - 1;
+eqnonlin = [];
+end
+
+Create the remaining problem specifications.
+fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+nonlcon = @unitdisk;
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+lb = [];
+ub = [];
+x0 = [0,0];
+
+Call fmincon using the x, fval, exitflag, and output outputs.
+[x,fval,exitflag,output] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon)
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.7864 0.6177
+
+fval = 
+0.0457
+
+exitflag = 
+1
+
+output = struct with fields:
+ iterations: 24
+ funcCount: 84
+ constrviolation: 0
+ stepsize: 6.9162e-06
+ algorithm: 'interior-point'
+ firstorderopt: 2.4373e-08
+ cgiterations: 4
+ message: 'Local minimum found that satisfies the constraints.↵↵Optimization completed because the objective function is non-decreasing in ↵feasible directions, to within the value of the optimality tolerance,↵and constraints are satisfied to within the value of the constraint tolerance.↵↵<stopping criteria details>↵↵Optimization completed: The relative first-order optimality measure, 2.437331e-08,↵is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint↵violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.'
+ bestfeasible: [1×1 struct]
+ wallclocktime: 0.10912 sec
+
+The exitflag value 1 indicates that the solution is a local minimum.
+
+The output structure reports several statistics about the solution process. In particular, it gives the number of iterations in output.iterations, number of function evaluations in output.funcCount, and the feasibility in output.constrviolation.
+
+Obtain All Outputs
+
+Open Live Script
+
+ fmincon optionally returns several outputs that you can use for analyzing the reported solution.
+Set up the problem of minimizing Rosenbrock's function on the unit disk. First create a function that represents the nonlinear constraint.
+function [ineqnonlin,eqnonlin] = unitdisk(x)
+ineqnonlin = x(1)^2 + x(2)^2 - 1;
+eqnonlin = [];
+end
+
+Create the remaining problem specifications.
+fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+nonlcon = @unitdisk;
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+lb = [];
+ub = [];
+x0 = [0,0]; 
+
+Request all fmincon outputs.
+[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon) 
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+<stopping criteria details>
+
+x = 1×2
+
+ 0.7864 0.6177
+
+fval = 
+0.0457
+
+exitflag = 
+1
+
+output = struct with fields:
+ iterations: 24
+ funcCount: 84
+ constrviolation: 0
+ stepsize: 6.9162e-06
+ algorithm: 'interior-point'
+ firstorderopt: 2.4373e-08
+ cgiterations: 4
+ message: 'Local minimum found that satisfies the constraints.↵↵Optimization completed because the objective function is non-decreasing in ↵feasible directions, to within the value of the optimality tolerance,↵and constraints are satisfied to within the value of the constraint tolerance.↵↵<stopping criteria details>↵↵Optimization completed: The relative first-order optimality measure, 2.437331e-08,↵is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint↵violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.'
+ bestfeasible: [1×1 struct]
+ wallclocktime: 0.38848 sec
+
+lambda = struct with fields:
+ eqlin: [0×1 double]
+ eqnonlin: [0×1 double]
+ ineqlin: [0×1 double]
+ lower: [2×1 double]
+ upper: [2×1 double]
+ ineqnonlin: 0.1215
+
+grad = 2×1
+
+ -0.1911
+ -0.1501
+
+hessian = 2×2
+
+ 497.2903 -314.5589
+ -314.5589 200.2392
+
+The lambda.ineqnonlin output shows that the nonlinear constraint is active at the solution, and gives the value of the associated Lagrange multiplier.
+
+The grad output gives the value of the gradient of the objective function at the solution x.
+
+The hessian output is described in fmincon Hessian.
+
+Input Arguments
+collapse all
+fun — Function to minimize
+ 
+function handle | function name
+
+Function to minimize, specified as a function handle or function
+name. fun is a function that accepts a vector or
+array x and returns a real scalar f,
+the objective function evaluated at x.
+fmincon passes x to
+ your objective function and any nonlinear constraint functions in the shape of the
+ x0 argument. For example, if x0 is a 5-by-3 array,
+ then fmincon passes x to fun as a
+ 5-by-3 array. However, fmincon multiplies linear constraint matrices
+ A or Aeq with x after
+ converting x to the column vector x(:).
+
+Specify fun as a function handle for a file:
+x = fmincon(@myfun,x0,A,b)
+
+where myfun is a MATLAB® function such
+as
+function f = myfun(x)
+f = ... % Compute function value at x
+
+You can also specify fun as a function handle
+for an anonymous function:
+x = fmincon(@(x)norm(x)^2,x0,A,b);
+
+If you can compute the gradient of fun
+ and the SpecifyObjectiveGradient
+ option is set to true, as set
+ by
+options = optimoptions(&#34;fmincon&#34;,SpecifyObjectiveGradient=true)
+
+then
+ fun must return the gradient vector
+ g(x) in the second output argument.
+If you can also compute the Hessian matrix and the
+ HessianFcn option is set to
+ &#34;objective&#34; via optimoptions
+ and the Algorithm option is
+ &#34;trust-region-reflective&#34;, fun
+ must return the Hessian value H(x), a symmetric matrix,
+ in a third output argument. fun can give a sparse
+ Hessian. See Hessian for fminunc trust-region or fmincon trust-region-reflective algorithms for details.
+If you can also compute the Hessian matrix and the Algorithm option is set
+ to &#34;interior-point&#34;, there is a different way to pass the
+ Hessian to fmincon. For more information, see Hessian for fmincon interior-point algorithm. For an example
+ using Symbolic Math Toolbox™ to compute the gradient and Hessian, see Calculate Gradients and Hessians Using Symbolic Math Toolbox.
+The interior-point and trust-region-reflective algorithms
+allow you to supply a Hessian multiply function. This function gives
+the result of a Hessian-times-vector product without computing the
+Hessian directly. This can save memory. See Hessian Multiply Function.
+Example: fun = @(x)sin(x(1))*cos(x(2))
+Data Types: char | function_handle | string
+
+x0 — Initial point
+ 
+real vector | real array
+
+Initial point, specified as a real vector or real array. Solvers use the
+ number of elements in, and size of, x0 to determine the
+ number and size of variables that fun accepts.
+&#34;interior-point&#34; algorithm — If the
+ HonorBounds option is true
+ (default), fmincon resets x0
+ components that are on or outside bounds lb or
+ ub to values
+ strictly between the bounds.
+
+&#34;trust-region-reflective&#34; algorithm —
+ fmincon resets infeasible
+ x0 components to be feasible with respect to
+ bounds or linear equalities.
+
+&#34;sqp&#34;, &#34;sqp-legacy&#34;, or
+ &#34;active-set&#34; algorithm —
+ fmincon resets x0
+ components that are outside bounds to the values of the
+ corresponding bounds.
+
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: x0 = [1,2,3,4]
+Data Types: single | double
+
+A — Linear inequality constraints
+ 
+real matrix
+
+Linear inequality constraints, specified as a real matrix. A is an
+ M-by-N
+ matrix, where M is the number of
+ inequalities, and N is the number
+ of variables (number of elements in
+ x0). For large problems with
+ algorithms that support sparse data, pass
+ A as a sparse matrix. See Sparsity in Optimization Algorithms.
+A encodes the M linear
+inequalities
+
+A*x <= b,
+
+where x is the column vector of N variables
+ x(:), and b is a column vector with
+ M elements.
+For example, consider these inequalities:
+x1 +
+ 2x2 ≤
+ 10
+
+3x1 +
+ 4x2 ≤
+ 20
+
+5x1 +
+ 6x2 ≤ 30.
+
+Specify the inequalities by entering the following constraints.
+A = [1,2;3,4;5,6];
+b = [10;20;30];
+
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: To specify that the x components sum to 1 or less, use A =
+ ones(1,N) and b = 1.
+Data Types: single | double
+
+b — Linear inequality constraints
+ 
+real vector
+
+Linear inequality constraints, specified as a real vector. b is an
+ M-element vector related to the A matrix. If
+ you pass b as a row vector, solvers internally convert
+ b to the column vector b(:).
+b encodes the M linear
+inequalities
+
+A*x <= b,
+
+where x is the column vector of N variables x(:),
+and A is a matrix of size M-by-N.
+For example, consider these inequalities:
+x1
+ + 2x2 ≤
+ 10
+
+3x1
+ + 4x2 ≤
+ 20
+
+5x1
+ + 6x2 ≤
+ 30.
+
+Specify the inequalities by entering the following constraints.
+A = [1,2;3,4;5,6];
+b = [10;20;30];
+
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: To specify that the x components sum to 1 or less, use A =
+ ones(1,N) and b = 1.
+Data Types: single | double
+
+Aeq — Linear equality constraints
+ 
+real matrix
+
+Linear equality constraints, specified as a real matrix. Aeq is an
+ Me-by-N matrix, where Me is the
+ number of equalities, and N is the number of variables (number of elements
+ in x0). For large problems with algorithms that support sparse data, pass
+ Aeq as a sparse matrix. See Sparsity in Optimization Algorithms.
+Aeq encodes the Me linear
+equalities
+
+Aeq*x = beq,
+
+where x is the column vector of N variables
+ x(:), and beq is a column vector with
+ Me elements.
+For example, consider these inequalities:
+x1 +
+ 2x2 +
+ 3x3 =
+ 10
+
+2x1 +
+ 4x2 +
+ x3 = 20.
+
+Specify the inequalities by entering the following constraints.
+Aeq = [1,2,3;2,4,1];
+beq = [10;20];
+
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: To specify that the x components sum to 1, use Aeq = ones(1,N) and
+ beq = 1.
+Data Types: single | double
+
+beq — Linear equality constraints
+ 
+real vector
+
+Linear equality constraints, specified as a real vector. beq is an
+ Me-element vector related to the Aeq matrix.
+ If you pass beq as a row vector, solvers internally convert it to the
+ column vector beq(:).
+beq encodes the Me linear
+equalities
+
+Aeq*x = beq,
+
+where x is the column vector of N variables
+ x(:), and Aeq is a matrix of size
+ Me-by-N.
+For example, consider these equalities:
+x1
+ + 2x2 +
+ 3x3 =
+ 10
+
+2x1
+ + 4x2 +
+ x3 =
+ 20.
+
+Specify the equalities by entering the following constraints.
+Aeq = [1,2,3;2,4,1];
+beq = [10;20];
+
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: To specify that the x components sum to 1, use Aeq = ones(1,N) and
+ beq = 1.
+Data Types: single | double
+
+lb — Lower bounds
+ 
+real vector | real array
+
+Lower bounds, specified as a real vector or real array. If the number of elements in
+ x0 is equal to the number of elements in lb,
+ then lb specifies that
+x(i) >= lb(i) for all i.
+
+If numel(lb) < numel(x0), then lb specifies
+that
+
+x(i) >= lb(i) for 1 <=
+i <= numel(lb).
+
+If lb has fewer elements than x0, solvers issue a
+ warning.
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: To specify that all x components are positive, use lb =
+ zeros(size(x0)).
+Data Types: single | double
+
+ub — Upper bounds
+ 
+real vector | real array
+
+Upper bounds, specified as a real vector or real array. If the number of elements in
+ x0 is equal to the number of elements in ub,
+ then ub specifies that
+x(i) <= ub(i) for all i.
+
+If numel(ub) < numel(x0), then ub specifies
+that
+
+x(i) <= ub(i) for 1 <=
+i <= numel(ub).
+
+If ub has fewer elements than x0, solvers issue
+ a warning.
+This argument can be single-precision for code generation
+ only, or by setting the UseCodegenSolver option to
+ true.
+Example: To specify that all x components are less than 1, use ub =
+ ones(size(x0)).
+Data Types: single | double
+
+nonlcon — Nonlinear constraints
+ 
+function handle | function name
+
+Nonlinear constraints, specified as a function handle or function name.
+ nonlcon is a function that accepts a vector or array
+ x and returns two arrays, ineqnonlin(x) and
+ eqnonlin(x).
+ineqnonlin(x) is the array of nonlinear inequality
+ constraints at x. fmincon attempts
+ to satisfy
+ineqnonlin(x) <= 0 for all entries of
+ ineqnonlin.
+
+eqnonlin(x) is the array of nonlinear equality constraints
+ at x. fmincon attempts to
+ satisfy
+eqnonlin(x) = 0 for all entries of
+ eqnonlin.
+
+Note
+The returned size of a nonlinear constraint function must not change during a
+ solver run.
+
+For example,
+  x = fmincon(@myfun,x0,...,@mycon)
+where mycon is a MATLAB function such as the
+ following:
+function [ineqnonlin,eqnonlin] = mycon(x)
+ineqnonlin = ... % Compute nonlinear inequalities at x.
+eqnonlin = ... % Compute nonlinear equalities at x.
+
+Suppose that the gradients of the constraints can also be computed and
+ the SpecifyConstraintGradient option is true, as
+ set by:
+  options =
+ optimoptions(&#34;fmincon&#34;,SpecifyConstraintGradient=true)
+In this case, the function nonlcon must also return, in the third and
+ fourth output arguments, Gineqnonlin, the gradient of
+ ineqnonlin(x), and Geqnonlin, the gradient of
+ eqnonlin(x). See Nonlinear Constraints for an explanation of how to “conditionalize” the
+ gradients for use in solvers that do not accept supplied gradients.
+If nonlcon returns a vector ineqnonlin of
+ m components and x has length
+ n, where n is the length of
+ x0, then the gradient Gineqnonlin of
+ ineqnonlin(x) is an n-by-m
+ matrix, where Gineqnonlin(i,j) is the partial derivative of
+ ineqnonlin(j) with respect to x(i) (that is,
+ the jth column of Gineqnonlin is the gradient of
+ the jth inequality constraint ineqnonlin(j)).
+ Likewise, if eqnonlin has p components, the
+ gradient Geqnonlin of eqnonlin(x) is an
+ n-by-p matrix, where
+ Geqnonlin(i,j) is the partial derivative of
+ eqnonlin(j) with respect to x(i) (that is, the
+ jth column of Geqnonlin is the gradient of the
+ jth equality constraint eqnonlin(j)).
+Note
+Setting SpecifyConstraintGradient to true is
+ effective only when SpecifyObjectiveGradient is set to
+ true. Internally, the objective is folded into the
+ constraint, so the solver needs both gradients (objective and constraint) supplied
+ in order to avoid estimating a gradient.
+
+See Passing Extra Parameters for an explanation of how to parameterize the
+ nonlinear constraint function nonlcon, if necessary.
+Data Types: char | function_handle | string
+
+options — Optimization options
+ 
+output of optimoptions | structure such as optimset returns
+
+Optimization options, specified as the output of
+ optimoptions or a structure such as
+ optimset returns.
+Some options apply to all algorithms, and others are relevant for
+ particular algorithms. See Optimization Options Reference for detailed information.
+
+Some options are absent from the
+ optimoptions display. These options appear in italics in the following
+ table. For details, see View Optimization Options.
+All
+ Algorithms | 
+Algorithm | Choose the optimization
+ algorithm:
+&#34;interior-point&#34;
+ (default)
+
+&#34;trust-region-reflective&#34;
+
+&#34;sqp&#34;
+
+&#34;sqp-legacy&#34;
+ (optimoptions only)
+
+&#34;active-set&#34;
+
+For information on choosing the
+ algorithm, see Choosing the Algorithm.
+The
+ trust-region-reflective algorithm requires:
+
+A gradient to be supplied in the objective
+ function
+
+SpecifyObjectiveGradient
+ to be set to true
+
+Either bound constraints or linear equality
+ constraints, but not both
+
+ If you select the
+ &#34;trust-region-reflective&#34;
+ algorithm and these conditions are not all satisfied,
+ fmincon throws an
+ error.
+The &#34;active-set&#34;,
+ &#34;sqp-legacy&#34;, and
+ &#34;sqp&#34; algorithms cannot use
+ sparse data. See Sparsity in Optimization Algorithms.
+ | 
+ConstraintTolerance | Tolerance on the constraint
+ violation, a nonnegative scalar. The default is
+ 1e-6. See Tolerances and Stopping Criteria.
+For optimset, the
+ name is TolCon. See Current and Legacy Option Names.
+ | 
+Diagnostics | Display diagnostic
+ information about the function to be minimized or
+ solved. Choices are &#34;off&#34; (default)
+ or &#34;on&#34;.
+ | 
+DiffMaxChange | Maximum change in variables
+ for finite-difference gradients (a positive scalar). The
+ default is Inf.
+ | 
+DiffMinChange | Minimum change in variables
+ for finite-difference gradients (a positive scalar). The
+ default is 0.
+ | 
+Display | Level of display (see Iterative Display):
+
+&#34;off&#34; or
+ &#34;none&#34; displays no
+ output.
+
+&#34;iter&#34; displays output at
+ each iteration, and gives the default exit
+ message.
+
+&#34;iter-detailed&#34; displays
+ output at each iteration, and gives the technical
+ exit message.
+
+&#34;notify&#34; displays output
+ only if the function does not converge, and gives
+ the default exit message.
+
+&#34;notify-detailed&#34;
+ displays output only if the function does not
+ converge, and gives the technical exit
+ message.
+
+&#34;final&#34; (default)
+ displays only the final output, and gives the
+ default exit message.
+
+&#34;final-detailed&#34; displays
+ only the final output, and gives the technical
+ exit message.
+
+ | 
+FiniteDifferenceStepSize | 
+ Scalar or vector step size factor for finite differences. When
+ you set FiniteDifferenceStepSize to a vector v, the
+ forward finite differences delta are
+delta = v.*sign′(x).*max(abs(x),TypicalX);
+
+where sign′(x) = sign(x) except sign′(0) = 1.
+ Central finite differences aredelta = v.*max(abs(x),TypicalX);
+
+A scalar FiniteDifferenceStepSize expands to a vector. The default
+ is sqrt(eps) for forward finite differences, and eps^(1/3)
+ for central finite differences.
+
+ For optimset, the name is
+ FinDiffRelStep. See Current and Legacy Option Names.
+
+ | 
+FiniteDifferenceType | Finite differences, used to
+ estimate gradients, are either
+ &#34;forward&#34; (default), or
+ &#34;central&#34; (centered).
+ &#34;central&#34; takes twice as many
+ function evaluations but should be more
+ accurate.
+fmincon
+ is careful to obey bounds when estimating both types of
+ finite differences. So, for example, it could take a
+ backward, rather than a forward, difference to avoid
+ evaluating at a point outside bounds. However, for the
+ interior-point algorithm,
+ &#34;central&#34; differences might
+ violate bounds during their evaluation if the
+ HonorBounds option is set to
+ false.
+The
+ &#34;trust-region-reflective&#34;
+ algorithm does not use
+ FiniteDifferenceType.
+For
+ optimset, the name is
+ FinDiffType. See Current and Legacy Option Names.
+ | 
+FunValCheck | Check whether objective
+ function values are valid. The default setting,
+ &#34;off&#34;, does not perform a check.
+ The &#34;on&#34; setting displays an error
+ when the objective function returns a value that is
+ complex, Inf,
+ or NaN.
+ | 
+MaxFunctionEvaluations | Maximum number of function
+ evaluations allowed, a nonnegative integer. The default
+ value for all algorithms except
+ interior-point is
+ 100*numberOfVariables; for the
+ interior-point algorithm the
+ default is 3000. See Tolerances and Stopping Criteria and Iterations and Function Counts.
+For optimset, the
+ name is MaxFunEvals. See Current and Legacy Option Names.
+ | 
+MaxIterations | Maximum number of iterations
+ allowed, a nonnegative integer. The default value for
+ all algorithms except interior-point
+ is 400; for the
+ interior-point algorithm the
+ default is 1000. See Tolerances and Stopping Criteria and Iterations and Function Counts.
+For optimset, the
+ name is MaxIter. See Current and Legacy Option Names.
+ | 
+MaxTime | Maximum amount of time that the algorithm runs as measured by
+ tic and toc, a duration or Inf. The
+ default is Inf, which disables this stopping criterion. The limit is
+ enforced after each iteration, so the solver can exceed the limit. If you specify a scalar
+ value, the value becomes a duration with the unit seconds.
+ | 
+OptimalityTolerance | Termination tolerance on the first-order optimality (a
+ nonnegative scalar). The default is 1e-6. See First-Order Optimality Measure.
+For optimset, the name
+ is TolFun. See Current and Legacy Option Names.
+ | 
+OutputFcn | Specify one or more
+ user-defined functions that an optimization function
+ calls at each iteration. Pass a function handle or a
+ cell array of function handles. The default is none
+ ([]). See Output Function and Plot Function Syntax.
+ | 
+PlotFcn | Plots various measures of
+ progress while the algorithm executes; select from
+ predefined plots or write your own. Pass a built-in plot
+ function name, a function handle, or a cell array of
+ built-in plot function names or function handles. For
+ custom plot functions, pass function handles. The
+ default is none ([]):
+
+&#34;optimplot&#34; plots the function value and constraint satisfaction,
+ similar to &#34;optimplotfvalconstr&#34;, except &#34;optimplot&#34;
+ determines feasibility based on the ConstraintTolerance and algorithm,
+ whereas &#34;optimplotfvalconstr&#34; uses a fixed tolerance of
+ 1e-6. In addition, &#34;optimplot&#34; shows the
+ coordinates of the iterative points, and displays the satisfaction of the stopping criteria.
+ For an example, see Monitor Solution Process with optimplot. The
+ &#34;optimplot&#34; plot function plots into a new window that is not shared
+ with any other plot function.
+
+&#34;optimplotx&#34; plots the
+ current point.
+
+&#34;optimplotfunccount&#34;
+ plots the function count.
+
+&#34;optimplotfval&#34; plots the
+ function value.
+
+&#34;optimplotfvalconstr&#34; plots the best feasible objective function value
+ found. The plot shows infeasible points in one color and feasible points in another, using a
+ feasibility tolerance of 1e-6.
+
+&#34;optimplotconstrviolation&#34;
+ plots the maximum constraint violation.
+
+&#34;optimplotstepsize&#34; plots
+ the step size.
+
+&#34;optimplotfirstorderopt&#34;
+ plots the first-order optimality measure.
+
+Custom plot functions use the same syntax
+ as output functions. See Output Functions for Optimization Toolbox and Output Function and Plot Function Syntax.
+For
+ optimset, the name is
+ PlotFcns. See Current and Legacy Option Names.
+ | 
+SpecifyConstraintGradient | Gradient for nonlinear
+ constraint functions defined by the user. When set to
+ the default, false,
+ fmincon estimates gradients of
+ the nonlinear constraints by finite differences. When
+ set to true,
+ fmincon expects the constraint
+ function to have four outputs, as described in nonlcon. The
+ trust-region-reflective algorithm
+ does not accept nonlinear constraints.
+For
+ optimset, the name is
+ GradConstr and the values are
+ &#34;on&#34; or &#34;off&#34;.
+ See Current and Legacy Option Names.
+ | 
+SpecifyObjectiveGradient | Gradient for the objective
+ function defined by the user. See the description of
+ fun to
+ see how to define the gradient in
+ fun. The default,
+ false, causes
+ fmincon to estimate gradients
+ using finite differences. Set to true
+ to have fmincon use a user-defined
+ gradient of the objective function. To use the
+ &#34;trust-region-reflective&#34;
+ algorithm, you must provide the gradient, and set
+ SpecifyObjectiveGradient to
+ true.
+For
+ optimset, the name is
+ GradObj and the values are
+ &#34;on&#34; or &#34;off&#34;.
+ See Current and Legacy Option Names.
+ | 
+StepTolerance | Termination tolerance on
+ x, a nonnegative scalar. The
+ default value for all algorithms except
+ &#34;interior-point&#34; is
+ 1e-6; for the
+ &#34;interior-point&#34; algorithm, the
+ default is 1e-10. See Tolerances and Stopping Criteria.
+For optimset, the
+ name is TolX. See Current and Legacy Option Names.
+ | 
+TypicalX | Typical x
+ values. The number of elements in
+ TypicalX is equal to the number
+ of elements in x0, the starting
+ point. The default value is
+ ones(numberofvariables,1).
+ fmincon uses
+ TypicalX for scaling finite
+ differences for gradient estimation.
+The
+ &#34;trust-region-reflective&#34;
+ algorithm does not use
+ TypicalX.
+ | 
+UseParallel | Option for using parallel computing to estimate
+ gradients, specified as one of these values:
+&#34;auto&#34; — If a parallel pool is open or automatic
+ pool creation is enabled, estimate gradients in parallel. Otherwise, estimate
+ gradients serially.
+
+&#34;on&#34; — Estimate gradients in parallel. If no
+ parallel pool is open, the solver starts one using your default cluster
+ profile.
+
+&#34;off&#34; (default) — Estimate gradients
+ serially.
+
+For backward compatibility, the values true and
+ false are also accepted for &#34;auto&#34; and
+ &#34;off&#34;, respectively.
+To use a parallel pool to run
+ computations in MATLAB, you must have Parallel Computing Toolbox™.
+For more information, see Parallel Computing.
+ | 
+Trust-Region-Reflective
+ Algorithm | 
+FunctionTolerance | Termination tolerance on the
+ function value, a nonnegative scalar. The default is
+ 1e-6. See Tolerances and Stopping Criteria.
+For optimset, the
+ name is TolFun. See Current and Legacy Option Names.
+ | 
+HessianFcn | If []
+ (default), fmincon approximates the
+ Hessian using finite differences, or uses a Hessian
+ multiply function (with option
+ HessianMultiplyFcn). If
+ &#34;objective&#34;,
+ fmincon uses a user-defined
+ Hessian (defined in fun).
+ See Hessian as an Input.
+For optimset, the
+ name is HessFcn. See Current and Legacy Option Names.
+ | 
+HessianMultiplyFcn | Hessian multiply
+ function, specified as a function handle. For
+ large-scale structured problems, this function computes
+ the Hessian matrix product H*Y
+ without actually forming H. The
+ function is of the
+ form
+W = hmfun(Hinfo,Y)
+
+where
+ Hinfo contains a matrix used to
+ compute H*Y. 
+The first
+ argument is the same as the third argument returned by
+ the objective function fun, for
+ example
+[f,g,Hinfo] = fun(x)
+
+Y
+ is a matrix that has the same number of rows as there
+ are dimensions in the problem. The matrix W =
+ H*Y, although H is not
+ formed explicitly. fmincon uses
+ Hinfo to compute the
+ preconditioner. For information on how to supply values
+ for any additional parameters hmfun
+ needs, see Passing Extra Parameters.
+Note
+To use the HessianMultiplyFcn
+ option, HessianFcn must be set to
+ [], and
+ SubproblemAlgorithm must be
+ &#34;cg&#34; (default).
+
+See Hessian Multiply Function. See Minimization with Dense Structured Hessian, Linear Equalities for an example.
+For
+ optimset, the name is
+ HessMult. See Current and Legacy Option Names.
+ | 
+HessPattern | Sparsity pattern of the
+ Hessian for finite differencing. Set
+ HessPattern(i,j) = 1 when you can
+ have
+ ∂2fun/∂x(i)∂x(j) ≠ 0.
+ Otherwise, set HessPattern(i,j) =
+ 0.
+Use
+ HessPattern when it is
+ inconvenient to compute the Hessian matrix
+ H in fun, but
+ you can determine (say, by inspection) when the
+ ith component of the gradient of
+ fun depends on
+ x(j).
+ fmincon can approximate
+ H via sparse finite differences
+ (of the gradient) if you provide the sparsity
+ structure of H as the
+ value for HessPattern. In other
+ words, provide the locations of the
+ nonzeros.
+When the structure is unknown, do
+ not set HessPattern. The default
+ behavior is as if HessPattern is a
+ dense matrix of ones. Then fmincon
+ computes a full finite-difference approximation in each
+ iteration. This computation can be very expensive for
+ large problems, so it is usually better to determine the
+ sparsity structure.
+ | 
+MaxPCGIter | Maximum number of
+ preconditioned conjugate gradient (PCG) iterations, a
+ positive scalar. The default is
+ max(1,floor(numberOfVariables/2))
+ for bound-constrained problems, and is
+ numberOfVariables for
+ equality-constrained problems. For more information, see
+ Preconditioned Conjugate Gradient Method.
+ | 
+PrecondBandWidth | Upper bandwidth of
+ preconditioner for PCG, a nonnegative integer. By
+ default, diagonal preconditioning is used (upper
+ bandwidth of 0). For some problems, increasing the
+ bandwidth reduces the number of PCG iterations. Setting
+ PrecondBandWidth to
+ Inf uses a direct factorization
+ (Cholesky) rather than the conjugate gradients (CG). The
+ direct factorization is computationally more expensive
+ than CG, but produces a better quality step towards the
+ solution.
+ | 
+SubproblemAlgorithm | Determines how the iteration
+ step is calculated. The default,
+ &#34;cg&#34;, takes a faster but less
+ accurate step than &#34;factorization&#34;.
+ See fmincon Trust Region Reflective Algorithm.
+For optimset, you
+ cannot set a nondefault value. To use
+ &#34;factorization&#34;, set options
+ using optimoptions.
+ | 
+TolPCG | Termination tolerance on the
+ PCG iteration, a positive scalar. The default is
+ 0.1.
+ | 
+Active-Set
+ Algorithm | 
+FunctionTolerance | Termination tolerance on the
+ function value, a nonnegative scalar. The default is
+ 1e-6. See Tolerances and Stopping Criteria.
+For optimset, the
+ name is TolFun. See Current and Legacy Option Names.
+ | 
+MaxSQPIter | Maximum number of SQP
+ iterations allowed, a positive integer. The default is
+ 10*max(numberOfVariables,
+ numberOfInequalities +
+ numberOfBounds).
+ | 
+RelLineSrchBnd | Relative bound (a real
+ nonnegative scalar value) on the line search step
+ length. The total displacement in x
+ satisfies |Δx(i)| ≤ relLineSrchBnd·
+ max(|x(i)|,|typicalx(i)|). This option provides control over the
+ magnitude of the displacements in x
+ for cases in which the solver takes steps that are
+ considered too large. The default is no bounds
+ ([]).
+ | 
+RelLineSrchBndDuration | Number of iterations for
+ which the bound specified in
+ RelLineSrchBnd should be active
+ (default is 1).
+ | 
+TolConSQP | Termination tolerance on
+ inner iteration SQP constraint violation, a positive
+ scalar. The default is
+ 1e-6.
+ | 
+Interior-Point
+ Algorithm | 
+BarrierParamUpdate | Specifies how fmincon updates
+ the barrier parameter (see fmincon Interior Point Algorithm). The options
+ are:
+&#34;monotone&#34; (default)
+
+&#34;predictor-corrector&#34;
+
+This option can affect the speed and
+ convergence of the solver, but the effect is not easy to
+ predict.
+ | 
+EnableFeasibilityMode | When true,
+ fmincon uses a different
+ algorithm for achieving feasibility. This setting can
+ help fmincon reach a feasible
+ solution in some cases. The default value is
+ false.
+Feasibility
+ mode usually performs better when
+ SubproblemAlgorithm is
+ &#34;cg&#34;. For details, see Feasibility Mode. For an example, see Obtain Solution Using Feasibility Mode.
+ | 
+HessianApproximation | Specifies how
+ fmincon calculates the Hessian
+ (see Hessian as an Input). The
+ choices are:
+&#34;bfgs&#34; (default)
+
+&#34;finite-difference&#34;
+
+&#34;lbfgs&#34;
+
+{&#34;lbfgs&#34;,Positive
+ Integer}
+
+Note
+To use HessianApproximation,
+ both HessianFcn and
+ HessianMultiplyFcn must be
+ empty entries ([]).
+
+For optimset, the name is
+ Hessian and the values are
+ &#34;user-supplied&#34;,
+ &#34;bfgs&#34;,
+ &#34;lbfgs&#34;,
+ &#34;fin-diff-grads&#34;,
+ &#34;on&#34;, or
+ &#34;off&#34;. See Current and Legacy Option Names.
+ | 
+HessianFcn | If []
+ (default), fmincon approximates the
+ Hessian using the method specified in
+ HessianApproximation, or uses a
+ supplied HessianMultiplyFcn. If a
+ function handle, fmincon uses
+ HessianFcn to calculate the
+ Hessian. See Hessian as an Input.
+For optimset, the
+ name is HessFcn. See Current and Legacy Option Names.
+ | 
+HessianMultiplyFcn | User-supplied function that
+ gives a Hessian-times-vector product (see Hessian Multiply Function). Pass a function
+ handle of the
+ form
+W = HessMultFcn(x,lambda,v);
+
+The
+ result W should be the product
+ H*v, where H
+ is the Hessian of the Lagrangian at x
+ (see Equation 3),
+ lambda is the Lagrange multiplier
+ (computed by fmincon), and
+ v is a vector of size
+ n-by-1. Set options as
+ follows:
+options = optimoptions(&#34;fmincon&#34;,...
+ Algorithm=&#34;interior-point&#34;,SpecifyObjectiveGradient=true,... 
+ SpecifyConstraintGradient=true,SubproblemAlgorithm=&#34;cg&#34;...
+ HessianMultiplyFcn=@HessMultFcn);
+
+For
+ information on how to supply values for any additional
+ parameters HessMultFcn needs, see
+ Passing Extra Parameters.
+Note
+To use the HessianMultiplyFcn
+ option, HessianFcn must be set to
+ [] (the default), and
+ SubproblemAlgorithm must be
+ &#34;cg&#34;.
+
+For an example using a Hessian multiply
+ function with the &#34;interior-point&#34;
+ algorithm, see Hessian Multiply Function for fmincon interior-point Algorithm.
+For optimset, the
+ name is HessMult. See Current and Legacy Option Names.
+ | 
+HonorBounds | The default
+ true ensures that bound
+ constraints are satisfied at every iteration. Disable by
+ setting to false.
+For
+ optimset, the name is
+ AlwaysHonorConstraints and the
+ values are &#34;bounds&#34; or
+ &#34;none&#34;. See Current and Legacy Option Names.
+ | 
+InitBarrierParam | Initial barrier value, a
+ positive scalar. Sometimes it might help to try a value
+ above the default 0.1, especially if
+ the objective or constraint functions are
+ large.
+ | 
+InitTrustRegionRadius | Initial radius of the trust
+ region, a positive scalar. On badly scaled problems it
+ might help to choose a value smaller than the default n, where n is the
+ number of variables.
+ | 
+MaxProjCGIter | A tolerance (stopping
+ criterion) for the number of projected conjugate
+ gradient iterations; this is an inner iteration, not the
+ number of iterations of the algorithm. This positive
+ integer has a default value of
+ 2*(numberOfVariables - numberOfEqualities).
+ | 
+ObjectiveLimit | A tolerance (stopping
+ criterion) that is a scalar. If the objective function
+ value goes below ObjectiveLimit and
+ the iterate is feasible, the iterations halt, because
+ the problem is presumably unbounded. The default value
+ is -1e20.
+ | 
+ScaleProblem | true
+ causes the algorithm to normalize all constraints and
+ the objective function. Disable by setting to the
+ default false.
+For
+ optimset, the values are
+ &#34;obj-and-constr&#34; or
+ &#34;none&#34;. See Current and Legacy Option Names.
+ | 
+SubproblemAlgorithm | Determines how the iteration
+ step is calculated. The default,
+ &#34;factorization&#34;, is usually
+ faster than &#34;cg&#34; (conjugate
+ gradient), though &#34;cg&#34; might be
+ faster for large problems with dense Hessians. See fmincon Interior Point Algorithm.
+For optimset, the
+ values are &#34;cg&#34; and
+ &#34;ldl-factorization&#34;. See Current and Legacy Option Names.
+ | 
+TolProjCG | A relative tolerance
+ (stopping criterion) for projected conjugate gradient
+ algorithm; this is for an inner iteration, not the
+ algorithm iteration. This positive scalar has a default
+ of 0.01.
+ | 
+TolProjCGAbs | Absolute tolerance (stopping
+ criterion) for projected conjugate gradient algorithm;
+ this is for an inner iteration, not the algorithm
+ iteration. This positive scalar has a default of
+ 1e-10.
+ | 
+SQP and SQP Legacy
+ Algorithms | 
+ObjectiveLimit | A tolerance (stopping
+ criterion) that is a scalar. If the objective function
+ value goes below ObjectiveLimit and
+ the iterate is feasible, the iterations halt, because
+ the problem is presumably unbounded. The default value
+ is -1e20.
+ | 
+ScaleProblem | true
+ causes the algorithm to normalize all constraints and
+ the objective function. Disable by setting to the
+ default false.
+For
+ optimset, the values are
+ &#34;obj-and-constr&#34; or
+ &#34;none&#34;. See Current and Legacy Option Names.
+ | 
+UseCodegenSolver | Indication to use the version of the software that runs on
+ target hardware, specified as true or the
+ default false. This option allows you to
+ check the behavior of the solver before you generate code or
+ deploy the code to hardware. You can include the option when you
+ generate code; the option has no effect in code generation, but
+ leaving the option in saves you the step of removing it. Even
+ though the generated code is identical to the MATLAB code, results can differ slightly because linked
+ math libraries can differ.
+ | 
+Single-Precision Code
+ Generation | 
+Algorithm | Must be
+ &#34;sqp&#34; or
+ &#34;sqp-legacy&#34;.
+ | 
+ConstraintTolerance | Tolerance on the constraint
+ violation, a nonnegative scalar. The default is
+ 1e-3. See Tolerances and Stopping Criteria.
+ | 
+FiniteDifferenceStepSize | Scalar or vector step
+ size factor for finite differences. When you set
+ FiniteDifferenceStepSize to a
+ vector v, the forward finite
+ differences delta are
+delta =
+ v.*sign′(x).*max(abs(x),TypicalX); | (1) | 
+
+where sign′(x) = sign(x)
+ except sign′(0) = 1. Central finite
+ differences aredelta =
+ v.*max(abs(x),TypicalX); | (2) | 
+
+A scalar
+ FiniteDifferenceStepSize expands
+ to a vector. The default is
+ sqrt(eps(&#34;single&#34;)) for forward
+ finite differences, and
+ eps(&#34;single&#34;)^(1/3) for central
+ finite differences.
+ | 
+FiniteDifferenceType | Finite differences, used to
+ estimate gradients, are either
+ &#34;forward&#34; (default), or
+ &#34;central&#34; (centered).
+ &#34;central&#34; takes twice as many
+ function evaluations but should be more
+ accurate.
+fmincon
+ is careful to obey bounds when estimating both types of
+ finite differences. So, for example, it could take a
+ backward, rather than a forward, difference to avoid
+ evaluating at a point outside bounds.
+ | 
+MaxFunctionEvaluations | Maximum number of function
+ evaluations allowed, a nonnegative integer. The default
+ value is 100*numberOfVariables. See
+ Tolerances and Stopping Criteria and Iterations and Function Counts.
+ | 
+MaxIterations | Maximum number of iterations
+ allowed, a nonnegative integer. The default value is
+ 400. See Tolerances and Stopping Criteria and Iterations and Function Counts.
+ | 
+ObjectiveLimit | A tolerance (stopping
+ criterion) that is a scalar. If the objective function
+ value goes below ObjectiveLimit and
+ the iterate is feasible, the iterations halt, because
+ the problem is presumably unbounded. The default value
+ is -1e20.
+ | 
+OptimalityTolerance | Termination tolerance
+ on the first-order optimality (a nonnegative scalar).
+ The default is 1e-3. See First-Order Optimality Measure.
+ | 
+ScaleProblem | true
+ causes the algorithm to normalize all constraints and
+ the objective function. Disable by setting to the
+ default false.
+ | 
+SpecifyConstraintGradient | Gradient for nonlinear
+ constraint functions defined by the user. When set to
+ the default, false,
+ fmincon estimates gradients of
+ the nonlinear constraints by finite differences. When
+ set to true,
+ fmincon expects the constraint
+ function to have four outputs, as described in nonlcon.
+ | 
+SpecifyObjectiveGradient | Gradient for the objective
+ function defined by the user. See the description of
+ fun to
+ see how to define the gradient in
+ fun. The default,
+ false, causes
+ fmincon to estimate gradients
+ using finite differences. Set to true
+ to have fmincon use a user-defined
+ gradient of the objective function.
+ | 
+StepTolerance | Termination tolerance on
+ x, a nonnegative scalar. The
+ default value is 1e-4. See Tolerances and Stopping Criteria.
+ | 
+TypicalX | Typical x
+ values. The number of elements in
+ TypicalX is equal to the number
+ of elements in x0, the starting
+ point. The default value is
+ ones(numberofvariables,1).
+ fmincon uses
+ TypicalX for scaling finite
+ differences for gradient estimation.
+ | 
+UseCodegenSolver | Indication to use the version of the software that runs on
+ target hardware, specified as true or the
+ default false. This option allows you to
+ check the behavior of the solver before you generate code or
+ deploy the code to hardware. You can include the option when you
+ generate code; the option has no effect in code generation, but
+ leaving the option in saves you the step of removing it. Even
+ though the generated code is identical to the MATLAB code, results can differ slightly because linked
+ math libraries can differ.
+ | 
+
+Note
+fmincon supports single-precision only in generated code, not in the MATLAB environment.
+
+Example: options =
+ optimoptions(&#34;fmincon&#34;,SpecifyObjectiveGradient=true,SpecifyConstraintGradient=true)
+
+problem — Problem structure
+ 
+structure
+
+Problem structure, specified as a structure with the following
+fields:
+Field Name | Entry | 
+objective 
+ | Objective function | 
+x0 
+ | Initial point for x | 
+Aineq 
+ | Matrix for linear inequality constraints | 
+bineq 
+ | Vector for linear inequality constraints | 
+Aeq 
+ | Matrix for linear equality constraints | 
+beq 
+ | Vector for linear equality constraints | 
+lb | Vector of lower bounds | 
+ub | Vector of upper bounds | 
+nonlcon 
+ | Nonlinear constraint function | 
+solver 
+ | &#34;fmincon&#34; | 
+options 
+ | Options created with optimoptions | 
+
+You must supply at least the objective, x0, solver,
+and options fields in the problem structure.
+
+Data Types: struct
+
+Output Arguments
+collapse all
+x — Solution
+ 
+real vector | real array
+
+Solution, returned as a real vector or real array. The size
+of x is the same as the size of x0.
+Typically, x is a local solution to the problem
+when exitflag is positive. For information on
+the quality of the solution, see When the Solver Succeeds.
+
+fval — Objective function value at solution
+ 
+real number
+
+Objective function value at the solution, returned as a real
+number. Generally, fval = fun(x). 
+
+exitflag — Reason fmincon stopped
+ 
+integer
+
+Reason fmincon stopped, returned as an
+integer.
+All Algorithms:
+ | 
+1
+ | First-order optimality measure was less than options.OptimalityTolerance,
+and maximum constraint violation was less than options.ConstraintTolerance.
+ | 
+0
+ | Number of iterations exceeded options.MaxIterations, number of
+ function evaluations exceeded
+ options.MaxFunctionEvaluations,
+ or options.MaxTime
+ exceeded.
+ | 
+-1
+ | Stopped by an output function or plot function.
+ | 
+-2
+ | No feasible point was found.
+ | 
+All algorithms except active-set:
+ | 
+2
+ | Change in x was less than options.StepTolerance and
+maximum constraint violation was less than options.ConstraintTolerance.
+ | 
+trust-region-reflective algorithm
+only:
+ | 
+3
+ | Change in the objective function value was less than options.FunctionTolerance and
+maximum constraint violation was less than options.ConstraintTolerance.
+ | 
+active-set algorithm
+only:
+ | 
+4
+ | Magnitude of the search direction was less than 2*options.StepTolerance and
+maximum constraint violation was less than options.ConstraintTolerance.
+ | 
+5
+ | Magnitude of directional derivative in search direction
+was less than 2*options.OptimalityTolerance and
+maximum constraint violation was less than options.ConstraintTolerance.
+ | 
+interior-point, sqp-legacy,
+and sqp algorithms:
+ | 
+-3
+ | Objective function at current iteration went below options.ObjectiveLimit and
+maximum constraint violation was less than options.ConstraintTolerance.
+ | 
+
+output — Information about the optimization process
+ 
+structure
+
+Information about the optimization process, returned as a structure
+with fields:
+iterations | Number of iterations taken
+ | 
+funcCount | Number of function evaluations
+ | 
+lssteplength | Size of line search step relative to search direction
+(active-set and sqp algorithms
+only)
+ | 
+constrviolation | Maximum of constraint functions
+ | 
+stepsize | Length of last displacement in x (not
+in active-set algorithm)
+ | 
+algorithm | Optimization algorithm used
+ | 
+cgiterations | Total number of PCG iterations (trust-region-reflective and interior-point algorithms)
+ | 
+firstorderopt | Measure of first-order optimality 
+ | 
+bestfeasible | Best (lowest objective function) feasible point
+ encountered at the ends of the iterations. A structure
+ with these fields:
+x
+
+fval
+
+firstorderopt
+
+constrviolation
+
+If no feasible point is found, the
+ bestfeasible field is empty. For
+ this purpose, a point is feasible when the maximum of
+ the constraint functions does not exceed
+ options.ConstraintTolerance.
+The
+ bestfeasible point can differ
+ from the returned solution point x
+ for a variety of reasons. For an example, see Obtain Best Feasible Point.
+ | 
+
+ wallclocktime
+ | Time taken by function execution. | 
+message | Exit message
+ | 
+
+lambda — Lagrange multipliers at the solution
+ 
+structure
+
+Lagrange multipliers at the solution, returned as a structure with fields:
+lower | Lower bounds corresponding to lb
+ | 
+upper | Upper bounds corresponding to ub
+ | 
+ineqlin | Linear inequalities corresponding to A and b
+ | 
+eqlin | Linear equalities corresponding to Aeq and beq
+ | 
+ineqnonlin | Nonlinear inequalities corresponding to the ineqnonlin function in
+ nonlcon
+ | 
+eqnonlin | Nonlinear equalities corresponding to the eqnonlin function in
+ nonlcon
+ | 
+
+grad — Gradient at the solution
+ 
+real vector
+
+Gradient at the solution, returned as a real vector. grad gives
+the gradient of fun at the point x(:).
+
+hessian — Approximate Hessian
+ 
+real matrix
+
+Approximate Hessian, returned as a real matrix. For the meaning
+of hessian, see Hessian Output.
+
+Limitations
+fmincon is a gradient-based method
+that is designed to work on problems where the objective and constraint
+functions are both continuous and have continuous first derivatives.
+
+For the &#34;trust-region-reflective&#34; algorithm, you must
+ provide the gradient in fun and set the
+ &#34;SpecifyObjectiveGradient&#34; option to
+ true.
+
+The &#34;trust-region-reflective&#34; algorithm does not allow
+ equal upper and lower bounds. For example, if lb(2)==ub(2),
+ fmincon gives this error:
+Equal upper and lower bounds not permitted in trust-region-reflective algorithm. Use
+either interior-point or SQP algorithms instead.
+
+There are two different syntaxes for passing a Hessian,
+and there are two different syntaxes for passing a HessianMultiplyFcn function;
+one for trust-region-reflective, and another for interior-point.
+See Including Hessians.
+For trust-region-reflective, the
+Hessian of the Lagrangian is the same as the Hessian of the objective
+function. You pass that Hessian as the third output of the objective
+function. 
+
+For interior-point, the Hessian
+of the Lagrangian involves the Lagrange multipliers and the Hessians
+of the nonlinear constraint functions. You pass the Hessian as a separate
+function that takes into account both the current point x and
+the Lagrange multiplier structure lambda.
+
+When the problem is infeasible, fmincon attempts
+to minimize the maximum constraint value.
+
+More About
+collapse all
+Hessian as an Input
+
+fmincon uses a Hessian
+as an optional input. This Hessian is the matrix of second derivatives
+of the Lagrangian (see Equation 1), namely,
+∇xx2L(x,λ)=∇2f(x)+∑λi∇2ineqnonlini(x)+∑λi∇2eqnonlini(x). | (3) | 
+
+For details of how to supply a Hessian to the trust-region-reflective or interior-point algorithms,
+see Including Hessians.
+The active-set and sqp algorithms
+do not accept an input Hessian. They compute a quasi-Newton approximation
+to the Hessian of the Lagrangian.
+The interior-point algorithm has several choices for the
+ &#34;HessianApproximation&#34; option; see Choose Input Hessian Approximation for interior-point fmincon:
+
+&#34;bfgs&#34; — fmincon
+ calculates the Hessian by a dense quasi-Newton approximation. This is
+ the default Hessian approximation.
+
+&#34;lbfgs&#34; — fmincon
+ calculates the Hessian by a limited-memory, large-scale quasi-Newton
+ approximation. The default memory, 10 iterations, is used.
+
+{&#34;lbfgs&#34;,positive integer} —
+ fmincon calculates the Hessian by a
+ limited-memory, large-scale quasi-Newton approximation. The positive
+ integer specifies how many past iterations should be remembered.
+
+&#34;finite-difference&#34; —
+ fmincon calculates a Hessian-times-vector
+ product by finite differences of the gradient(s). You must supply the
+ gradient of the objective function, and also gradients of nonlinear
+ constraints (if they exist). Set the
+ &#34;SpecifyObjectiveGradient&#34; option to
+ true and, if applicable, the
+ &#34;SpecifyConstraintGradient&#34; option to
+ true. You must set the
+ &#34;SubproblemAlgorithm&#34; to
+ &#34;cg&#34;.
+
+Hessian Multiply Function
+
+The interior-point and trust-region-reflective algorithms
+allow you to supply a Hessian multiply function. This function gives
+the result of a Hessian-times-vector product, without computing the
+Hessian directly. This can save memory. For details, see Hessian Multiply Function.
+
+Enhanced Exit Messages
+
+The next few items list the possible enhanced exit messages from
+ fmincon. Enhanced exit messages give a link for more
+ information as the first sentence of the message.
+
+Local Minimum Found That Satisfies the Constraints
+
+The solver located a point that seems to be a local minimum, since
+ the point is feasible (satisfies constraints within the ConstraintTolerance
+ tolerance) and the first-order optimality measure is less than the
+ OptimalityTolerance tolerance. 
+For suggestions on how to proceed, see When the Solver Succeeds.
+
+Initial Point Is a Local Minimum That Satisfies the Constraints
+
+The initial point seems to be a local minimum, since
+ the point is feasible (satisfies constraints within the ConstraintTolerance
+ tolerance), and the first-order optimality measure is less than the
+ OptimalityTolerance
+ tolerance.
+For suggestions on how to proceed, see Final Point Equals Initial Point.
+
+Local Minimum Possible, Constraints Satisfied
+
+The solver may have reached a local minimum, but
+ cannot be certain because the first-order optimality measure is not less than
+ the OptimalityTolerance
+ tolerance. The constraints
+ are satisfied to within the ConstraintTolerance constraint
+ tolerance.
+For suggestions on how to proceed, see Local Minimum Possible.
+
+fmincon Converged to an Infeasible Point
+
+fmincon converged to a point that does not satisfy all
+ constraints to within the constraint tolerance called ConstraintTolerance. The reason
+ fmincon stopped is that the last step was too small.
+ When the relative step size goes below the StepTolerance tolerance, then
+ the iterations end.
+For suggestions on how to proceed, see Converged to an Infeasible Point.
+
+Solver Stopped Prematurely
+
+The solver stopped because it reached a limit on the number of iterations or function evaluations before it minimized the objective to the requested tolerance. 
+For suggestions on how to proceed, see Too Many Iterations or Function Evaluations.
+
+Problem Appears Unbounded
+
+The solver reached a feasible point whose objective function value was less
+ than or equal to the ObjectiveLimit
+ tolerance. The problem
+ is unbounded, or poorly scaled, or the ObjectiveLimit option
+ is too high.
+For suggestions on how to proceed, see Problem Unbounded.
+
+Feasible Point with Lower Objective Function Value Found
+
+fmincon encountered a feasible point with a lower objective
+ value than the final point. This includes the case where the final point is
+ infeasible, in which case the final objective function value is not relevant.
+ Feasible means that the maximum infeasibility is less than the
+ ConstraintTolerance option.
+The best feasible point is in the bestfeasible field of the
+ output structure. For an
+ example, see Obtain Best Feasible Point.
+
+Definitions for Exit Messages
+
+The next few items contain definitions for terms in the fmincon exit messages.
+
+local minimum
+
+A local minimum of a function is a point where the function value is smaller than at nearby points, but possibly greater than at a distant point.
+A global minimum is a point where the function value is smaller than at all other feasible points.
+
+Solvers try to find a local minimum. The result can be a global minimum. For more information, see Local vs. Global Optima.
+
+tolerance
+
+Generally, a tolerance is a threshold which, if
+ crossed, stops the iterations of a solver. For more information on tolerances, see Tolerances and Stopping Criteria.
+
+ConstraintTolerance
+
+The constraint tolerance called
+ ConstraintTolerance is the maximum of the values of all
+ constraint functions at the current point. 
+ConstraintTolerance operates differently from other tolerances.
+ If ConstraintTolerance is not satisfied (i.e., if the magnitude
+ of the constraint function exceeds ConstraintTolerance), the
+ solver attempts to continue, unless it is halted for another reason. A solver does
+ not halt simply because ConstraintTolerance is satisfied.
+
+Constraint Violation
+
+The constraint violation is the maximum of the values of all constraint functions
+ at the current point. This is measured against the tolerance called
+ ConstraintTolerance.
+ConstraintTolerance operates differently from other tolerances.
+ If ConstraintTolerance is not satisfied (i.e., if the magnitude
+ of the constraint function exceeds ConstraintTolerance), the
+ solver attempts to continue, unless it is halted for another reason. A solver does
+ not halt simply because ConstraintTolerance is satisfied.
+
+Feasible Directions
+
+Feasible directions are those vectors from the current point that locally satisfy
+ the constraints. They either point to the interior of the region where the
+ constraints are satisfied, or are tangent to the boundary of binding
+ constraints.
+
+first-order optimality measure
+
+The first order optimality measure for constrained problems is the maximum of the
+ following two quantities:
+‖∇xL(x,λ)‖=‖∇f(x)+ATλineqlin+AeqTλeqlin                       +∑λineqnonlin,i∇ci(x)+∑λeqnonlin,i∇ceqi(x)‖,
+
+‖|li−xi|λlower,i→,|xi−ui|λupper,i→,|(Ax−b)i|λineqlin,i→,|ineqnonlini(x)|λineqnonlin,i→‖,
+
+For unconstrained problems, it is the maximum of the absolute value of the
+ components of the gradient vector (also known as the infinity norm).
+This should be zero at a minimizing point. 
+For more information, including definitions of all the variables in these
+ equations, see First-Order Optimality Measure.
+
+OptimalityTolerance
+
+The tolerance called OptimalityTolerance relates to the
+ first-order optimality measure. Iterations end when the first-order optimality
+ measure is less than OptimalityTolerance. For more information,
+ see First-Order Optimality Measure.
+
+Predicted Change in Objective Function
+
+The predicted change in objective function is the amount the solver estimates the
+ objective function would decrease if the current point were moved along the
+ estimated best search direction. This estimated decrease is the inner product of the
+ gradient of the objective at the current point with the search direction, times the
+ step length. Optimization Toolbox™ solvers compute search directions via various algorithms, described in
+ Constrained Nonlinear Optimization Algorithms.
+
+Output or Plot Function
+
+An output function (or plot function) is evaluated once per iteration of a solver. It can report many optimization quantities during the course of a solver's progress, and can halt the solver. 
+For more information, see Output Functions for Optimization Toolbox or Plot Functions.
+
+MaxIterations
+
+MaxIterations is a tolerance on the number of iterations the solver performs. When the solver has taken MaxIterations iterations, the iterations end. 
+For more information, see Iterations and Function Counts or Tolerances and Stopping Criteria.
+
+MaxFunctionEvaluations
+
+MaxFunctionEvaluations is a tolerance on the number of points where the solver evaluates the objective and/or constraint functions. When the solver has evaluated functions at MaxFunctionEvaluations points, the iterations end. 
+For more information, see Iterations and Function Counts or Tolerances and Stopping Criteria.
+
+Objective Function Limit
+
+The solver reached a feasible point whose objective function value was less
+ than or equal to the ObjectiveLimit
+ tolerance. The problem
+ is unbounded, or poorly scaled, or the ObjectiveLimit option
+ is too high.
+For suggestions on how to proceed, see Problem Unbounded.
+
+MaxSQPIter
+
+MaxSQPIter is a tolerance on the number of
+ sequential quadratic programming subproblem iterations the solver performs. When the
+ solver has taken MaxSQPIter iterations for the subproblem, the
+ subproblem iterations end. 
+For more information, see Sequential Quadratic Programming (SQP).
+
+Relative Changes in All Elements of X
+
+Relative changes in all elements of x is the normalized step vector. This vector
+ is the change in location where the objective function was evaluated, divided by the
+ infinity norm of the current position. If the maximum of this relative norm goes
+ below the StepTolerance
+ tolerance, then the
+ iterations end. 
+
+Size of the Current Step
+
+The size of the current step is the norm of the change in location where the
+ objective function was evaluated. In this case, fmincon uses a
+ relative size: the step size divided by the infinity norm of the current position.
+ When this relative step size goes below the StepTolerance
+ tolerance, then the
+ iterations end.
+
+StepTolerance
+
+StepTolerance is a tolerance for the size of
+ the last step, meaning the size of the change in location where the objective
+ function was evaluated. 
+
+Constraint Violation Locally Stationary
+
+The constraint violations are the constraint functions that are not satisfied at
+ the current point. The norm of the gradient of these functions is so small that the
+ solver could not proceed. The current point is not feasible (some constraint
+ violation exceeds the ConstraintTolerance
+ tolerance).
+For suggestions on how to proceed, see Converged to an Infeasible Point.
+
+Norm of Search Direction
+
+The search direction is the vector from the current point along which the solver
+ looks for an improvement. The norm of this direction is the infinity norm, the
+ maximum of the absolute values of the components of the search vector.
+Optimization Toolbox solvers compute search directions via various algorithms, described in
+ Constrained Nonlinear Optimization Algorithms.
+
+Gradient Calculation Is Undefined
+
+fmincon estimates gradients of objective and nonlinear
+ constraint functions by taking finite differences. A finite difference calculation
+ stepped outside the region where a function is well-defined, returning
+ Inf, NaN, or a complex result.
+For more information about how solvers compute and use gradients, see Constrained Nonlinear Optimization Algorithms. For suggestions on how to proceed,
+ see 6. Provide Gradient or Jacobian.
+
+Feasibility Mode
+
+The fmincon
+ &#34;interior-point&#34; algorithm can search for a feasible point using
+ a specialized algorithm. Enable this search by setting the
+ EnableFeasibilityMode option to true using
+ optimoptions. For added efficiency with difficult problems,
+ set the SubproblemAlgorithm option to
+ &#34;cg&#34;:
+options = optimoptions(&#34;fmincon&#34;,...
+ Algorithm=&#34;interior-point&#34;,...
+ EnableFeasibilityMode=true,...
+ SubproblemAlgorithm=&#34;cg&#34;);
+
+For details of the EnableFeasibilityMode algorithm, see Feasibility Mode.
+
+Algorithms
+collapse all
+Choosing the Algorithm
+
+For help choosing the algorithm, see fmincon Algorithms. To set the algorithm, use optimoptions to create options, and use the
+ &#34;Algorithm&#34; name-value pair.
+The rest of this section gives brief summaries or pointers to information about
+ each algorithm.
+
+Interior-Point Optimization
+
+This algorithm is described in fmincon Interior Point Algorithm. There is more extensive
+description in [1], [41], and [9].
+
+SQP and SQP-Legacy Optimization
+
+The fmincon
+ &#34;sqp&#34; and &#34;sqp-legacy&#34; algorithms are similar
+ to the &#34;active-set&#34; algorithm described in Active-Set Optimization. fmincon SQP Algorithm describes the main differences. In summary, these
+ differences are:
+Strict Feasibility With Respect to Bounds
+
+Robustness to Non-Double Results
+
+Refactored Linear Algebra Routines
+
+Reformulated Feasibility Routines
+
+Active-Set Optimization
+
+fmincon uses a sequential quadratic programming (SQP) method. In this
+method, the function solves a quadratic
+programming (QP) subproblem at each iteration. fmincon updates
+an estimate of the Hessian of the Lagrangian at each iteration using
+the BFGS formula (see fminunc and
+references [7] and [8]).
+fmincon performs a line search using a
+merit function similar to that proposed by [6], [7], and [8]. The QP subproblem is solved using
+an active set strategy similar to that described in [5]. fmincon Active Set Algorithm describes this algorithm in
+detail. 
+See also SQP Implementation for
+more details on the algorithm used.
+
+Trust-Region-Reflective Optimization
+
+The &#34;trust-region-reflective&#34; algorithm is a subspace trust-region method
+ and is based on the interior-reflective Newton method described in [3] and [4]. Each iteration involves the approximate
+ solution of a large linear system using the method of preconditioned conjugate
+ gradients (PCG). See the trust-region and preconditioned conjugate gradient method
+ descriptions in fmincon Trust Region Reflective Algorithm.
+
+Alternative Functionality
+App
+The Optimize Live Editor task provides a visual interface for fmincon.
+
+References
+[1] Byrd, R. H., J. C. Gilbert, and J. Nocedal.
+“A Trust Region Method Based on Interior Point Techniques for
+Nonlinear Programming.” Mathematical Programming,
+Vol 89, No. 1, 2000, pp. 149–185.
+
+[2] Byrd, R. H., Mary E. Hribar, and Jorge Nocedal.
+“An Interior Point Algorithm for Large-Scale Nonlinear Programming.” SIAM
+Journal on Optimization, Vol 9, No. 4, 1999, pp. 877–900.
+
+[3] Coleman, T. F. and Y. Li. “An Interior, Trust Region Approach
+ for Nonlinear Minimization Subject to Bounds.” SIAM Journal on
+ Optimization, Vol. 6, 1996, pp. 418–445.
+
+[4] Coleman, T. F. and Y. Li. “On the Convergence of Reflective
+ Newton Methods for Large-Scale Nonlinear Minimization Subject to Bounds.”
+ Mathematical Programming, Vol. 67, Number 2, 1994, pp.
+ 189–224.
+
+[5] Gill, P. E., W. Murray, and M. H. Wright. Practical
+Optimization, London, Academic Press, 1981.
+
+[6] Han, S. P. “A Globally Convergent Method for Nonlinear
+ Programming.” Journal of Optimization Theory and
+ Applications, Vol. 22, 1977, pp. 297.
+
+[7] Powell, M. J. D. “A Fast Algorithm for Nonlinearly
+ Constrained Optimization Calculations.” Numerical
+ Analysis, ed. G. A. Watson, Lecture Notes in
+ Mathematics, Springer-Verlag, Vol. 630, 1978.
+
+[8] Powell, M. J. D. “The Convergence of Variable Metric Methods
+ For Nonlinearly Constrained Optimization Calculations.” Nonlinear
+ Programming 3 (O. L. Mangasarian, R. R. Meyer, and S. M. Robinson,
+ eds.), Academic Press, 1978.
+
+[9] Waltz, R. A., J. L. Morales, J. Nocedal,
+and D. Orban. “An interior algorithm for nonlinear optimization
+that combines line search and trust region steps.” Mathematical
+Programming, Vol 107, No. 3, 2006, pp. 391–408.
+
+Extended Capabilities
+expand all
+C/C++ Code Generation
+ 
+Generate C and C++ code using MATLAB® Coder™.
+
+ Usage notes and limitations:
+ 
+fmincon supports code generation using either the codegen (MATLAB Coder) function or the MATLAB
+ Coder™ app. You must have a MATLAB
+ Coder license to generate code.
+
+The target hardware must support standard double-precision floating-point computations
+ or standard single-precision floating-point computations.
+
+Code generation targets do not use the same math kernel libraries as MATLAB solvers. Therefore, code generation solutions can vary from solver
+ solutions, especially for poorly conditioned problems.
+
+To test your code in MATLAB before generating code, set the UseCodegenSolver option to
+ true. That way, the solver uses the same code that code generation
+ creates.
+
+All code for generation must be MATLAB code. In particular, you cannot use a custom black-box function as an
+ objective function for fmincon. You can use
+ coder.ceval to evaluate a custom function coded in C or C++.
+ However, the custom function must be called in a MATLAB function.
+
+fmincon does not support the problem argument for code
+ generation.
+[x,fval] = fmincon(problem) % Not supported
+
+You must specify the objective function and any nonlinear constraint function by using
+ function handles, not strings or character names.
+x = fmincon(@fun,x0,A,b,Aeq,beq,lb,ub,@nonlcon) % Supported
+% Not supported: fmincon('fun',...) or fmincon(&#34;fun&#34;,...)
+
+All fmincon input matrices such as A,
+ Aeq, lb, and ub must be
+ full, not sparse. You can convert sparse matrices to full by using the full function.
+
+The lb and ub arguments must have the same
+ number of entries as the x0 argument or must be empty
+ [].
+
+If your target hardware does not support infinite bounds, use optim.coder.infbound.
+
+For advanced code optimization involving embedded processors, you also need an
+ Embedded Coder® license.
+
+You must include options for fmincon and specify them using
+ optimoptions. The options must include the
+ Algorithm option, set to &#34;sqp&#34; or
+ &#34;sqp-legacy&#34;.
+options = optimoptions(&#34;fmincon&#34;,Algorithm=&#34;sqp&#34;);
+[x,fval,exitflag] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
+
+Code generation supports these options:
+Algorithm — Must be &#34;sqp&#34; or
+ &#34;sqp-legacy&#34;
+
+ConstraintTolerance
+
+FiniteDifferenceStepSize
+
+FiniteDifferenceType
+
+MaxFunctionEvaluations
+
+MaxIterations
+
+ObjectiveLimit
+
+OptimalityTolerance
+
+MaxTime
+
+ScaleProblem
+
+SpecifyConstraintGradient
+
+SpecifyObjectiveGradient
+
+StepTolerance
+
+TypicalX
+
+UseCodegenSolver
+
+Generated code has limited error checking for options. The recommended way to update
+ an option is to use optimoptions, not dot notation.
+opts = optimoptions(&#34;fmincon&#34;,Algorithm=&#34;sqp&#34;);
+opts = optimoptions(opts,MaxIterations=1e4); % Recommended
+opts.MaxIterations = 1e4; % Not recommended
+
+Do not load options from a file. Doing so can cause code generation to fail. Instead,
+ create options in your code.
+
+Usually, if you specify an option that is not supported, the option is silently
+ ignored during code generation. However, if you specify a plot function or output
+ function by using dot notation, code generation can issue an error. For reliability,
+ specify only supported options.
+
+Because output functions and plot functions are not supported,
+ fmincon does not return the exit flag –1.
+
+Code generated from fmincon does not contain the
+ bestfeasible field in a returned output
+ structure.
+
+The MaxTime option requires double-precision data.
+
+If you do not specify the MaxTime option, the returned output structure does not contain a wallclocktime field.
+
+For an example, see Code Generation for Optimization Basics.
+
+Automatic Parallel Support
+ 
+Accelerate code by automatically running computation in parallel using Parallel Computing Toolbox™.
+
+To run in parallel, set the UseParallel option to &#34;auto&#34;
+ or &#34;on&#34;.
+options =
+ optimoptions(&#34;solvername&#34;,UseParallel=&#34;auto&#34;)
+For more information, see Testing Parallel Computing.
+
+Version History
+Introduced before R2006aexpand all
+R2026b: 
+ MaxTime option added for fmincon and
+ quadprog
+
+The fmincon and quadprog solvers gain the MaxTime option, which can end a
+ solver's iterations. The option is available in code generation. Specify
+ MaxTime as a duration, or as a scalar representing the
+ number of seconds. For example,
+options = optimoptions(&#34;fmincon&#34;,MaxTime=minutes(2));
+opts = optimoptions(&#34;quadprog&#34;,MaxTime=30); % means 30 seconds
+
+The returned output structure contains the
+ wallclocktime field, which contains the duration of the solver
+ run.
+
+R2026b: Enhanced control over parallel execution with UseParallel argument
+
+The UseParallel name-value argument accepts the value
+ &#34;off&#34;, &#34;auto&#34;, or &#34;on&#34; instead of
+ true or false. This change gives you more control
+ over when to use a parallel pool for parallel execution.
+Specifying the UseParallel name-value argument as true or false is not recommended.
+This table shows how to update your code depending on the task you are performing.
+Task | Recommended | Not Recommended | 
+Write code that runs on the MATLAB client.
+ | 
+ optimoptions(&#34;fmincon&#34;,UseParallel=&#34;off&#34;)
+ | 
+ optimoptions(&#34;fmincon&#34;,UseParallel=false)
+ | 
+Write portable code that runs on a parallel pool and, if a pool is not
+ available, runs on the MATLAB client. | 
+ optimoptions(&#34;fmincon&#34;,UseParallel=&#34;auto&#34;)
+ | 
+ optimoptions(&#34;fmincon&#34;,UseParallel=true)
+ | 
+Write code that runs on a parallel pool and issues an error if a pool is not
+ available. | 
+ optimoptions(&#34;fmincon&#34;,UseParallel=&#34;on&#34;)
+ | N/A
+ | 
+
+There are no plans to remove support for the values true and
+ false.
+
+R2026a: CheckGradients option removed
+
+The CheckGradients option has been removed. To check whether your code computes gradients correctly, use the checkGradients function. For example,
+function [f,g] = rosen(x)
+f = 100*(x(1) - x(2)^2)^2 + (1 - x(2))^2;
+if nargout > 1
+ g(1) = 200*(x(1) - x(2)^2);
+ g(2) = -400*x(2)*(x(1) - x(2)^2) - 2*(1 - x(2));
+end
+end
+% Before using the rosen function,
+% you can check that the gradient is correct at a point
+x0 = [2,4];
+assert(checkGradients(@rosen,x0))
+
+R2025a: Test Before Generating Code
+
+Set the new UseCodegenSolver option to true to have
+ fmincon use the same version of the software that code
+ generation creates. This option allows you to check the behavior of the solver before you
+ generate code or deploy the code to hardware. For solvers that support single-precision code
+ generation, the generated code can also support single-precision hardware. You can include
+ the option when you generate code; the option has no effect in code generation, but leaving
+ the option in saves you the step of removing it. Even though the generated code is identical
+ to the MATLAB code, results can differ slightly because linked math libraries can
+ differ.
+
+R2024a: Single-precision code generation
+
+You can generate code for fmincon on single-precision
+ floating point hardware. For instructions, see Single-Precision Code Generation.
+
+R2023b: CheckGradients option will be removed
+
+The CheckGradients option will be removed in a future release. To check the first derivatives of objective functions or nonlinear constraint functions, use the checkGradients function.
+
+See Also
+fminbnd | fminsearch | fminunc | optimoptions | Optimize
+Topics
+Solver-Based Nonlinear Optimization
+Solver-Based Optimization Problem Setup
+Constrained Nonlinear Optimization Algorithms
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

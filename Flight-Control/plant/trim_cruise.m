@@ -2,19 +2,18 @@ function trim = trim_cruise(P, op)
 % TRIM_CRUISE Steady symmetric-flight trim of the UACS twin plant.
 %
 % op is one field of P.op (for example P.op.cruise); V_mps, gamma_deg,
-% bank_deg and h_m are the fields used. Banked trim is not implemented in
-% v1 and is rejected instead of silently returning an unbalanced point.
+% bank_deg and h_m are the fields used. Banked trim is not implemented and is
+% rejected instead of silently returning an unbalanced point.
 %
-% Unknowns  z = [alpha; de; throttle], one throttle for both motors.
+% Unknowns  z = [alpha; de; throttle], one throttle for both motors
 % Equations Fx = 0, Fz = 0, My = 0 with beta = da = dr = 0, phi = 0 and
-%           theta = alpha + gamma (so theta = alpha for level flight).
+%           theta = alpha + gamma (so theta = alpha for level flight)
 % Residual  r = [Fx Fy Fz Mx My Mz]' taken from eom_6dof, normalised as
-%           forces / (m*g) and moments / (qbar*S*cbar). fsolve works on
-%           the subset [Fx Fz My] / (m*g, m*g, qbar*S*cbar).
+%           forces / (m*g) and moments / (qbar*S*cbar); fsolve works on the
+%           subset [Fx Fz My] / (m*g, m*g, qbar*S*cbar)
 %
-% Fields per architecture.md 5.2: x_star, u_star, residual, exitflag,
-% alpha_deg, theta_deg, de_deg, throttle, plus the normalised residual and
-% the operating point actually used.
+% Fields: x_star, u_star, residual, exitflag, alpha_deg, theta_deg, de_deg,
+% throttle, plus the normalised residual and the operating point used
 
 if nargin < 2 || isempty(op)
    op = P.op.cruise;
@@ -36,7 +35,7 @@ cbar = P.geom.cbar;
 A = P.aero;
 qbar0 = 0.5 * P.env.rho_sl * V^2;
 
-% Analytic first guess for fsolve.
+% Analytic first guess for fsolve
 CL_guess = m * g * cos(gamma) / (qbar0 * S);
 alpha_guess = (CL_guess - A.CL0) / A.CL_alpha;
 de_guess = -(A.Cm0 + A.Cm_alpha * alpha_guess) / A.Cm_de;
@@ -44,8 +43,7 @@ alpha_zl = -A.CL0 / A.CL_alpha;
 CD_guess = A.CD0 + A.k_induced * CL_guess^2 ...
    + A.CD_alpha * (alpha_guess - alpha_zl)^2 + A.CD_de * abs(de_guess);
 T_guess = qbar0 * S * CD_guess + m * g * sin(gamma);
-% Throttle first guess by inverting the authoritative propulsion map, which is
-% monotone in throttle, so the inversion needs no starting guess of its own.
+% Throttle first guess by inverting the authoritative propulsion map
 th_guess = local_throttle_for_thrust(P, T_guess / P.prop.n_motors, V);
 
 ctx = struct('P', P, 'V', V, 'gamma', gamma, 'h_m', h_m, ...
@@ -59,7 +57,7 @@ opts = optimoptions('fsolve', 'Display', 'off', ...
 z0 = [alpha_guess; de_guess; th_guess];
 [z, ~, exitflag, output] = fsolve(@(zz) local_res3(zz, ctx), z0, opts);
 if exitflag <= 0
-   % One restart from a larger angle of attack before reporting failure.
+   % One restart from a larger angle of attack before reporting failure
    z0b = [deg2rad(5); de_guess; min(max(th_guess, 0.05), 0.9)];
    [z, ~, exitflag, output] = fsolve(@(zz) local_res3(zz, ctx), z0b, opts);
 end
@@ -112,14 +110,12 @@ trim.V_mps = V;
 trim.gamma_deg = op.gamma_deg;
 trim.bank_deg = op.bank_deg;
 trim.h_m = h_m;
-% The density the plant actually used at this point: P.env.rho_sl under the
-% constant model, the ISA value at the state altitude under the ISA model. The
-% first guess above still uses the sea level density, which only steers fsolve
-% and scales its residual, not where it lands.
+% The density the plant actually used at this point; the first guess above still
+% uses the sea level density, which only steers fsolve and scales its residual
 trim.rho = rho_t;
 trim.qbar = qbar_t;
 
-% Reference quantities of the trimmed point, for reports and cross-checks.
+% Reference quantities of the trimmed point, for reports and cross-checks
 dbg = aero_forces(P, x_star, u_star, V, alpha, 0, qbar_t);
 T_per_motor = throttle_to_thrust(P, th, V);
 trim.CL = dbg.CL;
@@ -131,9 +127,7 @@ trim.thrust_total_N = P.prop.n_motors * T_per_motor;
 trim.x_cg_m = P.mass.x_cg;
 trim.gamma_rad = gamma;
 
-% V2 checks on the trim point itself. The frozen criterion in architecture.md 7
-% is alpha in 2..10 deg; the physically re-scaled window proposed for this class
-% of airframe is 0..8 deg. Both verdicts are carried, see design_notes_plant.md.
+% Two alpha windows are carried: the frozen criterion and the revised one
 trim.window_alpha_frozen_deg = [2 10];
 trim.window_alpha_revised_deg = [0 8];
 trim.check_residual = trim.residual_norm_max < 1e-6;
@@ -150,15 +144,15 @@ fprintf(['trim V %5.1f m/s gamma %+5.2f deg: alpha %7.4f deg, theta %7.4f deg, '
    trim.residual_norm_max, exitflag);
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function r = local_res3(zz, ctx)
-% Normalised residuals [Fx Fz My] handed to fsolve.
+% Normalised residuals [Fx Fz My] handed to fsolve
 r6 = local_res6(zz, ctx);
 r = r6([1 3 5]);
 end
 
 function r = local_res6(zz, ctx)
-% Normalised 6x1 residual at an arbitrary [alpha; de; throttle] candidate.
+% Normalised 6x1 residual at an arbitrary [alpha; de; throttle] candidate
 P = ctx.P;
 alpha = zz(1);
 de = zz(2);
@@ -176,8 +170,8 @@ r = [F_body / ctx.norm_f; M_body / ctx.norm_m];
 end
 
 function th = local_throttle_for_thrust(P, T_target, V)
-% Invert the authoritative propulsion map by bisection. Thrust is monotone
-% increasing in throttle, so the bracket is safe and no starting guess is needed.
+% Invert the authoritative propulsion map by bisection; thrust is monotone
+% increasing in throttle, so the bracket is safe
 if T_target <= 0
    th = 0;
    return;

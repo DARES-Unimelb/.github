@@ -16,31 +16,12 @@ function wt = wind_trim(trim, wind_ned, track_deg)
 %   wt.ground_speed_mps horizontal ground speed
 %   wt.vertical_rate_mps  pd rate, -V*sin(gamma) + W_down
 %
-% The result is an exact equilibrium, not an approximation. The still air trim has
-% zero body rates, phi = 0, theta = alpha + gamma, and its NED air relative
-% velocity is
-%   v_a^n = V*[cos(gamma)*cos(psi); cos(gamma)*sin(psi); -sin(gamma)]
-% which depends on the heading only, because the alpha of the trim cancels against
-% theta = alpha + gamma. Aerodynamics depend on V, alpha, beta and the rates, none
-% of which a heading change touches; gravity depends on phi and theta; thrust
-% depends on the throttle and V. So rotating the heading leaves F = 0 and M = 0
-% exactly and no trim re-solve is needed.
-%
-% The heading puts the ground velocity v_g^n = v_a^n + W along the commanded
-% track t:
+%   Only the heading is re-solved, so no trim re-solve is needed:
 %   s   = (t.W_h) + sqrt((t.W_h)^2 - |W_h|^2 + (V*cos(gamma))^2)
 %   psi = atan2(s*t_E - W_E, s*t_N - W_N)
-% For a north track this reduces to the crab angle psi = -asin(W_E/(V*cos(gamma))).
-% A solution needs V*cos(gamma) > |W_h|, that is an airspeed above the horizontal
-% wind; below it the aircraft cannot hold the ground track and this function errors
-% instead of returning a point that does not exist.
-%
-% Zero wind returns the input state untouched, bit for bit, rather than rebuilding
-% it through the direction cosine matrix; the two routes agree to a few ulps.
-%
-% The body from NED matrix is built here rather than taken from sim/sim_dcm.m, so
-% plant/ stays usable with only plant/ and params/ on the path. It is the same
-% matrix, the transpose of the one plant/eom_6dof.m builds.
+%   A solution needs V*cos(gamma) > |W_h|, else this function errors
+%   The body from NED matrix is built here so plant/ needs only plant/ and
+%   params/ on the path; it is the transpose of the one in plant/eom_6dof.m
 
 if nargin < 3 || isempty(track_deg)
    track_deg = 0;
@@ -82,8 +63,7 @@ assert(disc > 0, 'wind_trim:NoSolution', ...
 s = t' * W_h + sqrt(disc);
 psi = atan2(s * t(2) - W_h(2), s * t(1) - W_h(1));
 
-% Ground velocity in NED, then into body axes. The air relative velocity stays the
-% trim's own, so this equals v_a^b + C_nb*W.
+% Ground velocity in NED, then into body axes
 v_g_ned = [s * t(1); s * t(2); -V * sin(gamma) + wind_ned(3)];
 ct = cos(theta); st = sin(theta);
 cp = cos(phi);   sp = sin(phi);
@@ -105,7 +85,8 @@ wt.ground_velocity_ned = v_g_ned;
 wt.zero_wind_shortcut = false;
 end
 
+%% Local helpers
 function a = local_wrap180(a)
-% Fold an angle into (-180, 180] so a crab angle is reported as the shortest turn.
+% Fold an angle into (-180, 180] so a crab angle is reported as the shortest turn
 a = mod(a + 180, 360) - 180;
 end

@@ -1,17 +1,14 @@
 function info = sim_bench_wind(mdl)
-% SIM_BENCH_WIND 台架的大气与风扰动子系统：常值风、阵风、画布侧风微调。
+% SIM_BENCH_WIND Atmosphere and wind subsystem: constant wind, gust, canvas crosswind trim
 %
-%   大气与风扰动/   无输入      出 wind_ned 3x1 [北 东 地]
+%   out wind_ned 3x1 [north east down] m/s
 %
-% 三项相加，全部来自 uacs_go.m 第 1.10 节的 uacs_dist
-%   常值风    sim_dist_wind_ned，NED 三分量 [m/s]
-%   阵风      sim_dist_gust_dir 方向的简谐风，幅度 sim_dist_gust_amp、频率
-%             sim_dist_gust_freq（弧度每秒，由赫兹换算而来）。幅度为 0 就是关掉。
-%   侧风微调  画布上那个"侧风"滑杆绑的变量 sim_dist_wind_e，只加到东向分量上，
-%             用来在跑的过程中临时加一股侧风
-%
-% 阵风用向量增益而不是逐分量拼：Gain 块取 Matrix(K*u)，K 是 3x1 的方向向量，
-% u 是标量正弦，出来就是 3x1。这样方向由参数定，不用改模型。
+% Three terms are summed
+%   constant wind  sim_dist_wind_ned, NED components [m/s]
+%   gust           sine of amplitude sim_dist_gust_amp and angular frequency
+%                  sim_dist_gust_freq [rad/s], along sim_dist_gust_dir; zero
+%                  amplitude disables it
+%   crosswind      sim_dist_wind_e, added to the east component only
 
 sub = [mdl '/大气与风扰动'];
 sim_add_block(mdl, '大气与风扰动', 'simulink/Ports & Subsystems/Subsystem', [1520 300 1680 460]);

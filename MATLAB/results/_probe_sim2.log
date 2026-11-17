@@ -1,0 +1,3 @@
+scenario fields: t_end, x0, stick, wind, flight_mode, ref
+update ok in 0.94 s
+sim ok, yout class struct

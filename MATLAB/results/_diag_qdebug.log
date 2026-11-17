@@ -1,0 +1,15 @@
+FAILED MATLAB:nonExistentField
+  Unrecognized field name "wc_rad_s".
+  at diag_qdebug line 16
+  at run line 112
+  at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+  at mcpEval line 48
+  at fevalMatlab line 0
+  at fevalJSON line 0
+plant num [0 0 -4804 -3.173e+04 -6463 6.574e-13] (size [1 6]), den [1 100.3 3053 2.956e+04 6086 5393] (size [1 6])
+kp 0.050: size a [1 6], size b [1 6]
+   poles 5, worst -9.5066e-02
+kp 0.200: size a [1 6], size b [1 6]
+   poles 5, worst -9.4376e-02
+kp 0.400: size a [1 6], size b [1 6]
+   poles 5, worst -9.4441e-02

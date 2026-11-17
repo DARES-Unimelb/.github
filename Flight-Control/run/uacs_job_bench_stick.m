@@ -1,24 +1,26 @@
-% UACS_JOB_BENCH_STICK 台架满杆矩阵：三轴高低满杆、两两组合、三轴组合，PID 与 LQR 各一遍。
+% UACS_JOB_BENCH_STICK Bench full-stick matrix: each axis at both extremes, every pair of
+% axes, and all three axes, once per controller.
 %
-% 用法（分块跑，可反复调用，跑过的工况自动跳过）
-%   addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run');
-%   assignin('base', 'stick_budget_s', 480);   % 本次调用的时间预算，秒，缺省 400
+% Usage (runs in blocks, call it repeatedly; finished cases are skipped)
+%   addpath('<repo>/run');
+%   assignin('base', 'stick_budget_s', 480);   % time budget for this call, seconds, default 400
 %   run_job('bench_stick')
 %
-% 为什么要分块：本机实测模型比实时慢约 15 到 18 倍，12 s 的工况一段约 190 s。27 个工况乘
-% 两个控制器共 54 段，合计约 2.8 h，单次调用等不到它跑完。作业按时间预算跑，跑满就退出，
-% 下一次从没跑完的接着来。
+% The model runs about 15 to 18 times slower than real time, so a 12 s case takes roughly
+% 190 s and all 54 segments take about 2.8 h, more than one call can wait for. The job runs
+% to the time budget and exits; the next call continues from the unfinished cases.
 %
-% 产出
-%   results/bench_stick_traj.mat   每段一条记录，含四路记录信号重采样后的轨迹
-%   results/bench_stick_meta.txt   工况表、运行参数与参数集指纹
+% Output
+%   results/bench_stick_traj.mat   one record per segment, with the four logged signals resampled
+%   results/bench_stick_meta.txt   case table, run parameters and parameter set fingerprint
 %
-% 工况表：基准 1 段，单轴 3 轴乘高低 6 段，两轴 3 对乘四种组合 12 段，三轴 8 段，共 27 段。
-% 每段跑两个控制器，控制器在外层循环交替，中途停下时两个控制器的进度是齐的。
-% 油门杆固定为能让飞机配平巡航的那个杆位 sim_thr_trim，它对应 25 m/s 的空速指令。
+% 27 cases: 1 baseline, 6 single axis (3 axes x 2 extremes), 12 two-axis (3 pairs x 4
+% combinations) and 8 three-axis. Each case runs both controllers, alternating in the outer
+% loop so the two controllers stay level when the job stops early. The throttle stick is
+% fixed at sim_thr_trim, the trim cruise setting.
 %
-% 不改模型文件：只改内存里五个常值参数，跑完改回变量名，不保存。StopFcn 在这里摘掉，免得
-% 每跑一段就往 results/runs/ 里塞一份归档、往流水里写一行。
+% No model file is changed: five constant parameters are written in memory and restored.
+% StopFcn is detached so each segment does not archive a run and write a trace line.
 
 this = mfilename('fullpath');
 if isempty(this)
@@ -29,15 +31,15 @@ addpath(root, fullfile(root, 'params'), fullfile(root, 'plant'), fullfile(root, 
    fullfile(root, 'sim'), fullfile(root, 'run'), fullfile(root, 'verify'), '-begin');
 
 mdl = 'uacs_flight_bench';
-H = 12;            % 每段仿真时长，s
-fast_dt = 0.005;   % 快信号重采样步长，s
-act_dt = 0.01;     % 作动器信号重采样步长，s
+H = 12;            % simulated seconds per segment
+fast_dt = 0.005;   % resample step for the fast signals, s
+act_dt = 0.01;     % resample step for the actuator signals, s
 budget_s = 400;
 if evalin('base', 'exist(''stick_budget_s'', ''var'')')
    budget_s = double(evalin('base', 'stick_budget_s'));
 end
 
-% ---------------- 工况表 ----------------
+%% Case table
 pos_word = {'右滚满', '拉杆满', '右舵满'};
 neg_word = {'左滚满', '推杆满', '左舵满'};
 case_stick = zeros(0, 3);
@@ -98,7 +100,7 @@ end
 n_case = size(case_stick, 1);
 assert(n_case == 27, 'uacs_job_bench_stick:BadTable', '工况表应是 27 段，实际 %d 段', n_case);
 
-% ---------------- 环境 ----------------
+%% Environment
 evalin('base', 'uacs_go');
 was_loaded = bdIsLoaded(mdl);
 load_system(fullfile(root, 'model', [mdl '.slx']));
@@ -107,7 +109,7 @@ set_param(mdl, 'StopFcn', '');
 P = evalin('base', 'P');
 thr_stick = evalin('base', 'sim_thr_trim');
 
-% ---------------- 进度 ----------------
+%% Progress
 traj_file = fullfile(root, 'results', 'bench_stick_traj.mat');
 tmp_file = fullfile(root, 'results', 'bench_stick_traj_tmp.mat');
 if exist(traj_file, 'file')
@@ -123,7 +125,7 @@ end
 n_done = sum(done(:));
 fprintf('进度 %d/%d 段，本次预算 %.0f s\n', n_done, n_case * 2, budget_s);
 
-% ---------------- 主循环 ----------------
+%% Main loop
 t_budget = tic;
 n_this = 0;
 stop_now = false;
@@ -186,7 +188,7 @@ for ci = 1:n_case
    end
 end
 
-% ---------------- 工况表与指纹 ----------------
+%% Case table and fingerprint
 mfid = fopen(fullfile(root, 'results', 'bench_stick_meta.txt'), 'w', 'n', 'UTF-8');
 assert(mfid > 0, 'uacs_job_bench_stick:NoMeta', '写不了 results/bench_stick_meta.txt');
 fprintf(mfid, '台架满杆矩阵  %s\n', datestr(now, 'yyyy-mm-dd HH:MM:SS'));
@@ -219,7 +221,7 @@ for ci = 1:n_case
 end
 fclose(mfid);
 
-% ---------------- 收尾 ----------------
+%% Teardown
 set_param([mdl '/控制器选择/k_sel'], 'Value', 'sim_ctrl_sel');
 set_param([mdl '/驾驶员/k_roll'], 'Value', 'sim_stick_roll');
 set_param([mdl '/驾驶员/k_pitch'], 'Value', 'sim_stick_pitch');

@@ -1,0 +1,6 @@
+# Simulink 缓存与自动保存（2026-11-17 迁移前清理）
+*.slxc
+*.slx.autosave
+*.asv
+slprj/
+_slxcb/

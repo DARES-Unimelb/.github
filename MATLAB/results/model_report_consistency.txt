@@ -1,0 +1,87 @@
+UACS twin: model against design-report consistency (V13)
+generated 2026-10-11 03:29:58 by verify/v_sim_v13_consistency.m
+MATLAB 2024a, parameter set rev 11, P 0.5.0, design from deliverable_mats
+
+part names    the model block parameter, against the base variable it must name
+part pushed   the value pushed to that variable, against its design field
+part applied  the limit the linear simulation applied, against the same field
+part behaviour the saved roll_step evidence, against a linear run on its own command
+rel is |model - design| / max(|design|, 1e-12)
+
+part       quantity                                          model                         design         rel  verdict
+names      pid_p/Kp                               sim_pid_p_Kp_abs               sim_pid_p_Kp_abs    0.00e+00  PASS
+names      pid_p/Ki_gainval                       sim_pid_p_Ki_abs               sim_pid_p_Ki_abs    0.00e+00  PASS
+names      pid_p/Ki_limit                           sim_pid_p_Isat                 sim_pid_p_Isat    0.00e+00  PASS
+names      pid_p/pol                                 sim_pid_p_pol                  sim_pid_p_pol    0.00e+00  PASS
+names      pid_q/Kp                               sim_pid_q_Kp_abs               sim_pid_q_Kp_abs    0.00e+00  PASS
+names      pid_q/Ki_gainval                       sim_pid_q_Ki_abs               sim_pid_q_Ki_abs    0.00e+00  PASS
+names      pid_q/Ki_limit                           sim_pid_q_Isat                 sim_pid_q_Isat    0.00e+00  PASS
+names      pid_q/pol                                 sim_pid_q_pol                  sim_pid_q_pol    0.00e+00  PASS
+names      pid_r/Kp                               sim_pid_r_Kp_abs               sim_pid_r_Kp_abs    0.00e+00  PASS
+names      pid_r/Ki_gainval                       sim_pid_r_Ki_abs               sim_pid_r_Ki_abs    0.00e+00  PASS
+names      pid_r/Ki_limit                           sim_pid_r_Isat                 sim_pid_r_Isat    0.00e+00  PASS
+names      pid_r/pol                                 sim_pid_r_pol                  sim_pid_r_pol    0.00e+00  PASS
+names      pid_phi/Kp                           sim_pid_phi_Kp_abs             sim_pid_phi_Kp_abs    0.00e+00  PASS
+names      pid_phi/Ki_gainval                   sim_pid_phi_Ki_abs             sim_pid_phi_Ki_abs    0.00e+00  PASS
+names      pid_phi/Ki_limit                       sim_pid_phi_Isat               sim_pid_phi_Isat    0.00e+00  PASS
+names      pid_phi/pol                             sim_pid_phi_pol                sim_pid_phi_pol    0.00e+00  PASS
+names      pid_theta/Kp                       sim_pid_theta_Kp_abs           sim_pid_theta_Kp_abs    0.00e+00  PASS
+names      pid_theta/Ki_gainval               sim_pid_theta_Ki_abs           sim_pid_theta_Ki_abs    0.00e+00  PASS
+names      pid_theta/Ki_limit                   sim_pid_theta_Isat             sim_pid_theta_Isat    0.00e+00  PASS
+names      pid_theta/pol                         sim_pid_theta_pol              sim_pid_theta_pol    0.00e+00  PASS
+names      pid_V/Kp                               sim_pid_V_Kp_abs               sim_pid_V_Kp_abs    0.00e+00  PASS
+names      pid_V/Ki_gainval                       sim_pid_V_Ki_abs               sim_pid_V_Ki_abs    0.00e+00  PASS
+names      pid_V/Ki_limit                           sim_pid_V_Isat                 sim_pid_V_Isat    0.00e+00  PASS
+names      pid_V/pol                                 sim_pid_V_pol                  sim_pid_V_pol    0.00e+00  PASS
+names      pid_h/Kp                               sim_pid_h_Kp_abs               sim_pid_h_Kp_abs    0.00e+00  PASS
+names      pid_h/Ki_gainval                       sim_pid_h_Ki_abs               sim_pid_h_Ki_abs    0.00e+00  PASS
+names      pid_h/Ki_limit                           sim_pid_h_Isat                 sim_pid_h_Isat    0.00e+00  PASS
+names      pid_h/pol                                 sim_pid_h_pol                  sim_pid_h_pol    0.00e+00  PASS
+names      p_c_lim                              sim_rate_cmd_lim_p             sim_rate_cmd_lim_p    0.00e+00  PASS
+names      q_c_lim                              sim_rate_cmd_lim_q             sim_rate_cmd_lim_q    0.00e+00  PASS
+names      r_c_lim                              sim_rate_cmd_lim_r             sim_rate_cmd_lim_r    0.00e+00  PASS
+pushed     pid_p_Kp_abs                                0.760745972                    0.760745972    0.00e+00  PASS
+pushed     pid_p_Ki_abs                                      1e-12                          1e-12    0.00e+00  PASS
+pushed     pid_p_pol                                             1                              1    0.00e+00  PASS
+pushed     pid_p_Isat                                  0.436332313                    0.436332313    0.00e+00  PASS
+pushed     pid_q_Kp_abs                                0.863454085                    0.863454085    0.00e+00  PASS
+pushed     pid_q_Ki_abs                                      1e-12                          1e-12    0.00e+00  PASS
+pushed     pid_q_pol                                            -1                             -1    0.00e+00  PASS
+pushed     pid_q_Isat                                  0.436332313                    0.436332313    0.00e+00  PASS
+pushed     pid_r_Kp_abs                                0.896235605                    0.896235605    0.00e+00  PASS
+pushed     pid_r_Ki_abs                                      1e-12                          1e-12    0.00e+00  PASS
+pushed     pid_r_pol                                            -1                             -1    0.00e+00  PASS
+pushed     pid_r_Isat                                  0.436332313                    0.436332313    0.00e+00  PASS
+pushed     pid_phi_Kp_abs                               5.93828649                     5.93828649    0.00e+00  PASS
+pushed     pid_phi_Ki_abs                                    1e-12                          1e-12    0.00e+00  PASS
+pushed     pid_phi_pol                                           1                              1    0.00e+00  PASS
+pushed     pid_phi_Isat                                0.698131701                    0.698131701    0.00e+00  PASS
+pushed     pid_theta_Kp_abs                              4.1984533                      4.1984533    0.00e+00  PASS
+pushed     pid_theta_Ki_abs                            0.748480664                    0.748480664    0.00e+00  PASS
+pushed     pid_theta_pol                                         1                              1    0.00e+00  PASS
+pushed     pid_theta_Isat                              0.558505361                    0.558505361    0.00e+00  PASS
+pushed     pid_V_Kp_abs                                 16.9593497                     16.9593497    0.00e+00  PASS
+pushed     pid_V_Ki_abs                                 12.0937349                     12.0937349    0.00e+00  PASS
+pushed     pid_V_pol                                             1                              1    0.00e+00  PASS
+pushed     pid_V_Isat                                           50                             50    0.00e+00  PASS
+pushed     pid_h_Kp_abs                               0.0160921981                   0.0160921981    0.00e+00  PASS
+pushed     pid_h_Ki_abs                                      1e-12                          1e-12    0.00e+00  PASS
+pushed     pid_h_pol                                             1                              1    0.00e+00  PASS
+pushed     pid_h_Isat                                          400                            400    0.00e+00  PASS
+pushed     rate_cmd_lim_p                              0.477564475                    0.477564475    0.00e+00  PASS
+pushed     rate_cmd_lim_q                                1.1678306                      1.1678306    0.00e+00  PASS
+pushed     rate_cmd_lim_r                                 0.392266                       0.392266    0.00e+00  PASS
+applied    lin_p_lim                                   0.477564475                    0.477564475    0.00e+00  PASS
+applied    lin_q_lim                                     1.1678306                      1.1678306    0.00e+00  PASS
+applied    lin_r_lim                                      0.392266                       0.392266    0.00e+00  PASS
+applied    lin_lim_ith                                 0.558505361                    0.558505361    0.00e+00  PASS
+applied    lin_lim_iV                                           50                             50    0.00e+00  PASS
+applied    lin_lim_ih                                          400                            400    0.00e+00  PASS
+applied    lin_lim_iphi                                0.698131701                    0.698131701    0.00e+00  PASS
+behaviour  peak_rate_cmd_p                             0.477564475                    0.477564475    0.00e+00  PASS
+behaviour  peak_rate_cmd_p_linear                      0.477564475                    0.477564475    0.00e+00  PASS
+behaviour  settled_phi_deg                              12.8483497                     12.4657879    3.07e-02  PASS
+
+roll_step: the model settled at 13.4597 deg and commanded a peak roll rate of 0.477564 rad/s against the 0.477564 rad/s clamp
+the linear simulation on that same command peaked at 0.477564 rad/s and settled at 12.4658 deg against the model's 12.8483 deg
+V13 verdict: 72 of 72 comparisons pass

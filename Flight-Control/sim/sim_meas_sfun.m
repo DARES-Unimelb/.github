@@ -1,13 +1,11 @@
 function sim_meas_sfun(block)
-% SIM_MEAS_SFUN Level-2 MATLAB S-Function: air data of the state.
+% SIM_MEAS_SFUN Level-2 MATLAB S-Function: air data of the state
 %
-% Ports
 %   in  1  x_state 12x1
 %   out 1  air     4x1  [V alpha beta qbar]
 %
-% Continuous and direct-feedthrough: the block is algebraic, and the discrete
-% controller downstream does the sampling. Calling plant/flow_state.m keeps the
-% Controller's idea of V, alpha and beta identical to the plant's.
+% Algebraic and direct-feedthrough, so the discrete controller downstream does the
+% sampling; the air data itself comes from sim_meas_wrap
 
 setup(block);
 end

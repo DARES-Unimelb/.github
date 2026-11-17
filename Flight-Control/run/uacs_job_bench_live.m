@@ -1,9 +1,8 @@
 % UACS_JOB_BENCH_LIVE Job entry: does changing a stick value mid-run take effect?
 %
-% Run with:  addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run'); run_job('bench_live')
+% Run with:  addpath('<repo>/run'); run_job('bench_live')
 % Success is the marker === JOB DONE in results/job_bench_live.log. The verdict itself is
-% in results/bench_live_check.txt; this job always reports DONE unless it throws, because
-% a negative verdict is a finding and not a job failure.
+% in results/bench_live_check.txt; a negative verdict is a finding, not a job failure.
 
 this = mfilename('fullpath');
 if isempty(this)

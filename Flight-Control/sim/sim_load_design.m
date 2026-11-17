@@ -1,24 +1,17 @@
 function D = sim_load_design(P, opts)
-% SIM_LOAD_DESIGN Trim, linearisation and gains for the Simulink models.
+% SIM_LOAD_DESIGN Trim, linearisation and PID and LQR gains for the Simulink models
 %
-%   D = sim_load_design(P)
-%   D = sim_load_design(P, struct('refresh', true))
+%   P      parameter struct
+%   opts   optional: opts.refresh true ignores the stored deliverables and cache
+%   D      D.trim, D.lin, D.gains_pid, D.gains_lqr
+%   D.src  source of each piece, 'deliverable', 'computed' or 'placeholder',
+%          plus D.src.branch and D.src.fingerprint
 %
-%   D.trim, D.lin, D.gains_pid, D.gains_lqr, D.src
-%
-% Ladder, most authoritative first
-%   1. results/plant_baseline.mat and results/gains_baseline.mat, when they are
-%      newer than every .m file under params/, plant/ and control/. Those files
-%      are the plant and control deliverables, so using them keeps one
-%      authoritative trim and gain set instead of a second opinion.
-%   2. recompute with trim_cruise, linearize_at, design_pid and design_lqr.
-%   3. the placeholder trim, linearisation and gains in this directory, so the
-%      Simulink chain stays runnable while a delivered module is broken.
-%   4. results/sim_design_cache.mat, keyed by a byte and date fingerprint of the
-%      model sources, so repeated Simulink jobs do not repeat a trim solve.
-%
-% D.src names the branch and the source of each piece. Every result file carries
-% it, so a placeholder run is never read as a delivered-plant run.
+% Order of preference: results/plant_baseline.mat and results/gains_baseline.mat
+% while they are newer than the model sources, then the cache in
+% results/sim_design_cache.mat, then a fresh solve with trim_cruise,
+% linearize_at, design_pid and design_lqr, falling back to the local
+% placeholders when a delivered module is missing or throws
 
 if nargin < 2
    opts = struct();
@@ -47,11 +40,7 @@ if deliverable.ok && ~opts.refresh
    D.src.trim_source = 'deliverable';
    D.src.lin_source = 'deliverable';
    D.src.gains_source = 'deliverable';
-   % pid_source and lqr_source are set here as well as on the computed branch. They
-   % used to exist only when the design had to be recomputed, so
-   % run/uacs_job_sim_rebuild.m, which reads rep.design.pid_source, threw
-   % "Unrecognized field name" whenever the deliverable mats were current. That is
-   % the healthy state, so the rebuild job only worked while the design was stale.
+   % pid_source and lqr_source are set on every branch, because callers read them
    D.src.pid_source = 'deliverable';
    D.src.lqr_source = 'deliverable';
    D.src.detail = deliverable.detail;
@@ -72,7 +61,7 @@ if exist(cache_file, 'file') && ~opts.refresh
 end
 D.src.cache_hit = false;
 
-% ---------------- 2. compute from the delivered modules ----------------
+%% Compute from the delivered modules
 D.src.branch = 'computed';
 if sim_have('trim_cruise')
    try
@@ -144,7 +133,7 @@ fingerprint = fp.stamp;
 save(cache_file, 'D', 'fingerprint');
 end
 
-%% ---------------- local ----------------
+%% Local helpers
 function ok = local_complete(D)
 ok = isstruct(D) && isfield(D, 'trim') && ~isempty(D.trim) && ...
    isfield(D, 'lin') && ~isempty(D.lin) && ...
@@ -201,8 +190,7 @@ end
 end
 
 function fp = local_fingerprint(root)
-% Byte counts and timestamps of every model source file, so a cache entry is
-% used only while the sources that produced it are unchanged.
+% byte counts and timestamps of every model source, which key the cache
 dirs = {'params', 'plant', 'control'};
 items = {};
 newest = Inf;

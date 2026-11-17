@@ -1,15 +1,15 @@
 function T = sim_read_yout(out, names)
-% SIM_READ_YOUT Turn a sim output into a time vector and named signal matrix.
+% SIM_READ_YOUT Turn a simulation output object into a time vector and signals
 %
-%   T = sim_read_yout(out)
-%   T.t          nTx1
-%   T.y          nTxN, all outport signals concatenated
-%   T.names      cell array of outport names, one per column
-%   T.widths     width of each outport, so a caller can split the matrix
-%   T.by_name    struct with one field per outport
+%   out     Simulink.SimulationOutput carrying a yout entry
+%   names   optional cell array of outport names to keep, all of them when omitted
+%   T.t       nTx1 time vector
+%   T.y       nTxN, the kept outport signals concatenated
+%   T.names   one name per outport
+%   T.widths  width of each outport, so a caller can split T.y
+%   T.by_name struct with one field per outport
 %
-% Reads whichever save format the model was configured with, because that is a
-% config-set property and not something a scenario should have to remember.
+% Handles either save format, so a scenario does not depend on the config set
 
 y = out.get('yout');
 T = struct('t', [], 'y', [], 'names', {{}}, 'widths', [], 'by_name', struct());

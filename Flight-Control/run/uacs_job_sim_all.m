@@ -1,13 +1,11 @@
 % UACS_JOB_SIM_ALL Job entry: the whole Simulink chain, stage by stage.
 %
-% Owner: ash-sim (task-3). Stages run in order, each one's verdict is printed as
-% it finishes, and a failure does not stop the later stages. That matters on a
-% shared session: if the MCP request is dropped while MATLAB keeps working, the
-% job diary still shows exactly which stage reached where. The single-stage jobs
-% stay available for reruns of one step.
+% Stages run in order, each verdict is printed as it finishes, and a failure does not stop
+% the later stages, so the job diary always shows how far the chain got. The single-stage
+% jobs stay available for rerunning one step.
 %
-% No local functions in this file on purpose: a script that defines local
-% functions cannot be executed through evalin, which is how run_job starts it.
+% No local functions in this file: a script that defines local functions cannot be
+% executed through evalin, which is how run_job starts it.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_all');

@@ -1,9 +1,8 @@
 function tf = sim_have(fname)
-% SIM_HAVE Cached existence test for a function on the MATLAB path.
+% SIM_HAVE Cached existence test for a function on the MATLAB path
 %
-% The Simulink blocks call this on every sample, so the answer is cached in a
-% persistent variable. sim_deps_reset clears that cache after a path change.
-% Only a real file counts: a variable with the same name is not a function.
+% The answer is cached in a persistent variable, so call sim_deps_reset after
+% changing the path. Only a real file counts, not a variable of the same name
 
 persistent cache
 if isempty(cache)

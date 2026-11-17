@@ -1,0 +1,490 @@
+URL: https://www.mathworks.com/help/simulink/gui/solver-pane.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/gui/solver-pane.html
+
+ 
+
+ Solver Pane - MATLAB & Simulink
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulation
+
+ Configure Simulation Conditions
+
+ Solver Pane
+
+On this page
+Simulation Time
+Solver Selection
+Variable-Step Solver Details
+Variable-Step Zero-Crossing Detection
+Fixed-Step Solver Details
+Fixed-Step Zero-Crossing Detection
+Tasking and Sample Time Options
+Advanced Parameters
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+Solver Pane
+R2026b
+The Solver pane includes parameters for selecting and
+ configuring the solver for a model and for specifying the start and stop times for
+ simulation. A solver computes the states of a dynamic system for each simulation
+ time step over the specified time span for the simulation.
+Once the model compiles, the Solver Information tooltip displays:
+
+The compiled solver name
+
+The compiled step size, typically specified by the Max
+ step size parameter or the Fixed-step
+ size (fundamental sample time)
+ parameter.
+
+Once the model compiles, the status bar displays the solver used
+ for compiling and a caret (^) when:
+
+The software selects a different solver during
+ compilation.
+
+You set the step size to auto or the solver
+ determines a step size that is different from the specified
+ value of the Max step size parameter or the
+ Fixed-step size (fundamental sample
+ time) parameter. The Solver Information tooltip
+ displays the step size that the software determined.
+
+When configuring the solver, consider that:
+
+Simulation time is not the same as clock time. For example,
+ running a simulation for 10 seconds usually does not take 10
+ seconds. Total simulation time depends on factors such as model
+ complexity, solver step sizes, and computer speed.
+
+Code generation requires selecting a fixed-step solver.
+
+Selecting a variable-step solver can significantly shorten the
+ time required to simulate models in which states change rapidly
+ or contain discontinuities.
+
+The tables summarize the parameters available on the Solver
+ pane of the Configuration Parameters dialog box.
+Simulation Time
+Parameter | Description | 
+Start
+ time
+ | Simulation start time
+ | 
+Stop
+ time
+ | Simulation stop time
+ | 
+
+Solver Selection
+Parameter | Description | 
+Type
+ | Choice of variable- or fixed-step
+ solver
+ | 
+Solver
+ | Solver that computes states and outputs for
+ simulation
+ | 
+
+Variable-Step Solver Details
+To see these parameters, click the arrow to expand the Solver
+ details section.
+Parameter | Description | 
+Max step
+ size
+ | Maximum step size to allow in simulations
+ that use variable-step solvers
+ | 
+Min step
+ size
+ | Minimum step size for variable-step
+ solver
+ | 
+Initial step
+ size
+ | Size of first step for variable-step
+ solver
+ | 
+Relative
+ tolerance
+ | Relative tolerance for solver tolerance
+ calculation
+ | 
+Absolute
+ tolerance
+ | Absolute tolerance for solver tolerance
+ calculation
+ | 
+Auto scale absolute
+ tolerance
+ | Option to scale absolute tolerance based on
+ state values
+ | 
+Shape
+ preservation
+ | Option to preserve shape of states using
+ derivative information at each time
+ step
+ | 
+Number of
+ consecutive min steps
+ | Number of steps less than or equal to minimum
+ step size allowed before minimum step size
+ violation occurs
+ | 
+Solver reset
+ method
+ | Option to specify whether solver recomputes
+ Jacobian matrix during solver reset
+ | 
+Solver Jacobian
+ method
+ | Method implicit solvers use to compute
+ Jacobian matrix
+ | 
+Integration method
+ | Integration for nonadaptive
+ odeN variable-step
+ solver
+ | 
+Maximum
+ order
+ | Order of numerical differentiation formulas
+ used for ode15s
+ solver
+ | 
+Daessc mode
+ | Mode of operation for
+ daessc solver
+ | 
+Continuous state refinement
+ method
+ | Method daessc solver uses
+ to refine continuous state values
+ | 
+
+Variable-Step Zero-Crossing Detection
+To see these parameters, click the arrow to expand the Solver
+ details section.
+Parameter | Description | 
+Zero-crossing
+ control
+ | Option to control how zero-crossing detection
+ is enabled in the model
+ | 
+Algorithm
+ | Choice of variable-step zero-crossing
+ detection algorithm
+ | 
+Time
+ tolerance
+ | Definition of consecutive zero
+ crossings
+ | 
+Signal
+ threshold
+ | State value at which adaptive zero-crossing
+ algorithm can stop bracketing
+ | 
+Number of
+ consecutive zero
+ crossings
+ | Threshold for issuing diagnostic due to
+ consecutive zero crossings
+ | 
+
+Fixed-Step Solver Details
+To see these parameters, click the arrow to expand the Solver
+ details section.
+Parameter | Description | 
+Fixed-step
+ size (fundamental sample
+ time)
+ | Step size for fixed-step
+ solver
+ | 
+Solver Jacobian
+ method
+ | Method implicit solvers use to compute
+ Jacobian matrix
+ | 
+Number of
+ Newton's iterations
+ | Number of Newton's method iterations used by
+ ode14x and
+ ode1be solvers
+ | 
+Extrapolation
+ order
+ | Extrapolation order for
+ ode14x fixed-step
+ solver
+ | 
+
+Fixed-Step Zero-Crossing Detection
+To see these parameters, click the arrow to expand the Solver
+ details section.
+Parameter | Description | 
+Enable zero-crossing detection for fixed-step
+ simulation
+ | Option to use zero-crossing detection with
+ fixed-step solver
+ | 
+Maximum number of bracketing
+ iterations
+ | Maximum number of iterations performed when
+ locating zero crossing
+ | 
+Maximum number of zero-crossings per
+ step
+ | Maximum number of zero crossings to locate in
+ a single time step
+ | 
+
+Tasking and Sample Time Options
+To see these parameters, click the arrow to expand the Solver
+ details section.
+Parameter | Description | 
+Periodic
+ sample time
+ constraint
+ | Option to specify constraints on model sample
+ times
+ | 
+Sample time
+ properties
+ | Discrete sample time periods, offsets, and
+ priorities
+ | 
+Treat each
+ discrete rate as a separate
+ task
+ | Option to enable multitasking
+ execution
+ | 
+Allow tasks to
+ execute concurrently on
+ target
+ | Option to enable concurrent tasking behavior
+ for model
+ | 
+Automatically
+ handle rate transition for data
+ transfer
+ | Option to ensure integrity of data transfer
+ between different sample times in deployed
+ code
+ | 
+Deterministic
+ data transfer
+ | Deterministic data transfer behavior for
+ automatically inserted Rate
+ Transition blocks
+ | 
+Allow multiple tasks to access inputs and
+ outputs
+ | Option to treat root-level input and output
+ ports as part of each connected task in rate-based
+ model
+ | 
+Higher
+ priority value indicates higher task
+ priority
+ | Priority ordering for real-time system
+ targets
+ | 
+
+Advanced Parameters
+These configuration parameters are in the Advanced
+ parameters section.
+Parameter | Description | 
+Date and time at simulation time
+ zero
+ | Value to define reference calendar date and
+ time | 
+Enable decoupled continuous
+ integration
+ | Option to speed up simulation by decoupling
+ continuous state integration from discrete sample
+ times
+ | 
+Enable minimal zero-crossing impact
+ integration
+ | Option to reduce the effect of zero crossings
+ on continuous state integration
+ | 
+
+ See Also
+Topics
+Choose a Solver
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

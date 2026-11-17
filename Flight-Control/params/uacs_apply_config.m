@@ -1,22 +1,18 @@
 function uacs_apply_config(uacs)
-% UACS_APPLY_CONFIG 把 uacs_go.m 的旋钮变成一次可用的运行环境。
+% UACS_APPLY_CONFIG Turn the uacs_go.m knobs into a ready-to-run environment.
 %
-% uacs_go.m 只声明旋钮，其余机械动作全部在这里
-%   定位目录并加搜索路径
-%   把旋钮映射到 params/uacs_twin_params.m 的点分字段路径，展平，与冻结基准逐项比对，
-%   只把真正改了的那几项做成覆盖表
-%   调 init_uacs_twin 初始化参数
-%   取设计：无覆盖走交付缓存，有覆盖就地重算配平、线性化与增益，缓存单独一份
-%   把设计变量推进基础工作区
-%   发布台架自己的变量：杆位初值、模式、控制器选择、操纵源、常值风、阵风、失速迎角
+% uacs_go.m only declares the knobs; every mechanical step happens here:
+% locate the directories and add the search path, map the knobs onto dotted
+% field paths of params/uacs_twin_params.m and keep only the entries that really
+% changed, call init_uacs_twin to build the parameters, obtain the design
+% (delivery cache with no overrides, recomputed trim, linearisation and gains
+% with overrides), push the design variables into the base workspace, and
+% publish the bench's own variables
 %
-% 三条程序化保证
-%   一、覆盖只落在"原值"上。派生量（标 SIZED 的那些）由 uacs_twin_params.m 在覆盖之后
-%       重算，所以台架里的飞机与报告里的飞机不会不同步。覆盖发生在那个文件的 11 处
-%       字面量与派生的交界上，不在末尾，否则 SIZED 量会留在旧值上。
-%   二、旋钮名写错当场报错，不会静默多出一个没人读的参数。
-%   三、带覆盖的推导结果只写 results/bench_design_cache.mat，绝不写回交付用的
-%       sim_design_cache.mat 与 gains_baseline.mat，免得一次试验污染基准。
+% The override happens inside uacs_twin_params.m, where each group's literals end
+% and its derivation begins, so the SIZED quantities below recompute from the
+% overridden numbers; a typo in a knob name errors instead of adding a parameter,
+% and overridden derivations never overwrite the delivered caches
 
 here = fileparts(mfilename('fullpath'));
 root = fileparts(here);
@@ -24,7 +20,7 @@ addpath(fullfile(root, 'params'), fullfile(root, 'plant'), fullfile(root, 'contr
    fullfile(root, 'sim'), fullfile(root, 'run'), fullfile(root, 'verify'), ...
    fullfile(root, 'model'), root, '-begin');
 
-% ---------------- 覆盖表 ----------------
+%% Override table
 [k, paths, vals] = local_knob_paths(uacs);
 frozen = uacs_twin_params();
 over = cell(0, 2);
@@ -42,8 +38,8 @@ D = local_design(root, P, over);
 sim_push_design_vars(P, D);
 local_publish_bench(P, uacs);
 
-% 中性默认场景，让从工作区读杆的模型（uacs_manual_pid、uacs_lqr）在这一步之后也能直接
-% 编译运行。From Workspace 需要变量存在，哪怕台架走的是旋钮。
+% Neutral default scenario, so the models that read stick and wind from the base
+% workspace also compile and run at this point
 sim_push_scenario(struct('t_end', P.sim.t_end_s, 'x0', D.trim.x_star, ...
    'stick', [0 0 0 0 0; P.sim.t_end_s 0 0 0 0], ...
    'wind', [0 0 0 0; P.sim.t_end_s 0 0 0], 'flight_mode', 0));
@@ -52,15 +48,14 @@ assignin('base', 'uacs_last_design', D);
 local_banner(P, D, over, uacs);
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function [k, paths, vals] = local_knob_paths(uacs)
-% 旋钮结构体到 params/uacs_twin_params.m 的点分字段路径。字段名写错会在 local_get
-% 里当场报错。派生量不在这里映射：填了也会被覆盖或在自检里被拦下。
+% Knob struct to dotted field paths of params/uacs_twin_params.m; a misspelled
+% field name errors in local_get
 %
-% 气动导数（uacs_aero）不在下表里。在那个参数文件里它们的原值与派生量是逐条交错的
-% （CL_de 紧跟 CL_alpha、k_induced 紧跟 e_oswald，共八处），做成旋钮要在八处各插一行
-% 覆盖调用，这一版没做。要改气动导数直接改 params/uacs_twin_params.m 第 222 行起；
-% uacs_go.m 第 1.3 节那张表只是当前值的抄录，改它不生效。
+% The aerodynamic derivatives (uacs_aero) are not knobs: their literals and
+% derived values are interleaved in that parameter file, and changing them means
+% editing params/uacs_twin_params.m directly
 k = struct();
 k.mass.items = uacs.mass;
 k.mass.m = sum(cell2mat(uacs.mass(:, 2)));
@@ -124,8 +119,9 @@ k.sim.t_end_s = uacs.sim.t_end_s;
 end
 
 function D = local_design(root, P, over)
-% 参数变了，配平、线性化与增益必须跟着重算，否则模型会用旧飞机的新参数飞。带覆盖的
-% 推导结果单独缓存，命中条件是覆盖表逐项相同。
+% Overridden parameters need the trim, linearisation and gains recomputed; the
+% overridden derivation is cached separately and hits when the override table
+% matches entry for entry
 cache = fullfile(root, 'results', 'bench_design_cache.mat');
 D = [];
 if ~isempty(over) && exist(cache, 'file')
@@ -152,13 +148,14 @@ fprintf('bench 设计缓存已写入 %s\n', cache);
 end
 
 function local_publish_bench(P, uacs)
-% 台架自己的变量。它们不是 P 的字段：杆位初值、模式、控制器选择与操纵源都是"怎么看
-% 这架飞机"的选择，不该由参数文件承载。
+% The bench's own variables; they are not P fields, because stick trim, mode,
+% controller selection and command source are choices about how to view the
+% aircraft rather than parameters
 %
-% 油门滑杆的初值是能让飞机配平巡航的 STICK 位置，不是解出来的配平油门。两者不是同
-% 一个量：pilot_to_command 把杆位线性映射到空速指令 V_c = V_min + stick*(V_max - V_min)，
-% 所以巡航杆位是 (25 - 15.4665)/(30 - 15.4665) = 0.6560。这里填配平油门 0.4301 的话
-% 请求的是 21.7 m/s，飞机会一路减速离开配平。
+% The throttle slider default is the STICK position that trims the aircraft at
+% cruise, not the solved trim throttle: pilot_to_command maps stick linearly to
+% the speed command, so the trim throttle would request a lower speed and the
+% aircraft would decelerate away from trim
 V_min = P.limits.V_min_mps;
 V_max = P.limits.V_max_mps;
 thr = (P.op.cruise.V_mps - V_min) / (V_max - V_min);
@@ -232,11 +229,11 @@ else
 end
 end
 
-% ------------------------------------------------------------------------
 function tf = local_same(a, b)
-% 判断一个旋钮是否被改过。数值量用相对容差比，不用 isequaln：总重是由 12 行质量求和
-% 得来的，浮点求和给出 17.000000000000004 而不是 17，逐位比较会凭空报出一项"改动"，
-% 把默认运行推上几分钟的重算路径。非数值量（质量表、'const' 这类字符串）仍要求精确相等。
+% Whether a knob was changed. Numeric values compare on a relative tolerance
+% rather than isequaln: a mass summed over 12 rows gives 17.000000000000004,
+% and a bitwise comparison would report a phantom change and push a default run
+% onto the minutes-long recompute path; non-numeric values must still match
 if isnumeric(a) && isnumeric(b) && isequal(size(a), size(b))
    tf = all(abs(a(:) - b(:)) <= 1e-12 * max(1, abs(b(:))));
 else
@@ -245,8 +242,8 @@ end
 end
 
 function [paths, vals] = local_flatten(s, pre, paths, vals)
-% 把嵌套结构展平成 {点分路径, 值} 列表，深度优先。点分路径不能当结构体字段名，所以
-% 覆盖表用 N×2 元胞而不是结构体。
+% Flatten a nested struct into a depth-first {dotted path, value} list; a dotted
+% path cannot be a struct field name, so the override table is an Nx2 cell
 f = fieldnames(s);
 for k = 1:numel(f)
    if isempty(pre)
@@ -265,7 +262,7 @@ end
 end
 
 function v = local_get(P, path)
-% 按点分路径读 P 的字段，字段不存在时给出可读的错误，而不是静默返回空。
+% Read a P field by dotted path, with a readable error when it does not exist
 parts = strsplit(path, '.');
 v = P;
 for jj = 1:numel(parts)

@@ -1,6 +1,4 @@
 % UACS_JOB_SIM_SCENARIOS_V910 Job entry: V9 crosswind and V10 step-size independence.
-% V6 is excluded because it needs the manual-PID trajectory, which depends on the
-% PID design that is not finished yet.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_scenarios_v910');

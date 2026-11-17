@@ -5,8 +5,8 @@ function gains = design_pid(P, lin, opts)
 %   gains = design_pid(P, lin, struct('pm_target_deg', 45))
 %   gains = design_pid(P, lin, struct('which', {{'p', 'phi'}}))   % targeted re-run
 %
-% The third argument is optional; the frozen architecture.md 5.3 call
-% design_pid(P, lin) keeps working unchanged.
+% The third argument is optional; the frozen call design_pid(P, lin) keeps
+% working unchanged.
 %
 % Structure, every number designed from lin, nothing hand-tuned
 %   inner   p, q, r rate loops          pure P, crossover from the airframe modes
@@ -31,20 +31,16 @@ function gains = design_pid(P, lin, opts)
 % a geometric grid over proportional, integral and derivative gain and the D filter
 % ratio, then one refinement pass around the best point.
 %
-% The rate loops are judged on damping and vector margin rather than on bandwidth
+% The rate loops are judged on damping and vector margin rather than on bandwidth,
 % because their closed-loop bandwidth and step response are degenerate: dcgain(Gq)
-% is 0 exactly, so the loop is a differentiator. See local_cost for the measured
-% numbers behind that choice, and local_inner_target for why the inner crossover
-% target comes from the airframe's structural modes rather than from
-% P.ctrl.bw.rate_*_rad_s.
+% is 0 exactly, so the loop is a differentiator. The inner crossover target comes
+% from the airframe's structural modes, not from P.ctrl.bw.rate_*_rad_s.
 %
 % Polarity. The search covers both signs and the delivered sign is published per
-% loop as sim_pid_<loop>_pol. This is not decoration. The model computes
-% err = cmd - meas, so the sign that closes negative feedback depends on the sign
-% of the plant where the loop acts. On rev 10 the pitch and yaw rate loops need
-% Kp < 0 and the roll rate loop Kp > 0: positive Kp on the pitch rate channel
-% splits the airframe's over-damped short period into a less damped complex pair,
-% which is positive feedback.
+% loop as sim_pid_<loop>_pol. The model computes err = cmd - meas, so the sign that
+% closes negative feedback depends on the sign of the plant where the loop acts;
+% positive Kp on the pitch rate channel splits the airframe's over-damped short
+% period into a less damped complex pair, which is positive feedback.
 %
 % A pole at or right of the imaginary axis rejects the candidate, with no
 % exemption. The residue share of such a pole is reported beside the verdict as
@@ -53,10 +49,9 @@ function gains = design_pid(P, lin, opts)
 %
 % D terms carry the first-order filter P.ctrl.rate_filter_tau_s, scaled by the
 % search. Integrators carry the state-domain clamp P.ctrl.int_state_limit.(loop),
-% which is derived there from the error-domain P.ctrl.int_limit.(loop); the error
-% bound is what this report prints, the state clamp is what the integrator gets, and
-% reading one as the other is what put the model and the report 2.5x apart before
-% rev 11.
+% which is derived there from the error-domain P.ctrl.int_limit.(loop). The report
+% prints the error bound, the integrator gets the state clamp, and reading one as
+% the other is what put the model and the report 2.5x apart.
 
 if nargin < 3
    opts = struct();
@@ -88,9 +83,8 @@ lag = @(t) tf(1, [t, 1]);
 gains = struct();
 gains.created = datestr(now, 'yyyy-mm-dd HH:MM:SS');
 % zero_frac_type1 and zero_frac_type0 are the nominal integral-zero fractions the
-% search is anchored on, for a plant with a pole at the origin and one without. The
-% delivered value is per loop and is not this anchor: it comes out of the grid and
-% is reported in each loop's zero_frac and in its ki_reason.
+% search is anchored on, for a plant with a pole at the origin and one without; the
+% delivered value comes out of the grid and is reported per loop
 gains.rules = struct('pm_target_deg', opts.pm_target_deg, 'tol_axis', opts.tol_axis, ...
    'rate_filter_tau_s', Tf, 'anti_windup_Kb', Kb, 'law', ...
    'u = Kp*e + Ki*int(e) + Kd*Df(e), err = cmd - meas, polarity per loop and published', ...
@@ -100,13 +94,13 @@ gains.anti_windup_Kb = Kb;
 gains.int_limit = Il;
 gains.x_op = lc.u_op_full;
 
-% ---------------- inner rate loops, actuator lag included ----------------
+%% Inner rate loops, actuator lag included
 Gp = ss(lc.A_lat, lc.B_lat(:, 1), [0 1 0 0], 0) * lag(P.act.aileron.tau_s);
 Gq = ss(lc.A_long, lc.B_long(:, 1), [0 0 1 0], 0) * lag(P.act.elevator.tau_s);
 Gr = ss(lc.A_lat, lc.B_lat(:, 2), [0 0 1 0], 0) * lag(P.act.rudder.tau_s);
 
-% Inner rate-loop crossover target from the airframe, not from P.ctrl.bw; see
-% local_inner_target for why the frozen rate targets cannot be designed to.
+% Inner rate-loop crossover target from the airframe, not from P.ctrl.bw, because
+% the frozen rate targets cannot be designed to on this airframe
 wi_inner = local_inner_target(lc);
 fprintf('design_pid inner rate target %.4f rad/s (P.ctrl.bw rate targets are %.1f %.1f %.1f)\n', ...
    wi_inner, wc.rate_p_rad_s, wc.rate_q_rad_s, wc.rate_r_rad_s);
@@ -124,7 +118,7 @@ if want('r')
       deg2rad(P.act.rudder.max_deg), wc.rate_r_rad_s, verbose);
 end
 
-% ---------------- outer attitude loops ----------------
+%% Outer attitude loops
 % The plant is the closed rate loop followed by the kinematics 1/s, which is how
 % model/uacs_manual_pid.slx closes it: the attitude loop commands a rate and the
 % rate loop tracks it.
@@ -138,15 +132,15 @@ if want('theta')
    gains.theta = local_pi_loop(Gtheta, wc.att_theta_rad_s, Il.theta, Tf, Kb, opts, 'theta', true, verbose);
 end
 
-% ---------------- outermost, airspeed and altitude ----------------
+%% Outermost, airspeed and altitude
 if want('V')
    GV = ss(lc.A_long, lc.B_long(:, 2), [1 0 0 0], 0) * lag(P.prop.esc.tau_s);
    gains.V = local_pi_loop(GV, wc.speed_rad_s, Il.V, Tf, Kb, opts, 'V', true, verbose);
 end
 
-% Height plant: the delivered closed theta loop, then climb rate V0*gamma and
-% 1/s. The alpha part of h_dot = V0*(theta - alpha) is left out here and is
-% covered by the closed-loop longitudinal check in the design job.
+% Height plant: the delivered closed theta loop, then climb rate V0*gamma and 1/s.
+% The alpha part of h_dot = V0*(theta - alpha) is left out, and is covered by the
+% closed-loop longitudinal check in the design job.
 if want('h')
    V0 = lc.x_op_long(1);
    Tth = local_series_integrator(feedback(gains.theta.ctrl * Gtheta, 1));
@@ -154,7 +148,7 @@ if want('h')
    gains.h = local_pi_loop(Gh, wc.height_rad_s, Il.h, Tf, Kb, opts, 'h', false, verbose);
 end
 
-% ---------------- report facts ----------------
+%% Report facts
 verify = struct();
 for k = 1:numel(opts.which)
    nm = opts.which{k};
@@ -162,9 +156,9 @@ for k = 1:numel(opts.which)
 end
 sep = struct();
 if isempty(setdiff({'p', 'q', 'r', 'phi', 'theta', 'V', 'h'}, opts.which))
-   % The inner speed of a rate channel is its loop crossover, not a -3 dB bandwidth:
-   % those channels are near differentiators, so bandwidth_rad_s is NaN there by
-   % construction. The outer loops report the closed-loop bandwidth.
+   % The inner speed of a rate channel is its loop crossover, not a -3 dB
+   % bandwidth, because those channels are near differentiators and
+   % bandwidth_rad_s is NaN there by construction
    bw = @(nm) local_sep_speed(verify.(nm));
    sep.phi_over_p = bw('phi') / bw('p');
    sep.theta_over_q = bw('theta') / bw('q');
@@ -212,23 +206,20 @@ gains.law.int_limit = ['integrators clamped at P.ctrl.int_state_limit.(loop), wh
    'integral and are clamped at +-the surface travel'];
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function g = local_rate_loop(G, wi, Tf, Kb, opts, name, act, surf_lim, wc_bw, verbose)
 % Pure proportional gain on the inner rate loops, with the crossover placed at wi.
-% The rate feedback is the damping term for the attitude loop above it; it is not
-% a tracking loop, and local_search_rate records why no integral action belongs
-% here and why the objective is the crossover rather than a -3 dB bandwidth.
-% wc_bw is P.ctrl.bw.rate_*_rad_s, carried through for the report only.
+% The rate feedback is the damping term for the attitude loop above it, not a
+% tracking loop, so no integral action belongs here. wc_bw is
+% P.ctrl.bw.rate_*_rad_s, carried through for the report only.
 %
 % A channel with no stable gain is delivered OPEN, with Kp = 0 and designed =
 % false, rather than as an invented gain or an exception that kills the other six
-% loops. The yaw rate channel is the one that comes out this way, and the reason
-% is physical: Gr has a right half plane zero at +0.819+/-0.463i and its |Gr|
-% peaks at 2.31 as w -> 0, so the loop crosses the unit circle twice and the phase
-% crossing that follows makes every gain above 0.433 unstable, while below it the
-% loop never crosses unity and adds nothing. An open channel is reported as a
-% design constraint, and V6's r verdict then fails on the evidence rather than on
-% a number that does not exist.
+% loops. The yaw rate channel comes out this way for a physical reason: Gr has a
+% right half plane zero and its |Gr| peaks above 1 as w -> 0, so every gain above
+% the boundary is unstable while below it the loop never crosses unity and adds
+% nothing. An open channel is reported as a design constraint, and V6's r verdict
+% then fails on the evidence rather than on a number that does not exist.
 [kp, sgn, score, info] = local_search_rate(G, wi, opts);
 designed = isfinite(score) && score < 1e3;
 if ~designed
@@ -281,32 +272,23 @@ if verbose
 end
 end
 
-% ------------------------------------------------------------------------
 function [kp, sgn, score, info] = local_search_rate(G, wc, opts)
 % Pure proportional gain on the inner rate loops, chosen so the LOOP CROSSOVER
-% lands near wc. wc is not P.ctrl.bw: see local_inner_target for why the frozen
-% bandwidth targets cannot be used as the inner-loop target on this airframe.
+% lands near wc.
 %
 % The objective is the loop crossover, |L(jw)| falling through 1, and NOT the
-% closed-loop -3 dB bandwidth or the step response. Reason, and it is measured
-% rather than stylistic: these rate channels are near differentiators, so a step
-% response and a -3 dB bandwidth are both degenerate there.
-%   q channel: dcgain = 0 exactly, with a transmission zero at the origin. Its
-%   closed-loop |T| has no -3 dB point at all; bandwidth() returned 75295 for a
-%   loop whose |L| is 1.5 at 8 rad/s.
-%   p channel: dcgain = 0.021 and the zero at -0.0017 rad/s nearly cancels the
-%   pole at -0.104 rad/s, so |T| sits at 0.0168 from DC to 1e-4 rad/s, rises to
-%   0.53 at 14 rad/s and only then falls. bandwidth() read 468 for it, and the
-%   step response read 3141 percent "overshoot" that barely moves with gain.
-% Optimising on either of those drove the gain to the stability boundary: the
-% previous delivery had Kq = 0.600 where the boundary is 0.433, and V6 measured 66
-% percent pitch overshoot as a result. The crossover is the quantity that is
-% defined, monotone in Kp and named by P.ctrl.bw, so it is the one used here.
+% closed-loop -3 dB bandwidth or the step response: these rate channels are near
+% differentiators, so a step response and a -3 dB bandwidth are both degenerate
+% there. On q, dcgain is 0 exactly with a transmission zero at the origin, so the
+% closed-loop |T| has no -3 dB point at all. On p, a zero nearly cancels a pole and
+% the step response reads a huge "overshoot" that barely moves with gain.
+% Optimising on either of those drove the gain to the stability boundary. The
+% crossover is the quantity that is defined, monotone in Kp and named by
+% P.ctrl.bw, so it is the one used here.
 Kp_nom = local_plant_mag(G, wc);
-% The polarity is searched. It is not fixed by the wiring: the inner error is
+% The polarity is searched, not fixed by the wiring: the inner error is
 % err = cmd - meas, but whether that closes negative feedback depends on the sign
-% of the plant at the frequency where the loop acts, and on q that sign makes
-% positive Kp reduce the airframe's own damping.
+% of the plant at the frequency where the loop acts
 kp_grid = logspace(log10(1e-2 * Kp_nom), log10(1e3 * Kp_nom), 161);
 best = struct('cost', Inf);
 tried = 0;
@@ -319,9 +301,8 @@ for sgn = [1, -1]
          stable = stable + 1;
       end
       % Control effort, so the delivered gain is the smallest one that meets the
-      % damping and margin specs. Without it the cost is flat across the whole band
-      % of gains that clear both, and the search returns whichever point it met
-      % first rather than the cheapest one.
+      % damping and margin specs; without it the cost is flat across the whole band
+      % of gains that clear both
       cost = local_cost(ok, m, wc, opts.pm_target_deg, 'rate') ...
          + 1.0 * max(0, log(kp_grid(a) / Kp_nom))^2;
       if cost < best.cost
@@ -374,7 +355,7 @@ function [kp, ki, kd, kf, sgn, score, info] = local_search_pi(G, wc, Tf, opts, u
 %
 % The D filter ratio kf is swept as a multiple of P.ctrl.rate_filter_tau_s, and must
 % stay at or above the outer sample time P.sim.Ts_outer so the derivative is
-% realisable on the sampled loop. kf = 1 is the frozen value and 3 the slowest used.
+% realisable on the sampled loop.
 Kp_nom = local_plant_mag(G, wc);
 if use_d
    kp_grid = logspace(log10(1e-3 * Kp_nom), log10(1e3 * Kp_nom), 21);
@@ -383,7 +364,7 @@ else
 end
 frac_grid = [0, 0.05, 0.1, 0.2, 0.35, 0.5, 0.8, 1.2, 2.0, 3.5, 6.0];
 % Kd is swept as a fraction of Kp/wc, so as a derivative time relative to the target
-% crossover: zero, then up to about ten times the crossover period.
+% crossover: zero, then up to about ten times the crossover period
 kd_grid = [0, 0.02, 0.05, 0.1, 0.2, 0.4, 0.8];
 kf_grid = [1, 3];
 if ~use_d
@@ -458,62 +439,38 @@ end
 end
 
 function c = local_cost(ok, m, wc_target, pm_target, kind)
-% Candidate cost, from the closed-loop step response the acceptance case
-% measures, not from a frequency-domain proxy.
-%   steady-state error: charged for the tracking loops only. A command that does
-%   not settle on its own value is a failure whatever the bandwidth says, so
-%   |1 - dc_gain(T)| is charged hard.
+% Candidate cost, from the closed-loop step response the acceptance case measures,
+% not from a frequency-domain proxy.
+%   steady-state error: charged for the tracking loops only, because a command that
+%   does not settle on its own value is a failure whatever the bandwidth says.
 %
 %   THE RATE LOOPS ARE EXEMPT FROM THAT TERM, AND THE REASON IS PHYSICS, NOT
-%   CONVENIENCE: q = dtheta/dt. A constant non-zero pitch rate means the pitch
-%   angle grows without bound, so a stable aircraft can never hold a non-zero
-%   steady-state pitch rate, and every correct longitudinal model has
-%   dcgain(de->q) = 0. Measured on rev 10: dcgain(Gq) = 0 exactly, with a
-%   transmission zero at the origin, and the same for the moment input. A rate
-%   loop exists to add damping, not to hold a steady rate; holding an attitude is
-%   the attitude loop's job and the pilot's command. Charging unity DC gain on a
-%   rate loop therefore made every candidate lose, for every gain and every
-%   controller structure, which is what an earlier revision of this file did.
-%   Do not "restore" that term here.
+%   CONVENIENCE: q = dtheta/dt, so a constant non-zero pitch rate means the pitch
+%   angle grows without bound and a stable aircraft can never hold one. Every
+%   correct longitudinal model has dcgain(de->q) = 0, with a transmission zero at
+%   the origin. A rate loop exists to add damping, not to hold a steady rate;
+%   holding an attitude is the attitude loop's job and the pilot's command.
+%   Charging unity DC gain on a rate loop made every candidate lose, for every gain
+%   and every controller structure. Do not "restore" that term here.
 %
-%   rise time: the 10-90 percent rise against 2.2/P.ctrl.bw, the same target
-%   verify/v_sim_v6_pid.m uses, charged in log space so being slow and being
-%   fast are treated the same way.
-%   overshoot: charged above 8 percent and charged quadratically above 20
-%   percent, the V6 limit.
-%   tail ripple: the settled tail must not oscillate.
-%   slow modes and a low gain margin are charged as before.
+%   rise time: the 10-90 percent rise against 2.2/P.ctrl.bw, charged in log space
+%   overshoot: charged above 8 percent and quadratically above 20 percent
+%   tail ripple: the settled tail must not oscillate
+%   slow modes and a low gain margin are charged as before
 if ~ok
    c = 1e6;
    return;
 end
 if strcmp(kind, 'rate')
    % RATE LOOPS ARE JUDGED ON THE DAMPING THEY ADD, with the vector margin as the
-   % robustness term. Both stay meaningful on all three channels.
+   % robustness term. Damping is primary because it is what a rate loop is for, and
+   % it is the only one of the three candidates that is defined here: the -3 dB
+   % closed-loop bandwidth is degenerate on a near-differentiator, and the loop
+   % crossover alone is not reachable everywhere and has the wrong shape on q.
    %
-   % Damping is primary because it is what a rate loop is for, and it is the only
-   % one of the three candidates that is defined here. The two rejected ones, both
-   % measured on rev 10:
-   %   -3 dB closed-loop bandwidth: undefined. dcgain(Gq) = 0 exactly and the loop
-   %   is a differentiator, so bandwidth() reads 75295 rad/s for a loop whose |L| is
-   %   1.5 at 8 rad/s, and chasing it drove the previous delivery to Kq = 0.600,
-   %   whose short-period damping is 0.49 against 1.0 open loop.
-   %   loop crossover alone: not reachable everywhere, and the wrong shape on q. Gq
-   %   sits at -175.8 deg from 1 rad/s to 8 rad/s, so |L| touches 1 over a narrow
-   %   band with the phase already on the boundary. Positive Kq there SPLITS the
-   %   over-damped short period and lowers its damping ratio (1.0 open loop, 0.90 at
-   %   Kq = 0.05, 0.67 at 0.20), while negative Kq raises it (0.955 at Kq = -0.05,
-   %   wn 44.2 against 21.0). The polarity is therefore searched, not assumed.
    % The vector margin is the hard gate and the working spec at once: a channel that
    % cannot clear 0.60 has no usable feedback and is delivered open rather than
-   % closed at a gain the nonlinear model rings at. The floor sits in the gap between
-   % the measured outcomes on the model, which is the only calibration that counts:
-   %   p  vector margin 0.9139, pitch handled, roll step settles
-   %   q  vector margin 0.8237, pitch_step 0.9650 s rise and 4.41 percent overshoot
-   %   r  vector margin 0.5193, only 6.36 dB of gain margin, and yaw_rate_step rings
-   %      at 1086.59 percent overshoot with 1641 percent tail ripple
-   % Anything between 0.53 and 0.82 separates those, and 0.60 leaves the passing
-   % channels the same headroom they were measured with.
+   % closed at a gain the nonlinear model rings at.
    if ~isfinite(m.sm) || m.sm < 0.60
       c = 1e3;
       return;
@@ -522,11 +479,9 @@ if strcmp(kind, 'rate')
    e_damp = max(0, 0.70 - m.min_zeta);
    % The crossover is charged asymmetrically. Below target it is light, because a
    % channel whose |L| peaks just above 1 cannot be pushed to a high crossover and
-   % on those the loop is a gain limited damper set by the margin floor, not by a
-   % bandwidth. Above target it is heavy, because once the damping target is met
-   % extra crossover buys nothing and costs actuator bandwidth; without this term
-   % the cost is flat above the damping spec and the search sits at whatever gain
-   % it met first.
+   % on those the loop is a gain limited damper set by the margin floor. Above
+   % target it is heavy, because once the damping target is met extra crossover buys
+   % nothing and costs actuator bandwidth.
    if isnan(m.wc)
       e_slow_wc = log(wc_target / 0.1);
       e_fast_wc = 0;
@@ -550,10 +505,9 @@ if ~isfinite(e_ss)
    c = 1e3;
    return;
 end
-% Loop shape for the tracking loops: one sided on the slow side. Being slower
-% than the P.ctrl.bw target fails to track; being faster only costs actuator
-% activity, and charging the two the same way made the search prefer a barely
-% closed design.
+% Loop shape for the tracking loops: one sided on the slow side, because being
+% slower than the P.ctrl.bw target fails to track while being faster only costs
+% actuator activity
 if isnan(m.bw)
    e_slow = 1;
    e_fast = 0;
@@ -571,17 +525,13 @@ else
    e_os = 0.12 + ((m.os - 20) / 100)^2 * 10;
 end
 e_rip = max(0, m.ripple - 2) / 100;
-% Phase margin. This term is what keeps the integral zero of a PI from being
-% parked above the crossover, where it contributes almost none of the lead it is
-% there for. Measured on the airspeed loop at the frozen crossover of 0.8 rad/s: a
-% zero at 1.2*wc leaves the controller contributing -50.4 deg and the loop closes
-% at 49.6 deg of margin, while the same crossover with the zero at 0.2*wc leaves
-% the controller contributing -11.3 deg and the margin is 137.8 deg. The plant eats
-% 80.0 deg either way and the ESC lag only 2.7, so the zero placement is the whole
-% difference.
-% opts.pm_target_deg is the contract floor (45 deg). The working spec is 60,
-% because the loops here can afford it and a loop designed to the floor has nothing
-% left for the nonlinear terms the linear model does not carry.
+% Phase margin. This term keeps the integral zero of a PI from being parked above
+% the crossover, where it contributes almost none of the lead it is there for: at
+% the frozen airspeed crossover, a zero above the crossover leaves the controller
+% contributing almost no phase while a zero below it leaves the margin large.
+% opts.pm_target_deg is the contract floor (45 deg); the working spec is 60,
+% because a loop designed to the floor has nothing left for the nonlinear terms the
+% linear model does not carry.
 pm_work = max(pm_target, 60);
 if isfinite(m.pm)
    e_pm = max(0, (pm_work - m.pm) / pm_work);
@@ -595,14 +545,13 @@ if isfinite(m.gm) && m.gm < 4 && m.gm > 0
 end
 end
 
-% ------------------------------------------------------------------------
 function [ok, m] = local_cl_eval(sgn, kp, kd, Tf, G, tol, wc)
-% One PD candidate: C = sgn*(Kp + Kd*s/(Tf*s + 1)).
+% One PD candidate: C = sgn*(Kp + Kd*s/(Tf*s + 1))
 [ok, m] = local_cl_core([sgn * kp * Tf + sgn * kd, sgn * kp], [Tf, 1], G, tol, wc);
 end
 
 function [ok, m] = local_cl_eval_p(sgn, kp, G, tol, wc)
-% One proportional candidate: C = sgn*Kp.
+% One proportional candidate: C = sgn*Kp
 [ok, m] = local_cl_core(sgn * kp, 1, G, tol, wc);
 end
 
@@ -616,16 +565,10 @@ end
 function [ok, m] = local_cl_core(cnum, cden, G, tol, wc_target)
 % Closed-loop facts of one candidate.
 %
-% The verdict is pole(feedback(C*G, 1)) with minreal at a TIGHT tolerance. The
-% tolerance is the whole story here, and it is why the q channel looked
-% un-designable for a while: with minreal at 1e-7 the q loop's real closed-loop
-% pole at the origin -- which the plant's transmission zero there creates -- is
-% cancelled away, and the verdict then reports the loop as stable while
-% feedback() without minreal reports +4.06. At 1e-9, minreal cancels only the
-% genuine 1e-15 pair and the pole that decides stability survives. The polynomial
-% route roots(num_c*num_g + den_c*den_g) was also tried and is worse conditioned
-% than either, because the plant numerator's leading zeros double up in the
-% convolution.
+% The verdict is pole(feedback(C*G, 1)) with minreal at a TIGHT tolerance. At 1e-9
+% minreal cancels only the genuine numerical pair, while a looser tolerance
+% cancels a real closed-loop pole near the origin that the plant's transmission
+% zero creates, and the verdict then reports the loop as stable when it is not.
 dp = local_plant_poly(G);
 T = minreal(feedback(tf(cnum, cden) * tf(dp.num, dp.den), 1), 1e-9);
 p = pole(T);
@@ -634,12 +577,10 @@ m = struct('bw', NaN, 'pm', NaN, 'gm', Inf, 'wc', NaN, 'worst', max(real(p)), ..
    'rise', NaN, 'os', NaN, 'settle', NaN, 'dc', NaN, 'ripple', 0, 'sm', NaN, 'sm_db', NaN);
 ok = m.worst < -tol;
 if ~ok
-   % Strict verdict: a pole at or right of the axis is a rejection, full stop. An
-   % earlier revision let through a pole whose modal residue was small, arguing it
-   % was the image of a plant right half plane zero. That rule is not safe: a mode
-   % can be weak in the regulated output and still be the mode that decides the
-   % response, so the exemption is gone. The residue share is reported beside the
-   % verdict as evidence, never as a reason to accept.
+   % Strict verdict: a pole at or right of the axis is a rejection, full stop. A
+   % mode can be weak in the regulated output and still be the mode that decides
+   % the response, so the residue share is evidence beside the verdict, never a
+   % reason to accept.
    [m.artifact, m.worst_real] = local_residue_share(conv(cnum, dp.num), ...
       conv(cnum, dp.num) + conv(cden, dp.den), p);
    return;
@@ -647,9 +588,8 @@ end
 m.worst_real = m.worst;
 % Time-domain metrics, but only where they mean something. When the loop transfer
 % function has a zero at the origin the closed loop is a differentiator and its
-% step response is degenerate by construction -- the q and r channels are like
-% that, |L(0)| = 0 exactly -- so these stay NaN and the caller's cost falls back
-% to the crossover.
+% step response is degenerate by construction, so these stay NaN and the caller's
+% cost falls back to the crossover.
 w = local_freq_grid();
 H = (polyval(cnum, 1i * w) ./ polyval(cden, 1i * w)) .* dp.H;
 if abs(H(1)) > 1e-12 * max(abs(H))
@@ -681,10 +621,8 @@ else
    m.dc = 0;
 end
 % -3 dB bandwidth of the closed loop on the grid, referenced to the DC value when
-% the loop has one. bandwidth() is not used: on p/da it returns 456 rad/s for a
-% loop whose gain is 1.07 at 14 rad/s, because the near-cancelled zero at
-% -0.0017 rad/s keeps |T| high all the way to the actuator lag where bandwidth()
-% stops looking.
+% the loop has one. bandwidth() is not used: a near-cancelled zero keeps |T| high
+% all the way to the actuator lag, where bandwidth() stops looking.
 if isfinite(m.dc) && abs(m.dc) > 0
    mt = abs(H) ./ abs(1 + H);
    ref = abs(mt(1));
@@ -701,13 +639,11 @@ if ~isempty(i)
 end
 % Vector margin: the smallest distance from the loop's Nyquist locus to the -1
 % point, so min|1 + L(jw)|. Well defined on every channel here, including the ones
-% where the gain and phase margins are not: on q the phase sits at -180 deg across
-% the whole low-frequency band, so the gain margin reports Inf right up to the gain
-% where the loop goes unstable. 0.5 is the working spec.
+% where the gain and phase margins are not. 0.5 is the working spec.
 m.sm = min(abs(1 + H));
 m.sm_db = 20 * log10(max(m.sm, realmin));
 % Damping of the closed loop's oscillatory poles, and the frequency of the least
-% damped one. This is what a rate loop exists to change.
+% damped one; this is what a rate loop exists to change
 osc = p(abs(imag(p)) > 1e-3);
 if isempty(osc)
    m.min_zeta = 1;
@@ -731,14 +667,12 @@ end
 
 function [share, worst_real] = local_residue_share(cnum, cden, p)
 % Residues of the closed loop from a partial fraction expansion, reported beside
-% the stability verdict as evidence. A pole whose residue is a millionth of the
+% the stability verdict as evidence: a pole whose residue is a millionth of the
 % total carries almost none of the response.
 %
-% This is NOT used to accept anything. An earlier revision let a right half plane
-% pole through when its residue was small, on the argument that it was the image
-% of a plant right half plane zero. That rule is gone, and the reason is the one
-% written here: a mode can be weak in the regulated output and still be the mode
-% that decides the response, so a small residue is not a licence to pass.
+% This is NOT used to accept anything. A mode can be weak in the regulated output
+% and still be the mode that decides the response, so a small residue is not a
+% licence to pass.
 share = 0;
 worst_real = -Inf;
 if ~any(real(p) > -1e-9)
@@ -787,12 +721,9 @@ end
 [num, den] = ss2tf(Ag, Bg, Cg, Dg, 1);
 num = num / den(1);
 den = den / den(1);
-% The coefficients go in exactly as ss2tf produced them, leading zeros included.
-% An earlier revision stripped the plant's zeros near the origin here and
-% rebuilt the numerator with poly(), which was the single worst bug on this
-% channel: the q numerator carries a DOUBLE zero at the origin, poly() then
-% returned a shorter vector, and the length mismatch made every q candidate come
-% out unstable. Do not filter this numerator.
+% The coefficients go in exactly as ss2tf produced them, leading zeros included:
+% the q numerator carries a DOUBLE zero at the origin, so filtering or rebuilding
+% it with poly() shortens the vector and makes every q candidate look unstable
 w = local_freq_grid();
 ng = size(Ag, 1);
 H = complex(zeros(numel(w), 1));
@@ -805,11 +736,9 @@ end
 
 function w = local_freq_grid()
 % Shared log grid, held in memory: the design evaluates it thousands of times.
-% Density matters now that the rate-loop objective is the crossover: 600 points
-% over 1e-4..1e4 rad/s is 75 per decade, so the interpolated crossing frequency is
-% resolved far more finely than the 2 percent that a 1 rad/s target needs. The
-% earlier 220-point grid was chosen when the objective was a bandwidth read off
-% the same grid, which made the resolution irrelevant.
+% 600 points over 1e-4..1e4 rad/s is 75 per decade, so the interpolated crossing
+% frequency is resolved far more finely than the 2 percent that a 1 rad/s target
+% needs.
 persistent wg
 if isempty(wg)
    wg = logspace(-4, 4, 600);
@@ -819,14 +748,14 @@ w = wg;
 end
 
 function H = local_plant_freq_at(G, w)
-% Plant frequency response at given frequencies, via its cached polynomial pair.
+% Plant frequency response at given frequencies, via its cached polynomial pair
 dp = local_plant_poly(G);
 H = polyval(dp.num, 1i * w) ./ polyval(dp.den, 1i * w);
 end
 
 function w = local_sep_speed(v)
 % Speed of one closed loop for the separation check: the crossover where that is
-% the meaningful reading, the -3 dB bandwidth otherwise.
+% the meaningful reading, the -3 dB bandwidth otherwise
 if isfield(v, 'open_loop') && v.open_loop
    w = Inf;
 elseif isfinite(v.wcp_rad_s) && ~isfinite(v.bandwidth_rad_s)
@@ -844,10 +773,8 @@ function wi = local_inner_target(lc)
 % The rule: the inner loop sits below the slowest structural mode, because the
 % rate loop damps that mode rather than outrunning it. Structural means the short
 % period and the Dutch roll; the phugoid and the spiral are excluded because they
-% are slower than 1 rad/s and no rate loop is meant to touch them.
-% The half factor and the 10..20 rad/s clamp are the inner-loop placement band for
-% this airframe: the short period is wn = 24.36 rad/s and the Dutch roll 14.38, so
-% half of the slower one is 7.19 and the band's floor lifts it to 10.
+% are slower than 1 rad/s and no rate loop is meant to touch them. The half factor
+% and the 10..20 rad/s clamp are the inner-loop placement band for this airframe.
 wn_lat = abs(eig(lc.A_lat));
 wn_lat = wn_lat(wn_lat > 1.0);
 wn_lon = abs(eig(lc.A_long));
@@ -866,13 +793,13 @@ m = 1 / abs(freqresp(G, 1i * wc));
 end
 
 function i = local_first_cross(y, level)
-% First index where y descends through level, or empty.
+% First index where y descends through level, or empty
 i = find(y(1:end - 1) >= level & y(2:end) < level, 1);
 end
 
 function v = local_log_interp(w, y, i, level)
 % The frequency where y equals level, interpolated linearly in log w between the
-% two samples that bracket it. i is the lower index from local_first_cross.
+% two samples that bracket it; i is the lower index from local_first_cross
 j = min(i + 1, numel(w));
 y1 = y(i); y2 = y(j); w1 = w(i); w2 = w(j);
 if y1 == y2 || w2 <= w1
@@ -884,10 +811,8 @@ v = exp(log(w1) + f * (log(w2) - log(w1)));
 end
 
 function v = local_interp_at(w, y, wq)
-% y evaluated at wq, linearly in log w. Used to read the phase AT the crossover
-% rather than to search the phase for a level: passing the phase to
-% local_log_interp with level 0 finds where the phase crosses zero, which is not
-% the phase margin and once produced values of 1.1e6 and 1.2e154 degrees here.
+% y evaluated at wq, linearly in log w; used to read the phase AT the crossover
+% rather than to search the phase for a level, which is not the phase margin
 if ~isfinite(wq)
    v = NaN;
    return;
@@ -915,7 +840,7 @@ sm = min(abs(1 + H(:)));
 end
 
 function G = local_series_integrator(T)
-% Append the kinematics 1/s to a state-space loop.
+% Append the kinematics 1/s to a state-space loop
 [Ad, Bd, Cd, Dd] = ssdata(T);
 n = size(Ad, 1);
 G = ss([Ad, zeros(n, 1); Cd, 0], [Bd; Dd], [zeros(1, n), 1], 0);
@@ -926,17 +851,14 @@ function G = local_gain_series(T, k)
 G = ss(Ad, Bd, k * Cd, k * Dd);
 end
 
-% ------------------------------------------------------------------------
 function v = local_loop_verify(C, G, name, wc_target, opts, kind)
 % Report path. Uses LTI objects, so the standard margins and step metrics come
-% from MATLAB rather than from the search's own grid, and states the stability
-% verdict beside the residue share of any pole it let through.
+% from MATLAB rather than from the search's own grid.
 if nargin < 6
    kind = 'track';
 end
 % tf() normalises the controller first: tfdata on a bare scalar gain returns a
-% cell whose contents do not always follow the vector rule, which is what made
-% this line throw on the q loop.
+% cell whose contents do not always follow the vector rule
 [cn, cd] = tfdata(tf(C), 'v');
 cn = cn(:).';
 cd = cd(:).';
@@ -954,7 +876,7 @@ v.wc_target_rad_s = wc_target;
 v.poles = pole(T);
 if isempty(v.poles)
    % An open channel: C = 0, so feedback(C*G, 1) is the plant itself and there is
-   % no loop to judge. Report it as an unclosed channel with the plant's own poles.
+   % no loop to judge; report it as an unclosed channel with the plant's own poles
    v.poles = pole(G);
    v.worst_real = max(real(v.poles));
    v.stable = false;
@@ -995,9 +917,8 @@ end
 v.mode_shares = local_shares(T, v.poles);
 % Margins from the design's own frequency grid. allmargin() is not used on these
 % loops: it reports crossings that are numerical noise near the plant's
-% near-cancelled zero (0.16 rad/s with |C*G| = 0.44 on the roll-rate channel), so
-% the grid values are the reliable reading. They are also the same grid the search
-% scored against, so the report and the design cannot disagree.
+% near-cancelled zero, so the grid values are the reliable reading, and they are
+% also the same grid the search scored against.
 v.gm = Inf; v.gm_db = Inf; v.pm_deg = NaN; v.wcg_rad_s = NaN; v.wcp_rad_s = NaN;
 v.dm_s = NaN;
 vc = local_margins(L);
@@ -1008,11 +929,9 @@ v.gm_db = 20 * log10(max(vc.gm, realmin));
 v.wcg_rad_s = vc.wcg;
 v.dc_gain = dcgain(T);
 % Step response and -3 dB bandwidth are computed for the tracking loops only. On a
-% rate channel they are degenerate by construction (dcgain = 0 exactly on q, a
-% near-cancelled zero at -0.0017 against a pole at -0.104 on p), and reporting them
-% invites the next reader to treat 3141 percent "overshoot" as a real oscillation.
-% The rate loops carry their crossover instead, which local_margins already fills
-% into wcp_rad_s.
+% rate channel they are degenerate by construction, and reporting them invites the
+% next reader to treat a huge "overshoot" as a real oscillation; the rate loops
+% carry their crossover instead, which local_margins already fills into wcp_rad_s.
 if strcmp(kind, 'rate')
    v.rise_time_s = NaN; v.overshoot_pct = NaN; v.settling_time_s = NaN;
    v.peak = NaN; v.bandwidth_rad_s = NaN;
@@ -1058,11 +977,9 @@ function [vc, H] = local_margins(L)
 % Phase and gain margin of the loop transfer function on the design's own
 % frequency grid, interpolated in log w at both crossings.
 %
-% The phase is unwrapped before it is interpolated. angle() returns a sawtooth in
+% The phase is unwrapped before it is interpolated: angle() returns a sawtooth in
 % [-180, 180], and interpolating a segment that straddles the -180 to +180 jump
-% produces a value near zero where the phase is really near -180; that is how this
-% function once reported a phase margin of 1.1e6 degrees for the theta loop and
-% 1.2e154 for V, on loops whose margins are ordinary. Unwrap first, then interpolate.
+% produces a value near zero where the phase is really near -180.
 w = local_freq_grid();
 H = squeeze(freqresp(L, 1i * w));
 H = H(:);
@@ -1105,7 +1022,7 @@ end
 
 function sh = local_shares(T, p)
 % Residue share of every pole, for the report's side by side comparison between a
-% let-through pole and the modes the loop actually acts on.
+% let-through pole and the modes the loop actually acts on
 sh = struct('poles', p, 'share', zeros(numel(p), 1));
 [Ad, Bd, Cd] = ssdata(T);
 if isempty(Ad)

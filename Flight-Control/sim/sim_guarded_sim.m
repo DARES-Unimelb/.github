@@ -1,19 +1,11 @@
 function out = sim_guarded_sim(target, vars, varargin)
-% SIM_GUARDED_SIM Run sim, retrying once when the shared base workspace was cleared.
+% SIM_GUARDED_SIM Run sim, retrying once when the shared base workspace was cleared
 %
 %   out = sim_guarded_sim('uacs_plant', vars, 'ReturnWorkspaceOutputs', 'on')
 %   out = sim_guarded_sim(in, vars)          % in is a Simulink.SimulationInput
 %
-% One MATLAB session is shared by several members and there is one base
-% workspace. A model whose blocks read P, sim_x0 or ref_x0_* from base can lose
-% them between the push and the solver's first derivative, and what comes back is
-% "the plant cannot find P", which reads like a modelling fault rather than a
-% workspace one. This was observed: a job lost P and its own stage flags part way
-% through, because a probe in the same session cleared base.
-%
-% The retry is conditional on evidence: it happens only when a variable this
-% caller pushed is actually absent from base. A genuine model or solver fault
-% reports itself immediately, unretried.
+% vars is a struct of base workspace variables the model reads, and defaults to
+% an empty struct. The retry happens only when one of them is really missing
 
 if nargin < 2 || isempty(vars)
    vars = struct();

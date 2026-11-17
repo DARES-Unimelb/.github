@@ -1,0 +1,245 @@
+URL: https://www.mathworks.com/help/slcontrol/ug/choose-operating-point-search-method.html
+STATUS: 404
+FINAL: https://www.mathworks.com/help/slcontrol/ug/choose-operating-point-search-method.html
+
+ 
+
+ Simulink
+ Control Design
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+Category
+Using MATLAB
+MATLAB
+MATLAB Copilot
+
+Using Simulink
+Simulink
+Simulink Copilot
+Physical Modeling
+Event-Based Modeling
+Real-Time Simulation and Testing
+
+Workflows
+Parallel Computing
+Reporting and Database Access
+Systems Engineering
+Code Generation
+Application Deployment
+Verification, Validation, and Test
+Cloud Capabilities
+Teaching and Learning
+
+Applications
+AI and Statistics
+Mathematics and Optimization
+Signal Processing
+Image Processing and Computer Vision
+Control Systems
+Test and Measurement
+RF and Mixed Signal
+Wireless Communications
+Radar
+Robotics and Autonomous Systems
+FPGA, ASIC, and SoC Development
+Computational Finance
+Computational Biology
+Code Verification
+Aerospace and Defense
+Automotive
+
+ Main Content
+
+ The page you were looking for does not exist. Use the search box or browse topics below to find the page you were looking for.
+
+Simulink Control Design
+R2026b
+Linearize models and design control systems
+Release Notes
+
+PDF Documentation
+PDF Documentation
+
+Release Notes
+
+PDF Documentation
+PDF Documentation
+
+Simulink®
+ Control Design™ enables you to design and analyze traditional and data-driven control systems
+ modeled in Simulink. It offers tools for finding operating points and computing exact
+ linearizations of Simulink models at various operating conditions. You can compute simulation-based
+ frequency responses of your systems. You can also deploy embedded estimation algorithms for
+ real-time frequency response estimations of physical plants.
+Simulink
+ Control Design automatically tunes arbitrary SISO and MIMO control architectures, including
+ PID controllers and gain-scheduled compensators. You can deploy PID autotuning algorithms to
+ embedded software to automatically compute PID gains in real time. Simulink
+ Control Design lets you design and deploy sliding mode, iterative learning, active
+ disturbance rejection control, and other nonlinear, adaptive, and data-driven control
+ algorithms. You can use constraint enforcement methods to adjust control actions, preventing
+ your system from violating critical constraints.
+
+Get Started 
+Learn the basics of Simulink Control Design
+Operating Points
+Find model operating point from specification (trimming)
+or simulation time, initialize model at operating point
+Linearization
+Linearize model, visualize linearized system characteristics
+during simulation
+Frequency Response Estimation
+Estimate frequency response and examine frequency-domain characteristics of a
+ Simulink model or a physical plant
+Control System Design and Tuning
+Tune PID controllers and other control architectures automatically or interactively
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

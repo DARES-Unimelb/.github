@@ -1,9 +1,13 @@
 function cmd = sim_pilot_wrap(P, stick, t)
-% SIM_PILOT_WRAP Pilot command shaping, from control/pilot_to_command.m when present.
+% SIM_PILOT_WRAP Pilot command shaping, from control/pilot_to_command.m when present
 %
-% The fallback keeps the model chain runnable before the control deliverable
-% lands. It reproduces the authority limits of pilot_to_command but not its ramp
-% limiting, and sim_deps_report marks the run as placeholder based.
+%   P       parameter struct, default P from the base workspace
+%   stick   struct with fields roll, pitch, yaw, throttle, each -1 to 1
+%   t       time in s
+%   cmd     struct with fields phi_c, theta_c, r_c, V_c, h_c
+%
+% The local branch applies the same authority limits as pilot_to_command but no
+% ramp limiting, and sim_deps_report marks the run as placeholder based
 
 if nargin < 1 || isempty(P)
    P = evalin('base', 'P');

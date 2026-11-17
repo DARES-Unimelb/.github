@@ -1,9 +1,7 @@
 function root = sim_root()
-% SIM_ROOT Project MATLAB root, derived from this file's own location.
+% SIM_ROOT Absolute path of the project MATLAB root, one level above this file
 %
-% The Simulink helpers live in <root>/sim, so the root is one level up. Scripts
-% use it instead of the caller's pwd, because the MCP runner leaves the working
-% directory wherever the last script was.
+%   root   project root, independent of the caller's working directory
 
 here = fileparts(mfilename('fullpath'));
 root = fileparts(here);

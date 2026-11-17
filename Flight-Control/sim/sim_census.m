@@ -1,12 +1,14 @@
 function C = sim_census(mdl)
-% SIM_CENSUS Block inventory of a model, for the V11 disk-readback check.
+% SIM_CENSUS Block inventory of a model
 %
+%   C = sim_census(mdl)
 %   C.top_count    blocks at the top level of the model
 %   C.total_count  blocks including every subsystem level
 %   C.top_names    sorted top level block names
 %   C.all_names    sorted full paths, so a moved or renamed block is visible
 %   C.line_count   line segments
-%   C.ports        number of root inports and outports
+%   C.num_inports  root inports
+%   C.num_outports root outports
 
 C = struct();
 top = find_system(mdl, 'SearchDepth', 1, 'Type', 'Block');

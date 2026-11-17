@@ -1,0 +1,519 @@
+URL: https://www.mathworks.com/help/simulink/slref/save_system.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/simulink/slref/save_system.html
+
+ 
+
+ save_system - Save Simulink model - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Simulink
+
+ Simulink Environment Fundamentals
+
+ Programmatic Model Editing
+
+ save_system
+
+On this page
+Syntax
+Description
+ExamplesSave Current System
+Save Specified Model
+Save Model with New Name
+
+Input Argumentssys
+newSys
+
+Name-Value ArgumentsAllowPrompt
+BreakAllLinks
+BreakUserLinks
+BreakToolboxLinks
+ErrorIfShadowed
+ExportToXML
+ExportToVersion
+OverwriteIfChangedOnDisk
+SaveDirtyReferencedModels
+SaveModelWorkspace
+
+Output ArgumentsfileName
+
+Version History
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+save_system
+R2026b
+Save Simulink model
+collapse all in page
+
+Syntax
+fileName = save_system
+filename = save_system(sys)
+filename = save_system(sys,newSys)
+filename = save_system(___,Name=Value)
+
+Description
+
+ fileName = save_system saves the current top-level
+ model. If the model was not previously saved, save_system creates a file in
+ the current folder.
+To save a subsystem, copy the subsystem contents to a new model using the Simulink.SubSystem.copyContentsToBlockDiagram function, and then save the model
+ using the save_system function.
+
+example
+
+ filename = save_system(sys) saves
+ the specified model. The model must be open or loaded.
+
+example
+
+filename = save_system(sys,newSys)
+ saves the model to a file with the specified name. If you do not specify an extension, the
+ software uses the file format specified in your Simulink® preferences.
+
+example
+
+filename = save_system(___,Name=Value)
+ saves the model with additional options specified by one or more Name=Value
+ pair arguments.
+
+Examples
+collapse all
+Save Current System
+
+ Suppose you open two models sequentially. First, you open a model named
+ myModel1 and make changes to the model. Then, you open a model named
+ myModel2 and make changes to that model.
+
+ Save the current system.
+save_system
+
+The second model you open is the current system, so the command saves
+ myModel2.
+You can programmatically check which model is saved using the bdIsDirty function. If the model has unsaved changes, the function returns a
+ value of 1. Otherwise, the function returns a value of
+ 0.
+mdls = [&#34;myModel1&#34;,&#34;myModel2&#34;];
+bdIsDirty(mdls)
+
+ans = 1×2 logical array
+1 0
+
+Close myModel2. Once myModel2 closes,
+ myModel1 becomes the current system.
+Run the command again.
+save_system
+
+The command saves myModel1.
+You can verify using the bdIsDirty function.
+mdls = [&#34;myModel1&#34;,&#34;myModel2&#34;];
+bdIsDirty(mdls)
+
+ans = 1×2 logical array
+0 0
+
+Save Specified Model
+
+ Suppose you have two open models, named myModel1 and
+ myModel2. The model named myModel1 is the current
+ system.
+
+ Save the model named myModel2.
+save_system(&#34;myModel2&#34;)
+
+Save Model with New Name
+
+ Suppose you have an open model named myModel1.
+
+ Save the model with the new name myModel2. Return an error if the new
+ name is shadowed — when the name is already used on the MATLAB® path or in the workspace.
+save_system(&#34;myModel&#34;,ErrorIfShadowed=true)
+
+Input Arguments
+collapse all
+sys — Systems to save
+ 
+handle | model name
+
+Systems to save, specified as one or more handles or model names. Format the handles as
+ numeric scalars or numeric arrays. Format the names as strings, string arrays, character
+ vectors, or cell arrays of character vectors. Do not specify file extensions in the
+ names.
+For information about getting handles, see Get Handles and Paths.
+
+Example: &#34;myModel&#34;
+Example: [&#34;myModel1&#34;;&#34;myModel2&#34;]
+Data Types: double | array of doubles | string | string array | character vector | cell array of character vectors
+
+newSys — Name with which file is saved
+ 
+string | string array | char | cell array of character vectors
+
+Name with which the file is saved, specified as a string, string array, character vector,
+ or cell array of character vectors. You can specify a model name in the current folder or the
+ file path, with or without an extension.
+When you specify a name without an extension, the model saves in the file format
+ specified in your Simulink preferences. Possible model extensions are .slx and
+ .mdl. With the 'ExportToXML' option, use the extension
+ .xml. 
+
+For information on rules for naming models, see Choose Valid Model File Names. 
+
+Name-Value Arguments
+collapse all
+Specify optional pairs of arguments as
+ Name1=Value1,...,NameN=ValueN, where Name is
+ the argument name and Value is the corresponding value.
+ Name-value arguments must appear after other arguments, but the order of the
+ pairs does not matter.
+ 
+Example: save_system(&#34;myModel&#34;,SaveModelWorkspace=true,BreakUserLinks=true,OverwriteIfChangedOnDisk=true)
+
+AllowPrompt — Allow dialog box prompts
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to allow dialog box prompts. To turn the option on, specify
+ true or &#34;on&#34;. To turn the option off, specify the
+ value as false or &#34;off&#34;. By default, warnings and error
+ messages appear at the command line.
+
+Data Types: string | character vector | logical
+
+BreakAllLinks — Replace links to library blocks
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to replace links to library blocks with copies of the library blocks in the saved
+ file. To turn the option on, specify true or &#34;on&#34;. To
+ turn the option off, specify the value as false or
+ &#34;off&#34;. This option affects user-defined blocks and Simulink library blocks.
+Caution
+The BreakAllLinks option can result in compatibility issues when
+ upgrading to newer versions of Simulink. For example:
+
+Any masks on top of library links to Simulink S-functions do not upgrade to the new version of the S-function.
+
+Any library links to masked subsystems in a Simulink library do not upgrade to the new subsystem behavior.
+
+Any broken links prevent the library forwarding mechanism from upgrading the link.
+ See Maintain Compatibility of Library Blocks Using Forwarding Tables.
+
+If you saved a model with broken links to built-in libraries, use the Upgrade Advisor
+ to scan the model for out-of-date blocks. Then upgrade the Simulink blocks to their current versions.
+
+Data Types: string | character vector | logical
+
+BreakUserLinks — Replace links to user-defined blocks
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to replace links to user-defined library blocks with copies of the library blocks
+ in the saved file. To turn the option on, specify true or
+ &#34;on&#34;. To turn the option off, specify the value as
+ false or &#34;off&#34;. You cannot break locked library links.
+ For more information, see Lock Links to Blocks in a Library.
+
+Data Types: string | character vector | logical
+
+BreakToolboxLinks — Replace links to built-in library blocks
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to replace links to built-in library blocks with copies of the library blocks in
+ the saved file. To turn the option on, specify true or
+ &#34;on&#34;. To turn the option off, specify the value as
+ false or &#34;off&#34;. This option affects Simulink library blocks and blocks from libraries supplied with MathWorks® toolboxes or blocksets.
+
+Data Types: string | character vector | logical
+
+ErrorIfShadowed — Return an error if name exists
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to return an error if the new name exists on the MATLAB path or workspace. To turn the option on, specify true or
+ &#34;on&#34;. To turn the option off, specify the value as
+ false or &#34;off&#34;.
+
+Data Types: string | character vector | logical
+
+ExportToXML — Export model to XML format
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+This option is no longer supported and will be removed in a future release.
+Option to export the model to a file in a simple XML format. The block diagram in memory
+ does not change and no callbacks execute. To use this option, you must use this syntax. 
+
+save_system(sys,newSys,ExportToXML=true)
+
+Do not use this option with any additional Name=Value
+ arguments.
+When specifying the name of the exported file, include the .xml
+ extension. To turn the option on, specify the value of ExportToXML as
+ true or &#34;on&#34;. To turn the option off, specify the
+ value as false or &#34;off&#34;.
+Example: save_system(&#34;myModel&#34;,&#34;myExport.xml&#34;,ExportToXML=true)
+Data Types: string | character vector | logical
+
+ExportToVersion — MATLAB release name to export to
+ 
+release name
+
+MATLAB release name to which you want to export the model, specified as a string or
+ character vector. To use this option, you must use this syntax.
+save_system(sys,newSys,Name=Value)
+
+Specify the export version in one of these forms (not case sensitive). You can export to
+ seven years of previous releases.
+
+Release name, for example, &#34;R2023B&#34;,
+ &#34;R2020B&#34;
+
+Release name, followed by an underscore and then the extension, for example,
+ &#34;R2016A_SLX&#34;, &#34;R2022A_MDL&#34;. If you do not specify
+ an extension, you export to the file format specified in your Simulink preferences.
+
+save_system exports the model such that the specified
+ Simulink version can load it. If the model contains functionality not supported by the
+ specified Simulink version, the command removes the functionality in the exported file. It also
+ replaces unsupported blocks with empty masked subsystem blocks colored yellow. As a result,
+ the exported model might generate different results.
+Alternatively, use Simulink.exportToVersion or, interactively, the Export to Previous Version dialog
+ box.
+To export a project to previous releases, see Export a Project and References to Previous Version.
+Example: save_system(&#34;myModel1&#34;,&#34;myModel2&#34;,ExportToVersion=&#34;R2022A&#34;)
+Data Types: string | character vector
+
+OverwriteIfChangedOnDisk — Overwrite file
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to overwrite the file on disk even if it has been modified since the model was
+ loaded. To turn the option on, specify true or &#34;on&#34;. To
+ turn the option off, specify the value as false or
+ &#34;off&#34;. 
+By default, if the file changed on disk since the model was loaded, the function
+ displays an error to prevent the changes on disk from being overwritten. You can control
+ whether the function displays an error if the file has changed on disk using a Simulink preference. In the Model File pane of the Simulink Preferences dialog box, under Change Notification, select
+ Saving the model. This preference is on by default.
+
+Data Types: string | character vector | logical
+
+SaveDirtyReferencedModels — Save referenced models with unsaved changes
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to save referenced models that have unsaved changes while saving changes to their
+ parent model. To turn the option on, specify true or
+ &#34;on&#34;. To turn the option off, specify the value as
+ false or &#34;off&#34;. This option only applies to models
+ that are directly referenced by each model that is saved. If the parent model of a dirty
+ referenced model is not saved, the dirty referenced model is not saved.
+Suppose you have a model hierarchy in which model A references model
+ B, and model B references model C.
+ If models B and C both have unsaved changes, they are
+ both saved. If model C has unsaved changes but model B
+ does not have unsaved changes, neither model is saved.
+
+By default, attempting to save a model that contains unsaved referenced models returns an
+ error.
+Data Types: string | character vector | logical
+
+SaveModelWorkspace — Save model workspace
+ 
+false (default) | true | &#34;on&#34; | &#34;off&#34;
+
+Option to save the contents of the model workspace. To turn the option on, specify
+ true or &#34;on&#34;. To turn the option off, specify the
+ value as false or &#34;off&#34;. The model workspace
+ DataSource must be a MAT file. If the data source is not a MAT file,
+ save_system does not save the workspace. See Specify Source for Data in Model Workspace. 
+
+Data Types: string | character vector | logical
+
+Output Arguments
+collapse all
+fileName — File path of saved file
+ 
+file path
+
+File path of saved file, returned as a character vector or a cell array of character
+ vectors.
+
+Data Types: character vector | cell array of character vectors
+
+Version History
+Introduced before R2006a
+
+See Also
+close_system | new_system | open_system | Simulink.exportToVersion
+Topics
+Get Handles and Paths
+Save Models
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

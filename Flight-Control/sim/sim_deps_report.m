@@ -1,13 +1,8 @@
 function rep = sim_deps_report(smoke)
-% SIM_DEPS_REPORT Which delivered modules this model layer will actually use.
+% SIM_DEPS_REPORT Which delivered modules this model layer will actually use
 %
-%   rep = sim_deps_report()        look the functions up only
-%   rep = sim_deps_report(true)    also call the plant once, to catch a broken
-%                                  chain such as a stale throttle model that
-%                                  references a field the parameter set retired
-%
-% The report is written into every result file and into the build report, so a
-% run that silently fell back to a placeholder cannot be read as a real one.
+%   rep = sim_deps_report()      look the functions up only
+%   rep = sim_deps_report(true)  also call the plant once, to catch a broken chain
 
 if nargin < 1
    smoke = false;

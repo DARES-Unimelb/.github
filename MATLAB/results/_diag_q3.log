@@ -1,0 +1,7 @@
+Kp_nom 0.663814 wc 8.000
+FAILED MATLAB:nonExistentField | Unrecognized field name "kp".
+  at diag_q3 line 60
+  at LiveEditorEvaluationHelperEmatlab_mcp_server line 1
+  at mcpEval line 48
+  at fevalMatlab line 0
+  at fevalJSON line 0

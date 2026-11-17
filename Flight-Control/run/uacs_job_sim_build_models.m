@@ -1,7 +1,5 @@
 % UACS_JOB_SIM_BUILD_MODELS Job entry: build, save and census the three models.
-% Owner: ash-sim (task-3). Deliberately does NOT simulate: the build has to be
-% provable on its own, and a job that builds, saves and simulates at once is
-% exactly the shape that hung the shared session on 2026-10-08.
+% Deliberately does not simulate, so the build is provable on its own.
 this = mfilename('fullpath');
 if isempty(this)
    this = which('uacs_job_sim_build_models');

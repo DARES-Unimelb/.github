@@ -1,0 +1,19 @@
+V12 cross validation summary
+generated      2026-10-11 03:21:38
+parameters     revision 11, version 0.5.0
+MATLAB         24.1.0.2653294 (R2024a) Update 5
+Aerospace      Aerospace Blockset 24.1
+trim           V 25.000 m/s, alpha -0.3033 deg, de -0.8115 deg, throttle 0.4301
+stages         build 1, calibrate 1, crosscheck 1, verify 1
+verdict        PASS
+artifact       C:\Ash\Projects\DARES_UACS\MATLAB\results\sim_v12_calib.txt
+artifact       C:\Ash\Projects\DARES_UACS\MATLAB\results\sim_v12_calib.mat
+artifact       C:\Ash\Projects\DARES_UACS\MATLAB\results\sim_v12_crosscheck.mat
+artifact       C:\Ash\Projects\DARES_UACS\MATLAB\results\sim_v12_ref_census.mat
+
+[configurations]
+const_density  max rel 9.124738e-17 over 9.0 s, pitch, throttle, roll and yaw doublets
+const_cmd      max rel 2.535896e-16 over 5.0 s, fixed elevator and throttle
+crosswind      max rel 5.366716e-16 over 5.0 s, fixed elevator and throttle, 5 m/s east wind
+isa_frozen     max rel 1.253182e-16 over 9.0 s, pitch, throttle, roll and yaw doublets, both densities from ISA frozen at 150 m
+isa_state      max rel 2.218083e-14 over 9.0 s, pitch, throttle, roll and yaw doublets, both densities from ISA at the moving altitude

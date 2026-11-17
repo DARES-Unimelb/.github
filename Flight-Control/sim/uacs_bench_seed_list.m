@@ -1,14 +1,14 @@
 function pairs = uacs_bench_seed_list()
-% UACS_BENCH_SEED_LIST 台架操纵量与 uacs_go.m 变量的一一对应表。
+% UACS_BENCH_SEED_LIST Map from bench block paths to base workspace variable names
 %
-% 左边是模型里的块路径（相对模型根），右边是基础工作区变量名。
+%   pairs   n x 2 cell array: block path relative to the model root, variable name
 %
-% 这张表是操纵量初值的唯一权威。构建时 sim_build_bench 按它把变量写进块的字面值参数，
-% 打开模型时 uacs_bench_seed 按它再推一次。两处用同一张表，所以不会出现"构建时一个
-% 值、打开时另一个值"。
+% This table is the single authority for the initial values of the bench inputs:
+% the build writes them into the block literal values and uacs_bench_seed pushes
+% them again when the model opens
 %
-% 为什么要落字面量：Dashboard 控件绑基础工作区变量是假通路，运行时改变量仿真不理。
-% 实测见 verify/bench_live_check.m。
+% The values have to reach the blocks as literals; a Dashboard control bound to a
+% base workspace variable does not reach a running simulation
 
 pairs = {
    '驾驶员/k_roll',         'sim_stick_roll'

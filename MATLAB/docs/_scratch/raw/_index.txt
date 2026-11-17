@@ -1,0 +1,5 @@
+200	2019	compute_trim.m	https://raw.githubusercontent.com/byu-magicc/mavsim_public/main/mavsim_simulink/chap5/compute_trim.m
+200	154	compute_ss_model.m	https://raw.githubusercontent.com/byu-magicc/mavsim_public/main/mavsim_simulink/chap5/compute_ss_model.m
+200	737	compute_autopilot_gains.m	https://raw.githubusercontent.com/byu-magicc/mavsim_public/main/mavsim_simulink/chap6/compute_autopilot_gains.m
+200	5492	autopilot.m	https://raw.githubusercontent.com/byu-magicc/mavsim_public/main/mavsim_simulink/chap6/autopilot.m
+200	3181	aerosonde_parameters.m	https://raw.githubusercontent.com/byu-magicc/mavsim_public/main/mavsim_simulink/parameters/aerosonde_parameters.m

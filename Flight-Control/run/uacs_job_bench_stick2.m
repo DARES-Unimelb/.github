@@ -1,15 +1,13 @@
-% UACS_JOB_BENCH_STICK2 与 uacs_job_bench_stick 相同，多写一行实时进度，供长跑时从文件系统看进度。
+% UACS_JOB_BENCH_STICK2 The same full-stick matrix as uacs_job_bench_stick, plus a progress
+% line written and flushed to disk after every segment.
 %
-% 为什么要另起一个名字：作业脚本在本会话里跑过一次之后会被当成函数缓存，改文件不生效。
-% 换名是新文件，一定按当前内容执行。两个作业共用 results/bench_stick_traj.mat，所以换名
-% 之后进度自动接着走，不会重跑。
-%
-% 用法
-%   addpath('C:\Ash\Projects\DARES_UACS\MATLAB\run');
+% Usage
+%   addpath('<repo>/run');
 %   assignin('base', 'stick_budget_s', 5400);
 %   run_job('bench_stick2')
 %
-% 进度落 results/bench_stick_progress.txt，每段一行，跑完一段就写一行并刷盘。
+% Both jobs share results/bench_stick_traj.mat, so progress carries over between them.
+% Progress goes to results/bench_stick_progress.txt, one line per finished segment.
 
 this = mfilename('fullpath');
 if isempty(this)

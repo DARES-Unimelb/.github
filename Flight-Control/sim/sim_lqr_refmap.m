@@ -1,21 +1,12 @@
 function R = sim_lqr_refmap(P, lin, gains)
-% SIM_LQR_REFMAP Linear map from commanded deviations to reference and feedforward.
+% SIM_LQR_REFMAP Linear map from commanded deviations to reference and feedforward
 %
-%   R = sim_lqr_refmap(P, lin, gains)
+%   P, lin, gains   parameters, linearization and gain structs of the LQR design
 %   R.long.Tref  4x2  [dV_c; dtheta_c]  -> x_ref_long
 %   R.long.Uff   2x2  [dV_c; dtheta_c]  -> u_ff_long, [dde; dT]
 %   R.lat.Tref   4x2  [dbeta_c; dphi_c] -> x_ref_lat
 %   R.lat.Uff    2x2  [dbeta_c; dphi_c] -> u_ff_lat, [dda; ddr]
 %   R.linearity  max difference between the map and a direct lqr_reference solve
-%
-% control/lqr_reference.m solves A*x_ref + B*u_ff = 0 for the free states given
-% the commanded outputs, which is linear in those commands. Solving it at unit
-% commands therefore gives the whole map, and the model can then build the
-% reference for any command with one Gain block instead of a solver block.
-% The linearity check re-solves at a non-unit command and compares, so a future
-% nonlinearity in lqr_reference cannot pass silently.
-%
-% When lqr_reference is not on the path the same equations are solved here.
 
 unit = @(dV, dth, db, dph) struct('dV', dV, 'dtheta', dth, 'dbeta', db, 'dphi', dph);
 r0 = local_ref(P, lin, gains, unit(0, 0, 0, 0));
@@ -51,11 +42,10 @@ R.residual_lat = rc.residual_lat;
 R.basis_residual = [rV.residual_long, rT.residual_long, rB.residual_lat, rP.residual_lat];
 end
 
-%% ---------------- local ----------------
+%% Local helpers
 function r = local_ref(P, lin, gains, cmd)
 if sim_have('lqr_reference')
-   % The residuals are the second output of lqr_reference, not fields of the ref
-   % struct, so they are lifted onto r here and the whole info kept alongside.
+   % residuals are lqr_reference's second output; lift them onto r
    [r, info] = lqr_reference(P, lin, gains, cmd);
    r.residual_long = info.residual_long;
    r.residual_lat = info.residual_lat;
@@ -64,7 +54,7 @@ if sim_have('lqr_reference')
 end
 lc = lin_contract(lin);
 r = struct('long', [], 'lat', [], 'residual_long', NaN, 'residual_lat', NaN);
-% Solve A*x_ref + B*u_ff = 0 for [dalpha; dq; dde; dT] and [dp; dr; dda; ddr].
+% solve A*x_ref + B*u_ff = 0 for the free states and inputs
 A = lc.A_long;
 B = lc.B_long;
 M = [A(:, 2), A(:, 3), B(:, 1), B(:, 2)];

@@ -1,0 +1,428 @@
+URL: https://www.mathworks.com/help/slcontrol/ug/findopoptions.html
+STATUS: 200
+FINAL: https://www.mathworks.com/help/slcontrol/ug/findopoptions.html
+
+ 
+
+ findopOptions - Options for finding operating points from specifications - MATLAB
+
+ Skip to content
+
+ MATLAB Help Center
+
+ Search or ask a question
+
+ MATLAB Help Center
+
+ Community
+
+ Learning
+
+ Get MATLAB
+
+ MATLAB
+
+ Sign In
+
+ My Account
+
+ My Community Profile
+
+ Link License
+
+ Sign Out
+
+ Contact MathWorks Support
+
+ Visit mathworks.com
+
+ Off-Canvas Navigation Menu Toggle Contents
+
+ Documentation Home
+
+ Control Systems
+
+ Simulink
+ Control Design
+
+ Operating Points
+
+ findopOptions
+
+On this page
+Syntax
+Description
+ExamplesCreate Option Set for Operating Point Search
+
+Name-Value ArgumentsOptimizerType
+OptimizationOptions
+DisplayReport
+AreParamsTunable
+ConstraintType
+
+Output Argumentsoptions
+
+Version History'graddescent_elim' value of the Optimizer property is now 'graddescent-elim'
+
+See Also
+
+ Documentation
+
+ Examples
+
+ Functions
+
+ Blocks
+
+ Apps
+
+ Videos
+
+ Answers
+
+ Main Content
+
+findopOptions
+R2026b
+Options for finding operating points from specifications
+collapse all in page
+
+Syntax
+options = findopOptions
+options = findopOptions(Name=Value)
+
+Description
+options = findopOptions returns the default
+ operating point search options for the findop function. You can
+ modify these options using dot notation.
+
+example
+
+options = findopOptions(Name=Value)
+ sets options using one or more name-value arguments.
+
+Examples
+collapse all
+Create Option Set for Operating Point Search
+
+Open Live Script
+
+ Create an option set for operating point search that sets the optimizer type to gradient descent and suppresses the display output of findop. 
+option = findopOptions( ...
+ OptimizerType=&#34;graddescent&#34;, ...
+ DisplayReport=&#34;off&#34;);
+
+Alternatively, use dot notation to set the values of options. 
+options = findopOptions;
+options.OptimizerType = &#34;graddescent&#34;;
+options.DisplayReport = &#34;off&#34;;
+
+Name-Value Arguments
+collapse all
+Specify optional pairs of arguments as
+ Name1=Value1,...,NameN=ValueN, where Name is
+ the argument name and Value is the corresponding value.
+ Name-value arguments must appear after other arguments, but the order of the
+ pairs does not matter.
+ 
+Example: findopOptions(DisplayReport=&#34;off&#34;) suppresses the display of the
+ operating point search report to the Command Window.
+
+OptimizerType — Optimizer type used by the optimization algorithm
+ 
+&#34;graddescent-elim&#34; (default) | &#34;graddescent&#34; | &#34;graddescent-proj&#34; | &#34;lsqnonlin&#34; | &#34;lsqnonlin-proj&#34; | &#34;simplex&#34;
+
+Optimizer type used by the optimization algorithm, specified as one of these values:
+&#34;graddescent-elim&#34; — Enforce an equality
+ constraint to force the time derivatives of states to be zero
+ (dx/dt = 0, x(k+1) =
+ x(k)) and output signals to be equal to their
+ specified known values. The optimizer fixes the states,
+ x, and inputs, u, that
+ are marked as Known in an operating point
+ specification, and optimizes the remaining variables.
+
+&#34;graddescent&#34; — Enforce an equality
+ constraint to force the time derivatives of states to be zero
+ (dx/dt = 0, x(k+1) =
+ x(k)) and the output signals to be equal to their
+ specified known values. The optimizer also minimizes the error
+ between the states, x, and inputs,
+ u, and their respective known values from
+ an operating point specification. If there are not any inputs or
+ states marked as Known,
+ findop attempts to minimize the
+ deviation between the initial guesses for x
+ and u, and their trimmed values.
+
+&#34;graddescent-proj&#34; — In addition to
+ &#34;graddescent&#34;, enforce consistency of
+ model initial conditions at each function evaluation. To specify
+ whether constraints are hard or soft, use the
+ ConstraintType option. This
+ optimization method does not support analytical
+ Jacobians.
+
+&#34;lsqnonlin&#34; — Fix the states,
+ x, and inputs, u,
+ marked as Known in an operating point
+ specification, and optimize the remaining variables. The
+ algorithm tries to minimize both the error in the time
+ derivatives of the states (dx/dt = 0,
+ x(k+1) = x(k)) and the error between the
+ outputs and their specified known values.
+
+&#34;lsqnonlin-proj&#34; — In addition to
+ &#34;lsqnonlin&#34;, enforce consistency of model
+ initial conditions at each function evaluation. This
+ optimization method does not support analytical
+ Jacobians.
+
+&#34;simplex&#34; — Use the same cost function as
+ lsqnonlin with the direct search
+ optimization routine found in
+ fminsearch.
+
+For more information about these optimization algorithms, see fmincon (Optimization Toolbox), lsqnonlin (Optimization Toolbox), and fminsearch.
+
+ Dependencies
+
+ This option is not supported for finding periodic operating
+ points.
+
+OptimizationOptions — Options for the optimization algorithm
+ 
+structure
+
+Options for the optimization algorithm, specified as a structure created using the optimset (Optimization Toolbox) function.
+
+ Dependencies
+
+ This option is not supported for finding periodic operating
+ points.
+
+DisplayReport — Flag indicating whether to display the operating summary 
+report
+
+&#34;on&#34; (default) | &#34;off&#34; | &#34;iter&#34;
+
+Flag indicating whether to display the operating point summary report, specified as tone of
+ these values:
+&#34;on&#34; — Display the operating point summary
+ report in the MATLAB® command window when running
+ findop.
+
+&#34;off&#34; — Suppress display of the summary
+ report.
+
+&#34;iter&#34; — Display an iterative update of the
+ optimization progress.
+
+AreParamsTunable — Flag indicating whether to recompile the model when varying 
+parameter values
+
+true (default) | false
+
+Flag indicating whether to recompile the model when varying parameter values for trimming,
+ specified as one of these values:
+true — Do not recompile the model when all varying parameters are tunable.
+ If any varying parameters are not tunable, recompile the model
+ for each parameter grid point, and issue a warning
+ message.
+
+false — Recompile the model for each parameter grid point. Use this option
+ when you vary the values of nontunable parameters.
+
+ Dependencies
+
+ This option is not supported for finding periodic operating
+ points.
+
+ConstraintType — Constraint types for &#34;graddescent-proj&#34;
+ 
+structure
+
+Constraint types for &#34;graddescent-proj&#34; optimizer
+ algorithm, specified as a structure with these fields:
+dx — Type for constraints on state
+ derivatives
+
+x — Type for constraints on state
+ values
+
+y — Type for constraints on output
+ values
+
+Specify each constraint as one of these values:
+&#34;hard&#34; — Enforce the constraints to be
+ zero.
+
+&#34;soft&#34; — Minimize the constraints.
+
+All constraint types are &#34;hard&#34; by default.
+
+ Dependencies
+
+ This option is not supported for finding periodic operating
+ points.
+
+Output Arguments
+collapse all
+options — Operating point search options
+ 
+TrimOptions object
+
+Operating point search options, returned as a
+ TrimOptions object.
+
+Version History
+Introduced in R2013bexpand all
+R2017b: 'graddescent_elim' value of the Optimizer 
+ property is now 'graddescent-elim'
+
+The 'graddescent_elim' value of the
+ Optimizer property of a findopOptions
+ object is now 'graddescent-elim'.
+Update CodeTo update your code, change the optimizer value from
+ graddescent_elim to
+ graddescent-elim. The following table shows the typical
+ usage of this property value and how to update your code.
+If your code has this form: | Use this code instead: | 
+
+ opt = findopOptions('Optimizer',...
+ 'graddescent_elim');
+
+ | 
+ opt = findopOptions('Optimizer',...
+ 'graddescent-elim')
+
+ | 
+
+ opt = findopOptions;
+opt.Optimizer = 'graddescent_elim';
+
+ | 
+ opt = findopOptions;
+opt.Optimizer = 'graddescent-elim';
+
+ | 
+
+See Also
+findop
+
+ MATLAB Command
+
+ You clicked a link that corresponds to this MATLAB command: 
+
+ Run the command by entering it in the MATLAB Command Window.
+ Web browsers do not support MATLAB commands.
+
+ Close
+
+ Select a Web Site
+
+ Choose a web site to get translated content where available and see local events and offers. Based on your location, we recommend that you select: .
+
+ (English)
+
+ (Deutsch)
+
+ (Français)
+
+ （简体中文）
+
+ (English)
+
+ You can also select a web site from the following list
+
+ How to Get Best Site Performance
+
+ Select the China site (in Chinese or English) for best site performance. Other MathWorks country sites are not optimized for visits from your location.
+
+ Americas
+
+ América Latina (Español)
+
+ Canada (English)
+
+ United States (English)
+
+ Europe
+
+ Belgium (English)
+
+ Denmark (English)
+
+ Deutschland (Deutsch)
+
+ España (Español)
+
+ Finland (English)
+
+ France (Français)
+
+ Ireland (English)
+
+ Italia (Italiano)
+
+ Luxembourg (English)
+
+ Netherlands (English)
+
+ Norway (English)
+
+ Österreich (Deutsch)
+
+ Portugal (English)
+
+ Sweden (English)
+
+ Switzerland
+ 
+ Deutsch
+
+ English
+
+ Français
+
+ United Kingdom (English)
+
+ Asia Pacific
+
+ Australia (English)
+
+ India (English)
+
+ New Zealand (English)
+
+ 中国
+ 
+ 简体中文
+
+ English
+
+ 日本 (日本語)
+
+ 한국 (한국어)
+
+ Contact your local office
+
+ Trust Center
+
+ Trademarks
+
+ Privacy Policy
+
+ Preventing Piracy
+
+ Application Status
+
+ Contact Us
+
+ © 1994-2026 The MathWorks, Inc.
+
+ Select a Web Site
+ 
+ United States
+
+ 

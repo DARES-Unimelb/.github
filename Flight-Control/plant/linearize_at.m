@@ -13,14 +13,11 @@ function [lin, info] = linearize_at(P, trim, opts)
 %   lin.B_lat      B([2 4 6 7], [1 3])      inputs da dr
 %   lin.modes_long, lin.modes_lat  named modes with freq_rad_s and damping
 %                  freq_rad_s follows the Control System Toolbox damp()
-%                  convention and is the pole magnitude |lambda|, i.e. the
-%                  undamped natural frequency; freq_damped_rad_s = |Im| and
-%                  freq_nat_rad_s = |lambda| are both carried explicitly so
-%                  the two readings of "mode frequency" can never be confused.
+%                  convention and is the pole magnitude |lambda|
 %
-% Step rule: h_i = step * max(1, |x_i|) for states and step * max(1, |u_i|)
-% for inputs, so angles and rates get `step` rad and rad/s. Submatrices are
-% extracted from lin.A and lin.B only; they are never re-linearised.
+%   Step rule: h_i = step * max(1, |x_i|) for states and step * max(1, |u_i|)
+%   for inputs; the submatrices are extracted from lin.A and lin.B, never
+%   re-linearised
 
 if nargin < 3
    opts = struct();
@@ -76,7 +73,7 @@ lin.idx_long_x = idx_long_x;
 lin.idx_long_u = idx_long_u;
 lin.idx_lat_x = idx_lat_x;
 lin.idx_lat_u = idx_lat_u;
-% Submatrices by direct extraction from A and B.
+% Submatrices by direct extraction from A and B
 lin.A_long = A(idx_long_x, idx_long_x);
 lin.B_long = B(idx_long_x, idx_long_u);
 lin.A_lat = A(idx_lat_x, idx_lat_x);
@@ -119,7 +116,7 @@ if opts.verbose
 end
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function local_print_modes(S, banner)
 fprintf('  [%s]\n', banner);
 for k = 1:numel(S)
@@ -130,7 +127,7 @@ end
 end
 
 function S = local_modes(lam, tag, x0, P)
-% Named modes with frequency, damping and time constant from eigenvalues.
+% Named modes with frequency, damping and time constant from eigenvalues
 lam = lam(:);
 n = numel(lam);
 used = false(n, 1);
@@ -168,13 +165,8 @@ end
 
 switch tag
    case 'long'
-      % Name longitudinal modes by comparing each against the analytic estimates
-      % rather than by "highest oscillatory frequency". The old rule put the
-      % short-period name on the fastest OSCILLATORY mode, which is wrong when the
-      % short period is overdamped: at rev 10 the short period is a real pair
-      % (-53.49, -24.36 rad/s) so the fastest oscillatory mode is the PHUGOID
-      % (0.4315 rad/s), and the name landed on it. The criterion then failed a
-      % healthy aircraft. Two estimates separate the modes reliably:
+      % Name longitudinal modes against the analytic estimates below; matching on
+      % "highest oscillatory frequency" mislabels an overdamped short period
       %   short period  sqrt(qbar*S*cbar*|Cm_alpha|/Iyy)
       %   phugoid       sqrt(2)*g/V
       V0 = max(abs(x0(1)), 1e-6);
@@ -187,8 +179,7 @@ switch tag
       if which_ph ~= which_sp
          S(which_ph).name = 'phugoid';
       end
-      % Any remaining mode gets a descriptive name that states its character, so an
-      % overdamped pair is never mistaken for a missing mode.
+      % Any remaining mode gets a name stating its character
       for t = 1:numel(S)
          if isempty(S(t).name)
             if S(t).is_oscillatory
@@ -231,8 +222,8 @@ end
 end
 
 function E = local_entry(l, osc)
-% One mode entry from a complex or real eigenvalue. freq_rad_s is the pole
-% magnitude, matching the Control System Toolbox damp() convention.
+% One mode entry from a complex or real eigenvalue; freq_rad_s is the pole
+% magnitude, matching the Control System Toolbox damp() convention
 E = struct('name', '', 'lambda', l, 'real_part', real(l), 'imag_part', imag(l), ...
    'freq_rad_s', abs(l), 'freq_nat_rad_s', abs(l), 'freq_damped_rad_s', abs(imag(l)), ...
    'freq_hz', abs(l) / (2 * pi), 'damping', 1, 'tau_s', Inf, ...

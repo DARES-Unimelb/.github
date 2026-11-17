@@ -1,29 +1,23 @@
 function info = sim_bench_lqr(mdl)
-% SIM_BENCH_LQR 台架的 LQR 控制器子系统：整套线性二次型调节器装进一个块。
+% SIM_BENCH_LQR LQR controller subsystem: the whole linear-quadratic regulator inside one block
 %
-%   LQR控制器/   入 ref 5x1 / fb 9x1      出 du 4x1
+%   in ref 5x1 / fb 9x1    out du 4x1
 %
-%   du = [dda dde ddr dT]，与 PID 控制器同一接口，所以控制器选择只需一个 Switch。
+%   du = [dda dde ddr dT], the same interface as the PID controller, so the
+%   selector needs only one Switch
 %
-% 结构与受验模型 model/uacs_lqr.slx 一致，纵向与横航两个通道各自独立、各自带积分增广
-%   x_dev = x_abs - x_op                          偏差坐标
-%   z     = integral(C_int*x_dev - r)             积分状态，输出限幅
-%   u_dev = u_ff + K*([x_ref; 0] - [x_dev; z])    控制律
+% Two independent channels, longitudinal and lateral, each with integral augmentation
+%   x_dev = x_abs - x_op                           deviation coordinates
+%   z     = integral(C_int*x_dev - r)              integral state, output limited
+%   u_dev = u_ff + K*([x_ref; 0] - [x_dev; z])     control law
 %
-% 参考量从 ref 现算，而不是从预置场景读。ref 是绝对指令，LQR 的参考是偏差量，所以要
-% 各自减掉配平工作点
-%   dV_c     = V_c     - x_op_long(1)
-%   dtheta_c = theta_c - x_op_long(4)
-%   dphi_c   = phi_c   - x_op_lat(4)
-%   dbeta_c  = 0       - x_op_lat(1)
-% 工作点向量 sim_lqr_xop_long / sim_lqr_xop_lat 由 sim_push_design_vars 发布，就是
-% design_lqr 用的那一个，所以这里减掉的量与增益的来源是同一个工作点。
+% ref holds absolute commands while the LQR reference is a deviation, so each one
+% is measured against the trim operating point: dV_c = V_c - x_op_long(1),
+% dtheta_c = theta_c - x_op_long(4), dphi_c = phi_c - x_op_lat(4) and
+% dbeta_c = -x_op_lat(1). sim_lqr_xop_long and sim_lqr_xop_lat are the same
+% operating point the gains come from
 %
-% 参考映射用两个矩阵增益，这在线性上是精确的：lqr_reference 对这几个指令解的是线性
-% 方程组，sim_lqr_refmap 已经把它与直接求解对拍过。
-%
-% 高度指令不在这里用。LQR 通道里没有高度环，所以高度模式对它无效；要在两种控制器
-% 之间做公平对比，就都用姿态模式。
+% This channel has no altitude loop, so altitude mode has no effect on it
 
 sub = [mdl '/LQR控制器'];
 sim_add_block(mdl, 'LQR控制器', 'simulink/Ports & Subsystems/Subsystem', [1280 250 1450 450]);
@@ -36,7 +30,7 @@ sim_add_block(sub, 'ref_split', 'simulink/Signal Routing/Demux', sim_pos(1, 0, 4
 sim_add_block(sub, 'fb_split', 'simulink/Signal Routing/Demux', sim_pos(1, 3, 40, 200), ...
    'Outputs', '9');
 
-% ---------------- 参考量 ----------------
+%% Reference
 sim_add_block(sub, 'xop_long', 'simulink/Sources/Constant', sim_pos(0, 9, 90, 30), ...
    'Value', 'sim_lqr_xop_long');
 sim_add_block(sub, 'xop_long_split', 'simulink/Signal Routing/Demux', sim_pos(1, 9, 40, 90), ...
@@ -74,7 +68,7 @@ sim_connect(sub, 'const_zero/1', 'lat_cmd/1', 'ref_split/1', 'lat_cmd/2', ...
    'lat_cmd/1', 'lat_ref/1', 'lat_cmd_op/1', 'lat_ref/2', ...
    'lat_ref/1', 'lat_ref_split/1');
 
-% ---------------- 纵向通道 ----------------
+%% Longitudinal channel
 sim_add_block(sub, 'Tref_long', 'simulink/Math Operations/Gain', sim_pos(5, 9, 90, 40), ...
    'Gain', 'sim_lqr_Tref_long', 'Multiplication', 'Matrix(K*u)');
 sim_add_block(sub, 'Uff_long', 'simulink/Math Operations/Gain', sim_pos(5, 10, 90, 40), ...
@@ -115,7 +109,7 @@ sim_connect(sub, 'Tref_long/1', 'long_aug_ref/1', 'const_zero/1', 'long_aug_ref/
    'Uff_long/1', 'long_uff_sum/1', 'long_uff_sum/1', 'u_long_split/1', ...
    'long_ref/1', 'Tref_long/1', 'long_ref/1', 'Uff_long/1');
 
-% ---------------- 横航通道 ----------------
+%% Lateral channel
 sim_add_block(sub, 'Tref_lat', 'simulink/Math Operations/Gain', sim_pos(5, 12, 90, 40), ...
    'Gain', 'sim_lqr_Tref_lat', 'Multiplication', 'Matrix(K*u)');
 sim_add_block(sub, 'Uff_lat', 'simulink/Math Operations/Gain', sim_pos(5, 13, 90, 40), ...
@@ -156,8 +150,8 @@ sim_connect(sub, 'Tref_lat/1', 'lat_aug_ref/1', 'const_zero/1', 'lat_aug_ref/2',
    'Uff_lat/1', 'lat_uff_sum/1', 'lat_uff_sum/1', 'u_lat_split/1', ...
    'lat_ref/1', 'Tref_lat/1', 'lat_ref/1', 'Uff_lat/1');
 
-% ---------------- 输出 ----------------
-% 横航的两路是 [dda ddr]，纵向的两路是 [dde dT]，拼成与 PID 同一顺序。
+%% Output
+% lateral is [dda ddr] and longitudinal is [dde dT], interleaved into the PID order
 sim_add_block(sub, 'du_mux', 'simulink/Signal Routing/Mux', sim_pos(12, 1, 20, 90), ...
    'Inputs', '4');
 sim_add_block(sub, 'du', 'simulink/Sinks/Out1', sim_pos(13, 1, 30, 14), 'Port', '1');

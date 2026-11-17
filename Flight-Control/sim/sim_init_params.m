@@ -1,17 +1,11 @@
 function [P, src] = sim_init_params()
-% SIM_INIT_PARAMS Push the parameter set into base, recording a failed self check.
+% SIM_INIT_PARAMS Push the parameter set into base, recording a failed self check
 %
 %   [P, src] = sim_init_params()
-%   src  'init_uacs_twin' when the parameter self check passed
-%        'uacs_twin_params: self check FAILED: <reason>' when it did not
+%   src  'init_uacs_twin', or 'uacs_twin_params: self check FAILED: <reason>'
 %
-% init_uacs_twin asserts the physical consistency of the parameter set, and while
-% that set is being designed those assertions can fail for reasons that have
-% nothing to do with the Simulink layer. This wrapper keeps the models runnable
-% in that window, but it never hides the failure: the returned src is written
-% into every result file and into the build report, and a warning is printed, so
-% a run made against an unverified parameter set cannot be mistaken for a
-% verified one.
+% A failed self check still leaves the models runnable, and src is reported in
+% every result file, so a run against unverified parameters stays visible
 
 warning('off', 'sim:ParamsSelfCheck');
 try

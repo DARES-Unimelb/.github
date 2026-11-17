@@ -1,0 +1,28 @@
+=== sim\sim_plant_ref_aero.m
+   clean
+=== sim\sim_push_ref_vars.m
+   clean
+=== sim\sim_push_vars.m
+   clean
+=== sim\sim_guarded_sim.m
+   clean
+=== sim\sim_build_plant_ref.m
+   clean
+=== sim\sim_run_plant_cmd.m
+   clean
+=== sim\sim_ref_calibrate.m
+   line   58               'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.
+   line   58               'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.
+=== sim\sim_v12_measure.m
+   line   48               'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.
+   line   48               'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.
+=== sim\sim_v12_trim.m
+   clean
+=== verify\v_sim_v12_crosscheck.m
+   clean
+=== verify\v_sim_all.m
+   clean
+=== run\uacs_job_sim_v12.m
+   line   31               Using 'clear' with the 'functions' option usually decreases code performance and is often unnecessary.
+   line  134               'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.
+   line  134               'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.

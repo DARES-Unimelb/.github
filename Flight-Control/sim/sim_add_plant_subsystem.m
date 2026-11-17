@@ -1,13 +1,9 @@
 function info = sim_add_plant_subsystem(mdl, name, pos)
-% SIM_ADD_PLANT_SUBSYSTEM Put the 12-state plant inside a controller model.
+% SIM_ADD_PLANT_SUBSYSTEM Put the 12-state plant inside a controller model
 %
-% Same contents as model/uacs_plant.slx: two inputs, the S-Function, one output.
-% The controller models embed the plant rather than referencing uacs_plant.slx
-% through a Model block on purpose: model reference requires the referenced
-% model to use the same solver type as its parent, and V10 runs the same model
-% under the fixed-step ode4 and the variable-step ode45, so a referenced plant
-% would have to be re-saved between the two runs. The builder is shared, so the
-% two copies cannot drift, and V11 compares both against the same census.
+%   info = sim_add_plant_subsystem(mdl, name, pos)
+%
+% The plant is embedded as a copy, not a model reference
 
 sub = [mdl '/' name];
 sim_add_block(mdl, name, 'simulink/Ports & Subsystems/Subsystem', pos);

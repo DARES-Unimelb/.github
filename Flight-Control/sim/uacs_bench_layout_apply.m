@@ -1,18 +1,19 @@
 function rep = uacs_bench_layout_apply(mdl)
-% UACS_BENCH_LAYOUT_APPLY 把导出的画布布局套回刚重建的模型。
+% UACS_BENCH_LAYOUT_APPLY Put the exported canvas layout back onto a rebuilt model
 %
-%   rep = uacs_bench_layout_apply(mdl)
+%   mdl   bench model name, already built and loaded
+%   rep   applied and missing counts for blocks and for annotations
 %
-% 台架模型由 sim_build_bench 整份重建，重建会先删掉旧文件，所以用户在画布上摆过的位置
-% 必须在建完之后再套回去。数据来自 sim/uacs_bench_layout_list.m，由 run_job('bench_layout')
-% 从盘上那份 .slx 导出。
+% The bench model is rebuilt as a whole, so positions moved by hand on the canvas
+% are re-applied afterwards from uacs_bench_layout_list
 %
-% 只套还存在的块；新建的块在数据里没有记录，留在生成脚本给的位置上。返回值里报出套了几
-% 个、丢了几个，构建日志里能看见。
+% Only blocks that still exist are moved; a block added since the export keeps
+% the position the build script gave it
 %
-% 注释按正文匹配。注释没有独立于正文的身份，get_param 取到的 Name 就是从正文派生的，所以
-% 只能拿正文当键。先按整段正文精确匹配，不中再按首行标题匹配：这样正文改了而标题没改的
-% 注释也认得回来。导出件里的换行被写成两字符的 \n，比较前要先还原。
+% Annotations are matched on their text: first the whole text, then the first
+% line, so an annotation whose body changed but whose title did not is still
+% found; newlines in the exported data are the two characters \n and are
+% restored before comparing
 
 L = uacs_bench_layout_list();
 rep = struct('applied', 0, 'missing', 0, 'notes_applied', 0, 'notes_missing', 0);
@@ -55,9 +56,9 @@ for k = 1:size(L.notes, 1)
 end
 end
 
-% ------------------------------------------------------------------------
+%% Local helpers
 function s = local_first(t)
-% 注释的首行标题。没有换行就是整段。
+% first line of the annotation text, the whole text when it has one line
 nl = find(t == sprintf('\n'), 1);
 if ~isempty(nl)
    t = t(1:nl - 1);
